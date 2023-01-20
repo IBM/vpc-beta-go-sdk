@@ -1,5 +1,9 @@
 Go client library to interact with the various IBM Cloud VPC Services APIs in Beta.
 
+### Note:
+ This SDK surfaces Beta features which are subject to change before making it to GA.
+ GA VPC Go SDK can be found [here](https://github.com/IBM/vpc-go-sdk)
+
 [![Build Status](https://travis-ci.com/IBM/vpc-beta-go-sdk.svg?branch=master)](https://travis-ci.com/IBM/vpc-beta-go-sdk)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/IBM/vpc-beta-go-sdk)
