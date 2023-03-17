@@ -1,3 +1,4 @@
+//go:build examples
 // +build examples
 
 /**
@@ -41,6 +42,7 @@ var (
 	subnetID                          string
 	keyID                             string
 	imageID                           string
+	imageExportJobID                  string
 	instanceID                        string
 	addressPrefixID                   string
 	routingTableID                    string
@@ -1024,6 +1026,100 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 			Expect(response.StatusCode).To(Equal(200))
 			Expect(image).ToNot(BeNil())
 
+		})
+		It(`ListImageExportJobs request example`, func() {
+			fmt.Println("\nListImageExportJobs() result:")
+			// begin-list_image_export_jobs
+
+			listImageExportJobsOptions := vpcService.NewListImageExportJobsOptions(
+				imageID,
+			)
+
+			imageExportJobUnpaginatedCollection, response, err := vpcService.ListImageExportJobs(listImageExportJobsOptions)
+			if err != nil {
+				panic(err)
+			}
+
+			// end-list_image_export_jobs
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(imageExportJobUnpaginatedCollection).ToNot(BeNil())
+		})
+		It(`CreateImageExportJob request example`, func() {
+			fmt.Println("\nCreateImageExportJob() result:")
+			//name := getName("image-export-job")
+			// begin-create_image_export_job
+
+			cloudObjectStorageBucketIdentityModel := &vpcbetav1.CloudObjectStorageBucketIdentityCloudObjectStorageBucketIdentityByName{
+				Name: &[]string{"bucket-27200-lwx4cfvcue"}[0],
+			}
+
+			createImageExportJobOptions := &vpcbetav1.CreateImageExportJobOptions{
+				ImageID:       &imageID,
+				StorageBucket: cloudObjectStorageBucketIdentityModel,
+				Format:        &[]string{"qcow2"}[0],
+				Name:          &[]string{"my-image-export-job"}[0],
+			}
+
+			imageExportJob, response, err := vpcService.CreateImageExportJob(createImageExportJobOptions)
+			if err != nil {
+				panic(err)
+			}
+
+			// end-create_image_export_job
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(201))
+			Expect(imageExportJob).ToNot(BeNil())
+			imageExportJobID = *imageExportJob.ID
+		})
+		It(`GetImageExportJob request example`, func() {
+			fmt.Println("\nGetImageExportJob() result:")
+			// begin-get_image_export_job
+
+			getImageExportJobOptions := &vpcbetav1.GetImageExportJobOptions{
+				ImageID: &imageID,
+				ID:      &imageExportJobID,
+			}
+
+			imageExportJob, response, err := vpcService.GetImageExportJob(getImageExportJobOptions)
+			if err != nil {
+				panic(err)
+			}
+
+			// end-get_image_export_job
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(imageExportJob).ToNot(BeNil())
+		})
+		It(`UpdateImageExportJob request example`, func() {
+			fmt.Println("\nUpdateImageExportJob() result:")
+			//name := getName("image-export-job-updated")
+			// begin-update_image_export_job
+
+			imageExportJobPatchModel := &vpcbetav1.ImageExportJobPatch{
+				Name: &[]string{"image-export-job-updated"}[0],
+			}
+			imageExportJobPatchModelAsPatch, _ := imageExportJobPatchModel.AsPatch()
+
+			updateImageExportJobOptions := &vpcbetav1.UpdateImageExportJobOptions{
+				ImageID:             &imageID,
+				ID:                  &imageExportJobID,
+				ImageExportJobPatch: imageExportJobPatchModelAsPatch,
+			}
+
+			imageExportJob, response, err := vpcService.UpdateImageExportJob(updateImageExportJobOptions)
+			if err != nil {
+				panic(err)
+			}
+
+			// end-update_image_export_job
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(imageExportJob).ToNot(BeNil())
 		})
 		It(`ListOperatingSystems request example`, func() {
 			fmt.Println("\nListOperatingSystems() result:")
@@ -2385,8 +2481,8 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 
 			options := &vpcbetav1.CreateDedicatedHostGroupOptions{
 				Name:   &name,
-				Class:  &[]string{"mx2"}[0],
-				Family: &[]string{"balanced"}[0],
+				Class:  &[]string{"mx2d"}[0],
+				Family: &[]string{"memory-disk"}[0],
 				Zone: &vpcbetav1.ZoneIdentity{
 					Name: zone,
 				},
@@ -2500,13 +2596,14 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 		It(`CreateDedicatedHost request example`, func() {
 			fmt.Println("\nCreateDedicatedHost() result:")
 			name := getName("dh")
+			profile := "mx2d-host-152x1216"
 			// begin-create_dedicated_host
 
 			options := &vpcbetav1.CreateDedicatedHostOptions{}
 			options.SetDedicatedHostPrototype(&vpcbetav1.DedicatedHostPrototype{
 				Name: &name,
 				Profile: &vpcbetav1.DedicatedHostProfileIdentity{
-					Name: &dhProfile,
+					Name: &profile,
 				},
 				Group: &vpcbetav1.DedicatedHostGroupIdentity{
 					ID: &dedicatedHostGroupID,
@@ -2618,12 +2715,14 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 		It(`UpdateDedicatedHost request example`, func() {
 			fmt.Println("\nUpdateDedicatedHost() result:")
 			name := getName("dh")
+			insPlacement := false
 			// begin-update_dedicated_host
 			options := &vpcbetav1.UpdateDedicatedHostOptions{
 				ID: &dedicatedHostID,
 			}
 			dedicatedHostPatchModel := &vpcbetav1.DedicatedHostPatch{
-				Name: &name,
+				Name:                     &name,
+				InstancePlacementEnabled: &insPlacement,
 			}
 			dedicatedHostPatchModelAsPatch, asPatchErr := dedicatedHostPatchModel.AsPatch()
 			if asPatchErr != nil {
@@ -6447,24 +6546,6 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 
 		})
 
-		It(`DeleteInstanceTemplate request example`, func() {
-			// begin-delete_instance_template
-
-			options := &vpcbetav1.DeleteInstanceTemplateOptions{}
-			options.SetID(instanceTemplateID)
-			response, err := vpcService.DeleteInstanceTemplate(options)
-
-			// end-delete_instance_template
-			if err != nil {
-				panic(err)
-			}
-			fmt.Printf("\nDeleteInstanceTemplate() response status code: %d\n", response.StatusCode)
-
-			Expect(err).To(BeNil())
-			Expect(response.StatusCode).To(Equal(204))
-
-		})
-
 		It(`DeleteInstance request example`, func() {
 			// begin-delete_instance
 
@@ -6481,6 +6562,7 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 			Expect(response.StatusCode).To(Equal(204))
 
 		})
+
 		It(`DeleteKey request example`, func() {
 			// begin - delete_key
 
@@ -6499,6 +6581,24 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 			Expect(response.StatusCode).To(Equal(204))
 
 		})
+		It(`DeleteImageExportJob request example`, func() {
+			// begin-delete_image_export_job
+
+			deleteImageExportJobOptions := &vpcbetav1.DeleteImageExportJobOptions{
+				ImageID: &imageID,
+				ID:      &imageExportJobID,
+			}
+
+			response, err := vpcService.DeleteImageExportJob(deleteImageExportJobOptions)
+			if err != nil {
+				panic(err)
+			}
+			fmt.Printf("\nDeleteImageExportJob() response status code: %d\n", response.StatusCode)
+			// end-delete_image_export_job
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(202))
+		})
 		It(`DeleteImage request example`, func() {
 			// begin-delete_image
 
@@ -6516,23 +6616,6 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 
 		})
 
-		It(`DeleteSubnet request example`, func() {
-			// begin-delete_subnet
-
-			options := &vpcbetav1.DeleteSubnetOptions{}
-			options.SetID(subnetID)
-			response, err := vpcService.DeleteSubnet(options)
-
-			// end-delete_subnet
-			if err != nil {
-				panic(err)
-			}
-			fmt.Printf("\nDeleteSubnet() response status code: %d\n", response.StatusCode)
-
-			Expect(err).To(BeNil())
-			Expect(response.StatusCode).To(Equal(204))
-
-		})
 		It(`DeleteVPCRoutingTableRoute request example`, func() {
 			// begin-delete_vpc_routing_table_route
 
@@ -6586,22 +6669,6 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 				panic(err)
 			}
 			fmt.Printf("\nDeleteVPCAddressPrefix() response status code: %d\n", response.StatusCode)
-
-			Expect(err).To(BeNil())
-			Expect(response.StatusCode).To(Equal(204))
-
-		})
-		It(`DeleteVPC request example`, func() {
-			// begin-delete_vpc
-
-			deleteVpcOptions := &vpcbetav1.DeleteVPCOptions{}
-			deleteVpcOptions.SetID(vpcID)
-			response, err := vpcService.DeleteVPC(deleteVpcOptions)
-			// end-delete_vpc
-			if err != nil {
-				panic(err)
-			}
-			fmt.Printf("\nDeleteVPC() response status code: %d\n", response.StatusCode)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(204))
@@ -6856,20 +6923,35 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 			Expect(response.StatusCode).To(Equal(204))
 
 		})
+		It(`DeleteInstanceTemplate request example`, func() {
+			// begin-delete_instance_template
 
-		It(`DeleteDedicatedHostGroup request example`, func() {
-			// begin-delete_dedicated_host_group
+			options := &vpcbetav1.DeleteInstanceTemplateOptions{}
+			options.SetID(instanceTemplateID)
+			response, err := vpcService.DeleteInstanceTemplate(options)
 
-			options := vpcService.NewDeleteDedicatedHostGroupOptions(
-				dedicatedHostGroupID,
-			)
-			response, err := vpcService.DeleteDedicatedHostGroup(options)
-
-			// end-delete_dedicated_host_group
+			// end-delete_instance_template
 			if err != nil {
 				panic(err)
 			}
-			fmt.Printf("\nDeleteDedicatedHostGroup() response status code: %d\n", response.StatusCode)
+			fmt.Printf("\nDeleteInstanceTemplate() response status code: %d\n", response.StatusCode)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(204))
+
+		})
+		It(`DeleteSubnet request example`, func() {
+			// begin-delete_subnet
+
+			options := &vpcbetav1.DeleteSubnetOptions{}
+			options.SetID(subnetID)
+			response, err := vpcService.DeleteSubnet(options)
+
+			// end-delete_subnet
+			if err != nil {
+				panic(err)
+			}
+			fmt.Printf("\nDeleteSubnet() response status code: %d\n", response.StatusCode)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(204))
@@ -6886,6 +6968,24 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 				panic(err)
 			}
 			fmt.Printf("\nDeleteDedicatedHost() response status code: %d\n", response.StatusCode)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(204))
+
+		})
+		It(`DeleteDedicatedHostGroup request example`, func() {
+			// begin-delete_dedicated_host_group
+
+			options := vpcService.NewDeleteDedicatedHostGroupOptions(
+				dedicatedHostGroupID,
+			)
+			response, err := vpcService.DeleteDedicatedHostGroup(options)
+
+			// end-delete_dedicated_host_group
+			if err != nil {
+				panic(err)
+			}
+			fmt.Printf("\nDeleteDedicatedHostGroup() response status code: %d\n", response.StatusCode)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(204))
@@ -7067,6 +7167,22 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(202))
 			Expect(backupPolicy).ToNot(BeNil())
+
+		})
+		It(`DeleteVPC request example`, func() {
+			// begin-delete_vpc
+
+			deleteVpcOptions := &vpcbetav1.DeleteVPCOptions{}
+			deleteVpcOptions.SetID(vpcID)
+			response, err := vpcService.DeleteVPC(deleteVpcOptions)
+			// end-delete_vpc
+			if err != nil {
+				panic(err)
+			}
+			fmt.Printf("\nDeleteVPC() response status code: %d\n", response.StatusCode)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(204))
 
 		})
 	})

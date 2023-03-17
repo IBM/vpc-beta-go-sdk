@@ -15,7 +15,7 @@
  */
 
 /*
- * IBM OpenAPI SDK Code Generator Version: 3.62.2-e5d4c32b-20221214-193750
+ * IBM OpenAPI SDK Code Generator Version: 3.68.2-ac7def68-20230310-195410
  */
 
 // Package vpcbetav1 : Operations and models for the VpcbetaV1 service
@@ -37,17 +37,17 @@ import (
 // VpcbetaV1 : The IBM Cloud Virtual Private Cloud (VPC) API can be used to programmatically provision and manage
 // virtual server instances, along with subnets, volumes, load balancers, and more.
 //
-// API Version: beta-initial
+// API Version: beta-2023-02-14
 type VpcbetaV1 struct {
 	Service *core.BaseService
-
-	// The API version, in format `YYYY-MM-DD`. For the API behavior documented here, specify any date between `2022-11-25`
-	// and today's date (UTC).
-	Version *string
 
 	// The infrastructure generation. For the API behavior documented here, specify
 	// `2`.
 	generation *int64
+
+	// The API version, in format `YYYY-MM-DD`. For the API behavior documented here, specify any date between `2023-02-12`
+	// and today's date (UTC).
+	Version *string
 }
 
 // DefaultServiceURL is the default URL to make service requests to.
@@ -62,7 +62,7 @@ type VpcbetaV1Options struct {
 	URL           string
 	Authenticator core.Authenticator
 
-	// The API version, in format `YYYY-MM-DD`. For the API behavior documented here, specify any date between `2022-11-25`
+	// The API version, in format `YYYY-MM-DD`. For the API behavior documented here, specify any date between `2023-02-12`
 	// and today's date (UTC).
 	Version *string
 }
@@ -121,13 +121,12 @@ func NewVpcbetaV1(options *VpcbetaV1Options) (service *VpcbetaV1, err error) {
 	}
 
 	if options.Version == nil {
-		options.Version = core.StringPtr("2022-11-23")
+		options.Version = core.StringPtr("2023-02-14")
 	}
-
 	service = &VpcbetaV1{
 		Service:    baseService,
-		Version:    options.Version,
 		generation: core.Int64Ptr(2),
+		Version:    options.Version,
 	}
 
 	return
@@ -330,9 +329,9 @@ func (vpcbeta *VpcbetaV1) CreateVPCWithContext(ctx context.Context, createVPCOpt
 
 // DeleteVPC : Delete a VPC
 // This request deletes a VPC. This operation cannot be reversed. For this request to succeed, the VPC must not contain
-// any instances, subnets, or public gateways. All security groups and network ACLs associated with the VPC are
-// automatically deleted. All flow log collectors with `auto_delete` set to `true` targeting the VPC or any resource in
-// the VPC are automatically deleted.
+// any instances, subnets, public gateways, or endpoint gateways. All security groups and network ACLs associated with
+// the VPC are automatically deleted. All flow log collectors with `auto_delete` set to `true` targeting the VPC or any
+// resource in the VPC are automatically deleted.
 func (vpcbeta *VpcbetaV1) DeleteVPC(deleteVPCOptions *DeleteVPCOptions) (response *core.DetailedResponse, err error) {
 	return vpcbeta.DeleteVPCWithContext(context.Background(), deleteVPCOptions)
 }
@@ -644,9 +643,8 @@ func (vpcbeta *VpcbetaV1) GetVPCDefaultRoutingTableWithContext(ctx context.Conte
 }
 
 // GetVPCDefaultSecurityGroup : Retrieve a VPC's default security group
-// This request retrieves the default security group for the VPC specified by the identifier in the URL. Resources that
-// optionally allow a security group to be specified upon creation will be attached to this security group if a security
-// group is not specified.
+// This request retrieves the default security group for the VPC specified by the identifier in the URL. Resources
+// created in this VPC that allow a security group to be optionally specified will use this security group by default.
 func (vpcbeta *VpcbetaV1) GetVPCDefaultSecurityGroup(getVPCDefaultSecurityGroupOptions *GetVPCDefaultSecurityGroupOptions) (result *DefaultSecurityGroup, response *core.DetailedResponse, err error) {
 	return vpcbeta.GetVPCDefaultSecurityGroupWithContext(context.Background(), getVPCDefaultSecurityGroupOptions)
 }
@@ -1188,6 +1186,9 @@ func (vpcbeta *VpcbetaV1) CreateVPCRouteWithContext(ctx context.Context, createV
 	}
 	if createVPCRouteOptions.NextHop != nil {
 		body["next_hop"] = createVPCRouteOptions.NextHop
+	}
+	if createVPCRouteOptions.Priority != nil {
+		body["priority"] = createVPCRouteOptions.Priority
 	}
 	_, err = builder.SetBodyContentJSON(body)
 	if err != nil {
@@ -1775,8 +1776,9 @@ func (vpcbeta *VpcbetaV1) UpdateVPCRoutingTableWithContext(ctx context.Context, 
 // ListVPCRoutingTableRoutes : List all routes in a VPC routing table
 // This request lists all routes in a VPC routing table. If subnets are associated with this routing table, delivery of
 // packets sent on a subnet is performed according to the action of the most specific matching route in the table
-// (provided the subnet and route are in the same zone). If multiple equally-specific routes exist, traffic will be
-// distributed across them. If no routes match, delivery will be controlled by the system's built-in routes.
+// (provided the subnet and route are in the same zone). If multiple equally-specific routes exist, the route with the
+// highest priority will be used. If two matching routes have the same destination and priority, traffic will be
+// distributed between them. If no routes match, delivery will be controlled by the system's built-in routes.
 func (vpcbeta *VpcbetaV1) ListVPCRoutingTableRoutes(listVPCRoutingTableRoutesOptions *ListVPCRoutingTableRoutesOptions) (result *RouteCollection, response *core.DetailedResponse, err error) {
 	return vpcbeta.ListVPCRoutingTableRoutesWithContext(context.Background(), listVPCRoutingTableRoutesOptions)
 }
@@ -1905,6 +1907,9 @@ func (vpcbeta *VpcbetaV1) CreateVPCRoutingTableRouteWithContext(ctx context.Cont
 	}
 	if createVPCRoutingTableRouteOptions.NextHop != nil {
 		body["next_hop"] = createVPCRoutingTableRouteOptions.NextHop
+	}
+	if createVPCRoutingTableRouteOptions.Priority != nil {
+		body["priority"] = createVPCRoutingTableRouteOptions.Priority
 	}
 	_, err = builder.SetBodyContentJSON(body)
 	if err != nil {
@@ -3391,8 +3396,8 @@ func (vpcbeta *VpcbetaV1) CreateImageWithContext(ctx context.Context, createImag
 }
 
 // DeleteImage : Delete an image
-// This request deletes an image. This operation cannot be reversed. A system-provided image is not allowed to be
-// deleted. Additionally, an image cannot be deleted if it:
+// This request deletes an image. Any active image export jobs will be completed first. This operation cannot be
+// reversed. A system-provided image is not allowed to be deleted. Additionally, an image cannot be deleted if it:
 // - has a `status` of `deleting`
 // - has a `status` of `pending` with a `status_reasons` code of `image_request_in_progress`
 // - has `catalog_offering.managed` set to `true`.
@@ -3570,6 +3575,349 @@ func (vpcbeta *VpcbetaV1) UpdateImageWithContext(ctx context.Context, updateImag
 	}
 	if rawResponse != nil {
 		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalImage)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// ListImageExportJobs : List all image export jobs
+// This request lists all export jobs for an image. Each job tracks the exporting of the image to another location, such
+// as a bucket within cloud object storage.
+//
+// The jobs will be sorted by their `created_at` property values, with newest jobs first. Jobs with identical
+// `created_at` property values will in turn be sorted by ascending
+// `name` property values.
+func (vpcbeta *VpcbetaV1) ListImageExportJobs(listImageExportJobsOptions *ListImageExportJobsOptions) (result *ImageExportJobUnpaginatedCollection, response *core.DetailedResponse, err error) {
+	return vpcbeta.ListImageExportJobsWithContext(context.Background(), listImageExportJobsOptions)
+}
+
+// ListImageExportJobsWithContext is an alternate form of the ListImageExportJobs method which supports a Context parameter
+func (vpcbeta *VpcbetaV1) ListImageExportJobsWithContext(ctx context.Context, listImageExportJobsOptions *ListImageExportJobsOptions) (result *ImageExportJobUnpaginatedCollection, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(listImageExportJobsOptions, "listImageExportJobsOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(listImageExportJobsOptions, "listImageExportJobsOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"image_id": *listImageExportJobsOptions.ImageID,
+	}
+
+	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = vpcbeta.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(vpcbeta.Service.Options.URL, `/images/{image_id}/export_jobs`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range listImageExportJobsOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("vpcbeta", "V1", "ListImageExportJobs")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+
+	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
+	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	if listImageExportJobsOptions.Name != nil {
+		builder.AddQuery("name", fmt.Sprint(*listImageExportJobsOptions.Name))
+	}
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = vpcbeta.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalImageExportJobUnpaginatedCollection)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// CreateImageExportJob : Create an image export job
+// This request creates and queues a new export job for the image specified in the URL using the image export job
+// prototype object. The image must be owned by the account and be in the `available`, `deprecated`, `obsolete`, or
+// `unusable` state. The prototype object is structured in the same way as a retrieved image export job, and contains
+// the information necessary to create and queue the new image export job.
+func (vpcbeta *VpcbetaV1) CreateImageExportJob(createImageExportJobOptions *CreateImageExportJobOptions) (result *ImageExportJob, response *core.DetailedResponse, err error) {
+	return vpcbeta.CreateImageExportJobWithContext(context.Background(), createImageExportJobOptions)
+}
+
+// CreateImageExportJobWithContext is an alternate form of the CreateImageExportJob method which supports a Context parameter
+func (vpcbeta *VpcbetaV1) CreateImageExportJobWithContext(ctx context.Context, createImageExportJobOptions *CreateImageExportJobOptions) (result *ImageExportJob, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(createImageExportJobOptions, "createImageExportJobOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(createImageExportJobOptions, "createImageExportJobOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"image_id": *createImageExportJobOptions.ImageID,
+	}
+
+	builder := core.NewRequestBuilder(core.POST)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = vpcbeta.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(vpcbeta.Service.Options.URL, `/images/{image_id}/export_jobs`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range createImageExportJobOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("vpcbeta", "V1", "CreateImageExportJob")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+	builder.AddHeader("Content-Type", "application/json")
+
+	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
+	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+
+	body := make(map[string]interface{})
+	if createImageExportJobOptions.StorageBucket != nil {
+		body["storage_bucket"] = createImageExportJobOptions.StorageBucket
+	}
+	if createImageExportJobOptions.Format != nil {
+		body["format"] = createImageExportJobOptions.Format
+	}
+	if createImageExportJobOptions.Name != nil {
+		body["name"] = createImageExportJobOptions.Name
+	}
+	_, err = builder.SetBodyContentJSON(body)
+	if err != nil {
+		return
+	}
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = vpcbeta.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalImageExportJob)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// DeleteImageExportJob : Delete an image export job
+// This request deletes an image export job. This operation cannot be reversed. If the job has not completed, the job
+// will be canceled, and the incomplete exported image object deleted. If the job has completed, the exported image
+// object will not be deleted.
+func (vpcbeta *VpcbetaV1) DeleteImageExportJob(deleteImageExportJobOptions *DeleteImageExportJobOptions) (response *core.DetailedResponse, err error) {
+	return vpcbeta.DeleteImageExportJobWithContext(context.Background(), deleteImageExportJobOptions)
+}
+
+// DeleteImageExportJobWithContext is an alternate form of the DeleteImageExportJob method which supports a Context parameter
+func (vpcbeta *VpcbetaV1) DeleteImageExportJobWithContext(ctx context.Context, deleteImageExportJobOptions *DeleteImageExportJobOptions) (response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(deleteImageExportJobOptions, "deleteImageExportJobOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(deleteImageExportJobOptions, "deleteImageExportJobOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"image_id": *deleteImageExportJobOptions.ImageID,
+		"id":       *deleteImageExportJobOptions.ID,
+	}
+
+	builder := core.NewRequestBuilder(core.DELETE)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = vpcbeta.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(vpcbeta.Service.Options.URL, `/images/{image_id}/export_jobs/{id}`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range deleteImageExportJobOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("vpcbeta", "V1", "DeleteImageExportJob")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
+	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	response, err = vpcbeta.Service.Request(request, nil)
+
+	return
+}
+
+// GetImageExportJob : Retrieve an image export job
+// This request retrieves a single image export job specified by the identifier in the URL.
+func (vpcbeta *VpcbetaV1) GetImageExportJob(getImageExportJobOptions *GetImageExportJobOptions) (result *ImageExportJob, response *core.DetailedResponse, err error) {
+	return vpcbeta.GetImageExportJobWithContext(context.Background(), getImageExportJobOptions)
+}
+
+// GetImageExportJobWithContext is an alternate form of the GetImageExportJob method which supports a Context parameter
+func (vpcbeta *VpcbetaV1) GetImageExportJobWithContext(ctx context.Context, getImageExportJobOptions *GetImageExportJobOptions) (result *ImageExportJob, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(getImageExportJobOptions, "getImageExportJobOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(getImageExportJobOptions, "getImageExportJobOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"image_id": *getImageExportJobOptions.ImageID,
+		"id":       *getImageExportJobOptions.ID,
+	}
+
+	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = vpcbeta.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(vpcbeta.Service.Options.URL, `/images/{image_id}/export_jobs/{id}`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range getImageExportJobOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("vpcbeta", "V1", "GetImageExportJob")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+
+	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
+	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = vpcbeta.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalImageExportJob)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// UpdateImageExportJob : Update an image export job
+// This request updates an image export job with the information in a provided image export job patch. The image export
+// job patch object is structured in the same way as a retrieved image export job and contains only the information to
+// be updated.
+func (vpcbeta *VpcbetaV1) UpdateImageExportJob(updateImageExportJobOptions *UpdateImageExportJobOptions) (result *ImageExportJob, response *core.DetailedResponse, err error) {
+	return vpcbeta.UpdateImageExportJobWithContext(context.Background(), updateImageExportJobOptions)
+}
+
+// UpdateImageExportJobWithContext is an alternate form of the UpdateImageExportJob method which supports a Context parameter
+func (vpcbeta *VpcbetaV1) UpdateImageExportJobWithContext(ctx context.Context, updateImageExportJobOptions *UpdateImageExportJobOptions) (result *ImageExportJob, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(updateImageExportJobOptions, "updateImageExportJobOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(updateImageExportJobOptions, "updateImageExportJobOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"image_id": *updateImageExportJobOptions.ImageID,
+		"id":       *updateImageExportJobOptions.ID,
+	}
+
+	builder := core.NewRequestBuilder(core.PATCH)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = vpcbeta.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(vpcbeta.Service.Options.URL, `/images/{image_id}/export_jobs/{id}`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range updateImageExportJobOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("vpcbeta", "V1", "UpdateImageExportJob")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+	builder.AddHeader("Content-Type", "application/merge-patch+json")
+
+	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
+	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+
+	_, err = builder.SetBodyContentJSON(updateImageExportJobOptions.ImageExportJobPatch)
+	if err != nil {
+		return
+	}
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = vpcbeta.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalImageExportJob)
 		if err != nil {
 			return
 		}
@@ -5684,7 +6032,7 @@ func (vpcbeta *VpcbetaV1) RemoveInstanceNetworkInterfaceFloatingIPWithContext(ct
 }
 
 // GetInstanceNetworkInterfaceFloatingIP : Retrieve associated floating IP
-// This request a retrieves a specified floating IP address if it is associated with the network interface and instance
+// This request retrieves a specified floating IP address if it is associated with the network interface and instance
 // specified in the URL.
 func (vpcbeta *VpcbetaV1) GetInstanceNetworkInterfaceFloatingIP(getInstanceNetworkInterfaceFloatingIPOptions *GetInstanceNetworkInterfaceFloatingIPOptions) (result *FloatingIP, response *core.DetailedResponse, err error) {
 	return vpcbeta.GetInstanceNetworkInterfaceFloatingIPWithContext(context.Background(), getInstanceNetworkInterfaceFloatingIPOptions)
@@ -5887,7 +6235,7 @@ func (vpcbeta *VpcbetaV1) ListInstanceNetworkInterfaceIpsWithContext(ctx context
 }
 
 // GetInstanceNetworkInterfaceIP : Retrieve bound reserved IP
-// This request a retrieves the specified reserved IP address if it is bound to the network interface and instance
+// This request retrieves the specified reserved IP address if it is bound to the network interface and instance
 // specified in the URL.
 func (vpcbeta *VpcbetaV1) GetInstanceNetworkInterfaceIP(getInstanceNetworkInterfaceIPOptions *GetInstanceNetworkInterfaceIPOptions) (result *ReservedIP, response *core.DetailedResponse, err error) {
 	return vpcbeta.GetInstanceNetworkInterfaceIPWithContext(context.Background(), getInstanceNetworkInterfaceIPOptions)
@@ -9372,6 +9720,9 @@ func (vpcbeta *VpcbetaV1) CreateBackupPolicyPlanWithContext(ctx context.Context,
 	if createBackupPolicyPlanOptions.AttachUserTags != nil {
 		body["attach_user_tags"] = createBackupPolicyPlanOptions.AttachUserTags
 	}
+	if createBackupPolicyPlanOptions.ClonePolicy != nil {
+		body["clone_policy"] = createBackupPolicyPlanOptions.ClonePolicy
+	}
 	if createBackupPolicyPlanOptions.CopyUserTags != nil {
 		body["copy_user_tags"] = createBackupPolicyPlanOptions.CopyUserTags
 	}
@@ -10408,6 +10759,9 @@ func (vpcbeta *VpcbetaV1) CreateBareMetalServerWithContext(ctx context.Context, 
 	if createBareMetalServerOptions.Zone != nil {
 		body["zone"] = createBareMetalServerOptions.Zone
 	}
+	if createBareMetalServerOptions.EnableSecureBoot != nil {
+		body["enable_secure_boot"] = createBareMetalServerOptions.EnableSecureBoot
+	}
 	if createBareMetalServerOptions.Name != nil {
 		body["name"] = createBareMetalServerOptions.Name
 	}
@@ -10416,6 +10770,9 @@ func (vpcbeta *VpcbetaV1) CreateBareMetalServerWithContext(ctx context.Context, 
 	}
 	if createBareMetalServerOptions.ResourceGroup != nil {
 		body["resource_group"] = createBareMetalServerOptions.ResourceGroup
+	}
+	if createBareMetalServerOptions.TrustedPlatformModule != nil {
+		body["trusted_platform_module"] = createBareMetalServerOptions.TrustedPlatformModule
 	}
 	if createBareMetalServerOptions.VPC != nil {
 		body["vpc"] = createBareMetalServerOptions.VPC
@@ -11175,8 +11532,8 @@ func (vpcbeta *VpcbetaV1) RemoveBareMetalServerNetworkInterfaceFloatingIPWithCon
 }
 
 // GetBareMetalServerNetworkInterfaceFloatingIP : Retrieve associated floating IP
-// This request a retrieves a specified floating IP address if it is associated with the network interface and bare
-// metal server specified in the URL.
+// This request retrieves a specified floating IP address if it is associated with the network interface and bare metal
+// server specified in the URL.
 func (vpcbeta *VpcbetaV1) GetBareMetalServerNetworkInterfaceFloatingIP(getBareMetalServerNetworkInterfaceFloatingIPOptions *GetBareMetalServerNetworkInterfaceFloatingIPOptions) (result *FloatingIP, response *core.DetailedResponse, err error) {
 	return vpcbeta.GetBareMetalServerNetworkInterfaceFloatingIPWithContext(context.Background(), getBareMetalServerNetworkInterfaceFloatingIPOptions)
 }
@@ -11373,7 +11730,7 @@ func (vpcbeta *VpcbetaV1) ListBareMetalServerNetworkInterfaceIpsWithContext(ctx 
 }
 
 // GetBareMetalServerNetworkInterfaceIP : Retrieve bound reserved IP
-// This request a retrieves the specified reserved IP address if it is bound to the network interface and bare metal
+// This request retrieves the specified reserved IP address if it is bound to the network interface and bare metal
 // server specified in the URL.
 func (vpcbeta *VpcbetaV1) GetBareMetalServerNetworkInterfaceIP(getBareMetalServerNetworkInterfaceIPOptions *GetBareMetalServerNetworkInterfaceIPOptions) (result *ReservedIP, response *core.DetailedResponse, err error) {
 	return vpcbeta.GetBareMetalServerNetworkInterfaceIPWithContext(context.Background(), getBareMetalServerNetworkInterfaceIPOptions)
@@ -12429,6 +12786,9 @@ func (vpcbeta *VpcbetaV1) ListSnapshotsWithContext(ctx context.Context, listSnap
 	if listSnapshotsOptions.BackupPolicyPlanID != nil {
 		builder.AddQuery("backup_policy_plan.id", fmt.Sprint(*listSnapshotsOptions.BackupPolicyPlanID))
 	}
+	if listSnapshotsOptions.ClonesZoneName != nil {
+		builder.AddQuery("clones[].zone.name", fmt.Sprint(*listSnapshotsOptions.ClonesZoneName))
+	}
 
 	request, err := builder.Build()
 	if err != nil {
@@ -12697,6 +13057,251 @@ func (vpcbeta *VpcbetaV1) UpdateSnapshotWithContext(ctx context.Context, updateS
 	}
 	if rawResponse != nil {
 		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalSnapshot)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// ListSnapshotClones : List all clones for a snapshot
+// This request lists all clones for a snapshot. Use a clone to quickly restore a snapshot within the clone's zone.
+func (vpcbeta *VpcbetaV1) ListSnapshotClones(listSnapshotClonesOptions *ListSnapshotClonesOptions) (result *SnapshotCloneCollection, response *core.DetailedResponse, err error) {
+	return vpcbeta.ListSnapshotClonesWithContext(context.Background(), listSnapshotClonesOptions)
+}
+
+// ListSnapshotClonesWithContext is an alternate form of the ListSnapshotClones method which supports a Context parameter
+func (vpcbeta *VpcbetaV1) ListSnapshotClonesWithContext(ctx context.Context, listSnapshotClonesOptions *ListSnapshotClonesOptions) (result *SnapshotCloneCollection, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(listSnapshotClonesOptions, "listSnapshotClonesOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(listSnapshotClonesOptions, "listSnapshotClonesOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"id": *listSnapshotClonesOptions.ID,
+	}
+
+	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = vpcbeta.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(vpcbeta.Service.Options.URL, `/snapshots/{id}/clones`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range listSnapshotClonesOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("vpcbeta", "V1", "ListSnapshotClones")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+
+	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
+	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = vpcbeta.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalSnapshotCloneCollection)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// DeleteSnapshotClone : Delete a snapshot clone
+// This request deletes a snapshot clone. This operation cannot be reversed, but an equivalent clone may be recreated
+// from the snapshot.
+func (vpcbeta *VpcbetaV1) DeleteSnapshotClone(deleteSnapshotCloneOptions *DeleteSnapshotCloneOptions) (response *core.DetailedResponse, err error) {
+	return vpcbeta.DeleteSnapshotCloneWithContext(context.Background(), deleteSnapshotCloneOptions)
+}
+
+// DeleteSnapshotCloneWithContext is an alternate form of the DeleteSnapshotClone method which supports a Context parameter
+func (vpcbeta *VpcbetaV1) DeleteSnapshotCloneWithContext(ctx context.Context, deleteSnapshotCloneOptions *DeleteSnapshotCloneOptions) (response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(deleteSnapshotCloneOptions, "deleteSnapshotCloneOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(deleteSnapshotCloneOptions, "deleteSnapshotCloneOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"id":        *deleteSnapshotCloneOptions.ID,
+		"zone_name": *deleteSnapshotCloneOptions.ZoneName,
+	}
+
+	builder := core.NewRequestBuilder(core.DELETE)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = vpcbeta.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(vpcbeta.Service.Options.URL, `/snapshots/{id}/clones/{zone_name}`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range deleteSnapshotCloneOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("vpcbeta", "V1", "DeleteSnapshotClone")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
+	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	response, err = vpcbeta.Service.Request(request, nil)
+
+	return
+}
+
+// GetSnapshotClone : Retrieve a snapshot clone
+// This request retrieves a single clone specified by the snapshot identifier and zone name in the URL.
+func (vpcbeta *VpcbetaV1) GetSnapshotClone(getSnapshotCloneOptions *GetSnapshotCloneOptions) (result *SnapshotClone, response *core.DetailedResponse, err error) {
+	return vpcbeta.GetSnapshotCloneWithContext(context.Background(), getSnapshotCloneOptions)
+}
+
+// GetSnapshotCloneWithContext is an alternate form of the GetSnapshotClone method which supports a Context parameter
+func (vpcbeta *VpcbetaV1) GetSnapshotCloneWithContext(ctx context.Context, getSnapshotCloneOptions *GetSnapshotCloneOptions) (result *SnapshotClone, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(getSnapshotCloneOptions, "getSnapshotCloneOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(getSnapshotCloneOptions, "getSnapshotCloneOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"id":        *getSnapshotCloneOptions.ID,
+		"zone_name": *getSnapshotCloneOptions.ZoneName,
+	}
+
+	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = vpcbeta.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(vpcbeta.Service.Options.URL, `/snapshots/{id}/clones/{zone_name}`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range getSnapshotCloneOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("vpcbeta", "V1", "GetSnapshotClone")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+
+	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
+	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = vpcbeta.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalSnapshotClone)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// CreateSnapshotClone : Create a clone for a snapshot
+// This request creates a new clone for a snapshot in the specified zone. A request body is not required, and if
+// provided, is ignored. If the snapshot already has a clone in the zone, it is returned.
+func (vpcbeta *VpcbetaV1) CreateSnapshotClone(createSnapshotCloneOptions *CreateSnapshotCloneOptions) (result *SnapshotClone, response *core.DetailedResponse, err error) {
+	return vpcbeta.CreateSnapshotCloneWithContext(context.Background(), createSnapshotCloneOptions)
+}
+
+// CreateSnapshotCloneWithContext is an alternate form of the CreateSnapshotClone method which supports a Context parameter
+func (vpcbeta *VpcbetaV1) CreateSnapshotCloneWithContext(ctx context.Context, createSnapshotCloneOptions *CreateSnapshotCloneOptions) (result *SnapshotClone, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(createSnapshotCloneOptions, "createSnapshotCloneOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(createSnapshotCloneOptions, "createSnapshotCloneOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"id":        *createSnapshotCloneOptions.ID,
+		"zone_name": *createSnapshotCloneOptions.ZoneName,
+	}
+
+	builder := core.NewRequestBuilder(core.PUT)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = vpcbeta.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(vpcbeta.Service.Options.URL, `/snapshots/{id}/clones/{zone_name}`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range createSnapshotCloneOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("vpcbeta", "V1", "CreateSnapshotClone")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+
+	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
+	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = vpcbeta.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalSnapshotClone)
 		if err != nil {
 			return
 		}
@@ -19353,6 +19958,9 @@ func (vpcbeta *VpcbetaV1) CreateLoadBalancerWithContext(ctx context.Context, cre
 	if createLoadBalancerOptions.Datapath != nil {
 		body["datapath"] = createLoadBalancerOptions.Datapath
 	}
+	if createLoadBalancerOptions.Dns != nil {
+		body["dns"] = createLoadBalancerOptions.Dns
+	}
 	if createLoadBalancerOptions.Listeners != nil {
 		body["listeners"] = createLoadBalancerOptions.Listeners
 	}
@@ -19782,6 +20390,9 @@ func (vpcbeta *VpcbetaV1) CreateLoadBalancerListenerWithContext(ctx context.Cont
 	}
 	if createLoadBalancerListenerOptions.HTTPSRedirect != nil {
 		body["https_redirect"] = createLoadBalancerListenerOptions.HTTPSRedirect
+	}
+	if createLoadBalancerListenerOptions.IdleConnectionTimeout != nil {
+		body["idle_connection_timeout"] = createLoadBalancerListenerOptions.IdleConnectionTimeout
 	}
 	if createLoadBalancerListenerOptions.Policies != nil {
 		body["policies"] = createLoadBalancerListenerOptions.Policies
@@ -21716,8 +22327,7 @@ func (vpcbeta *VpcbetaV1) RemoveEndpointGatewayIPWithContext(ctx context.Context
 }
 
 // GetEndpointGatewayIP : Retrieve a reserved IP bound to an endpoint gateway
-// This request a retrieves the specified reserved IP address if it is bound to the endpoint gateway specified in the
-// URL.
+// This request retrieves the specified reserved IP address if it is bound to the endpoint gateway specified in the URL.
 func (vpcbeta *VpcbetaV1) GetEndpointGatewayIP(getEndpointGatewayIPOptions *GetEndpointGatewayIPOptions) (result *ReservedIP, response *core.DetailedResponse, err error) {
 	return vpcbeta.GetEndpointGatewayIPWithContext(context.Background(), getEndpointGatewayIPOptions)
 }
@@ -23439,6 +24049,8 @@ type BackupPolicyPlan struct {
 	// The user tags to attach to backups (snapshots) created by this plan.
 	AttachUserTags []string `json:"attach_user_tags" validate:"required"`
 
+	ClonePolicy *BackupPolicyPlanClonePolicy `json:"clone_policy" validate:"required"`
+
 	// Indicates whether to copy the source's user tags to the created backups (snapshots).
 	CopyUserTags *bool `json:"copy_user_tags" validate:"required"`
 
@@ -23499,6 +24111,10 @@ func UnmarshalBackupPolicyPlan(m map[string]json.RawMessage, result interface{})
 	if err != nil {
 		return
 	}
+	err = core.UnmarshalModel(m, "clone_policy", &obj.ClonePolicy, UnmarshalBackupPolicyPlanClonePolicy)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "copy_user_tags", &obj.CopyUserTags)
 	if err != nil {
 		return
@@ -23532,6 +24148,88 @@ func UnmarshalBackupPolicyPlan(m map[string]json.RawMessage, result interface{})
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "resource_type", &obj.ResourceType)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// BackupPolicyPlanClonePolicy : BackupPolicyPlanClonePolicy struct
+type BackupPolicyPlanClonePolicy struct {
+	// The maximum number of recent snapshots (per source) that will keep clones.
+	MaxSnapshots *int64 `json:"max_snapshots" validate:"required"`
+
+	// The zone this backup policy plan will create snapshot clones in.
+	Zones []ZoneReference `json:"zones" validate:"required"`
+}
+
+// UnmarshalBackupPolicyPlanClonePolicy unmarshals an instance of BackupPolicyPlanClonePolicy from the specified map of raw messages.
+func UnmarshalBackupPolicyPlanClonePolicy(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(BackupPolicyPlanClonePolicy)
+	err = core.UnmarshalPrimitive(m, "max_snapshots", &obj.MaxSnapshots)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "zones", &obj.Zones, UnmarshalZoneReference)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// BackupPolicyPlanClonePolicyPatch : BackupPolicyPlanClonePolicyPatch struct
+type BackupPolicyPlanClonePolicyPatch struct {
+	// The maximum number of recent snapshots (per source) that will keep clones.
+	MaxSnapshots *int64 `json:"max_snapshots,omitempty"`
+
+	// The zones this backup policy plan will create snapshot clones in. Updating this value does not change the clones for
+	// snapshots that have already been created by this plan.
+	Zones []ZoneIdentityIntf `json:"zones,omitempty"`
+}
+
+// UnmarshalBackupPolicyPlanClonePolicyPatch unmarshals an instance of BackupPolicyPlanClonePolicyPatch from the specified map of raw messages.
+func UnmarshalBackupPolicyPlanClonePolicyPatch(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(BackupPolicyPlanClonePolicyPatch)
+	err = core.UnmarshalPrimitive(m, "max_snapshots", &obj.MaxSnapshots)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "zones", &obj.Zones, UnmarshalZoneIdentity)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// BackupPolicyPlanClonePolicyPrototype : BackupPolicyPlanClonePolicyPrototype struct
+type BackupPolicyPlanClonePolicyPrototype struct {
+	// The maximum number of recent snapshots (per source) that will keep clones.
+	MaxSnapshots *int64 `json:"max_snapshots,omitempty"`
+
+	// The zone this backup policy plan will create snapshot clones in.
+	Zones []ZoneIdentityIntf `json:"zones" validate:"required"`
+}
+
+// NewBackupPolicyPlanClonePolicyPrototype : Instantiate BackupPolicyPlanClonePolicyPrototype (Generic Model Constructor)
+func (*VpcbetaV1) NewBackupPolicyPlanClonePolicyPrototype(zones []ZoneIdentityIntf) (_model *BackupPolicyPlanClonePolicyPrototype, err error) {
+	_model = &BackupPolicyPlanClonePolicyPrototype{
+		Zones: zones,
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+// UnmarshalBackupPolicyPlanClonePolicyPrototype unmarshals an instance of BackupPolicyPlanClonePolicyPrototype from the specified map of raw messages.
+func UnmarshalBackupPolicyPlanClonePolicyPrototype(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(BackupPolicyPlanClonePolicyPrototype)
+	err = core.UnmarshalPrimitive(m, "max_snapshots", &obj.MaxSnapshots)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "zones", &obj.Zones, UnmarshalZoneIdentity)
 	if err != nil {
 		return
 	}
@@ -23637,6 +24335,8 @@ type BackupPolicyPlanPatch struct {
 	// tags for backups that have already been created by this plan.
 	AttachUserTags []string `json:"attach_user_tags,omitempty"`
 
+	ClonePolicy *BackupPolicyPlanClonePolicyPatch `json:"clone_policy,omitempty"`
+
 	// Indicates whether to copy the source's user tags to the created backups (snapshots).
 	CopyUserTags *bool `json:"copy_user_tags,omitempty"`
 
@@ -23661,6 +24361,10 @@ func UnmarshalBackupPolicyPlanPatch(m map[string]json.RawMessage, result interfa
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "attach_user_tags", &obj.AttachUserTags)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "clone_policy", &obj.ClonePolicy, UnmarshalBackupPolicyPlanClonePolicyPatch)
 	if err != nil {
 		return
 	}
@@ -23702,6 +24406,8 @@ type BackupPolicyPlanPrototype struct {
 	// User tags to attach to each backup (snapshot) created by this plan. If unspecified, no user tags will be attached.
 	AttachUserTags []string `json:"attach_user_tags,omitempty"`
 
+	ClonePolicy *BackupPolicyPlanClonePolicyPrototype `json:"clone_policy,omitempty"`
+
 	// Indicates whether to copy the source's user tags to the created backups (snapshots).
 	CopyUserTags *bool `json:"copy_user_tags,omitempty"`
 
@@ -23736,6 +24442,10 @@ func UnmarshalBackupPolicyPlanPrototype(m map[string]json.RawMessage, result int
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "attach_user_tags", &obj.AttachUserTags)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "clone_policy", &obj.ClonePolicy, UnmarshalBackupPolicyPlanClonePolicyPrototype)
 	if err != nil {
 		return
 	}
@@ -23910,6 +24620,7 @@ const (
 // Constants associated with the BareMetalServer.Status property.
 // The status of the bare metal server.
 const (
+	BareMetalServerStatusDeletingConst    = "deleting"
 	BareMetalServerStatusFailedConst      = "failed"
 	BareMetalServerStatusMaintenanceConst = "maintenance"
 	BareMetalServerStatusPendingConst     = "pending"
@@ -24561,20 +25272,18 @@ type BareMetalServerNetworkInterface struct {
 	CreatedAt *strfmt.DateTime `json:"created_at" validate:"required"`
 
 	// If `true`:
-	//   - The VPC infrastructure performs any needed NAT operations.
-	//   - A single floating IP can be assigned to the network interface.
+	// - The VPC infrastructure performs any needed NAT operations.
+	// - `floating_ips` must not have more than one floating IP.
 	//
 	// If `false`:
-	//   - Packets are passed unchanged to/from the network interface,
-	//     allowing the workload to perform any needed NAT operations.
-	//   - Multiple floating IPs can be assigned to the network interface.
-	//   - `allow_ip_spoofing` must be set to `false`.
-	//
-	// This must be `true` when `interface_type` is `hipersocket`.
+	// - Packets are passed unchanged to/from the network interface,
+	//   allowing the workload to perform any needed NAT operations.
+	// - `allow_ip_spoofing` must be `false`.
+	// - `interface_type` must not be `hipersocket`.
 	EnableInfrastructureNat *bool `json:"enable_infrastructure_nat" validate:"required"`
 
 	// The floating IPs associated with this network interface.
-	FloatingIps []FloatingIPReference `json:"floating_ips,omitempty"`
+	FloatingIps []FloatingIPReference `json:"floating_ips" validate:"required"`
 
 	// The URL for this network interface.
 	Href *string `json:"href" validate:"required"`
@@ -24641,15 +25350,15 @@ type BareMetalServerNetworkInterface struct {
 
 // Constants associated with the BareMetalServerNetworkInterface.InterfaceType property.
 // The network interface type:
-// - `hipersocket`: a virtual network device that provides high-speed TCP/IP connectivity
-//   within a `s390x` based system
-// - `pci`: a physical PCI device which can only be created or deleted when the bare metal
-//   server is stopped
+//   - `hipersocket`: a virtual network device that provides high-speed TCP/IP connectivity
+//     within a `s390x` based system
+//   - `pci`: a physical PCI device which can only be created or deleted when the bare metal
+//     server is stopped
 //   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 //     to use the PCI interface
 //   - Cannot directly use an IEEE 802.1q VLAN tag.
-// - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its
-//   array of `allowed_vlans`.
+//   - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its
+//     array of `allowed_vlans`.
 //   - Must use an IEEE 802.1q tag.
 //   - Has its own security groups and does not inherit those of the PCI device through
 //     which traffic flows.
@@ -24820,16 +25529,14 @@ type BareMetalServerNetworkInterfacePatch struct {
 	AllowedVlans []int64 `json:"allowed_vlans,omitempty"`
 
 	// If `true`:
-	//   - The VPC infrastructure performs any needed NAT operations.
-	//   - A single floating IP can be assigned to the network interface.
+	// - The VPC infrastructure performs any needed NAT operations.
+	// - `floating_ips` must not have more than one floating IP.
 	//
 	// If `false`:
-	//   - Packets are passed unchanged to/from the network interface,
-	//     allowing the workload to perform any needed NAT operations.
-	//   - Multiple floating IPs can be assigned to the network interface.
-	//   - `allow_ip_spoofing` must be set to `false`.
-	//
-	// This must be `true` when `interface_type` is `hipersocket`.
+	// - Packets are passed unchanged to/from the network interface,
+	//   allowing the workload to perform any needed NAT operations.
+	// - `allow_ip_spoofing` must be `false`.
+	// - `interface_type` must not be `hipersocket`.
 	EnableInfrastructureNat *bool `json:"enable_infrastructure_nat,omitempty"`
 
 	// The name for this network interface. The name must not be used by another network interface on the bare metal
@@ -24881,16 +25588,14 @@ type BareMetalServerNetworkInterfacePrototype struct {
 	AllowIPSpoofing *bool `json:"allow_ip_spoofing,omitempty"`
 
 	// If `true`:
-	//   - The VPC infrastructure performs any needed NAT operations.
-	//   - A single floating IP can be assigned to the network interface.
+	// - The VPC infrastructure performs any needed NAT operations.
+	// - `floating_ips` must not have more than one floating IP.
 	//
 	// If `false`:
-	//   - Packets are passed unchanged to/from the network interface,
-	//     allowing the workload to perform any needed NAT operations.
-	//   - Multiple floating IPs can be assigned to the network interface.
-	//   - `allow_ip_spoofing` must be set to `false`.
-	//
-	// This must be `true` when `interface_type` is `hipersocket`.
+	// - Packets are passed unchanged to/from the network interface,
+	//   allowing the workload to perform any needed NAT operations.
+	// - `allow_ip_spoofing` must be `false`.
+	// - `interface_type` must not be `hipersocket`.
 	EnableInfrastructureNat *bool `json:"enable_infrastructure_nat,omitempty"`
 
 	// The network interface type:
@@ -24943,17 +25648,17 @@ type BareMetalServerNetworkInterfacePrototype struct {
 
 // Constants associated with the BareMetalServerNetworkInterfacePrototype.InterfaceType property.
 // The network interface type:
-// - `hipersocket`: a virtual network device that provides high-speed TCP/IP connectivity
-//   within a `s390x` based system
+//   - `hipersocket`: a virtual network device that provides high-speed TCP/IP connectivity
+//     within a `s390x` based system
 //   - Not supported on bare metal servers with a `cpu.architecture` of `amd64`
-// - `pci`: a physical PCI device which can only be created or deleted when the bare metal
-//   server is stopped
+//   - `pci`: a physical PCI device which can only be created or deleted when the bare metal
+//     server is stopped
 //   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 //     to use the PCI interface
 //   - Cannot directly use an IEEE 802.1q VLAN tag.
 //   - Not supported on bare metal servers with a `cpu.architecture` of `s390x`
-// - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its
-//   array of `allowed_vlans`.
+//   - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its
+//     array of `allowed_vlans`.
 //   - Must use an IEEE 802.1q tag.
 //   - Has its own security groups and does not inherit those of the PCI device through
 //     which traffic flows.
@@ -24999,15 +25704,32 @@ func UnmarshalBareMetalServerNetworkInterfacePrototype(m map[string]json.RawMess
 
 // BareMetalServerPatch : BareMetalServerPatch struct
 type BareMetalServerPatch struct {
+	// Indicates whether secure boot is enabled. If enabled, the image must support secure boot or the bare metal server
+	// will fail to boot.
+	//
+	// For `enable_secure_boot` to be changed, the bare metal server `status` must be
+	// `stopped`.
+	EnableSecureBoot *bool `json:"enable_secure_boot,omitempty"`
+
 	// The name for this bare metal server. The name must not be used by another bare metal server in the region. Changing
 	// the name will not affect the system hostname.
 	Name *string `json:"name,omitempty"`
+
+	TrustedPlatformModule *BareMetalServerTrustedPlatformModulePatch `json:"trusted_platform_module,omitempty"`
 }
 
 // UnmarshalBareMetalServerPatch unmarshals an instance of BareMetalServerPatch from the specified map of raw messages.
 func UnmarshalBareMetalServerPatch(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(BareMetalServerPatch)
+	err = core.UnmarshalPrimitive(m, "enable_secure_boot", &obj.EnableSecureBoot)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "trusted_platform_module", &obj.TrustedPlatformModule, UnmarshalBareMetalServerTrustedPlatformModulePatch)
 	if err != nil {
 		return
 	}
@@ -25035,16 +25757,14 @@ type BareMetalServerPrimaryNetworkInterfacePrototype struct {
 	AllowedVlans []int64 `json:"allowed_vlans,omitempty"`
 
 	// If `true`:
-	//   - The VPC infrastructure performs any needed NAT operations.
-	//   - A single floating IP can be assigned to the network interface.
+	// - The VPC infrastructure performs any needed NAT operations.
+	// - `floating_ips` must not have more than one floating IP.
 	//
 	// If `false`:
-	//   - Packets are passed unchanged to/from the network interface,
-	//     allowing the workload to perform any needed NAT operations.
-	//   - Multiple floating IPs can be assigned to the network interface.
-	//   - `allow_ip_spoofing` must be set to `false`.
-	//
-	// This must be `true` when `interface_type` is `hipersocket`.
+	// - Packets are passed unchanged to/from the network interface,
+	//   allowing the workload to perform any needed NAT operations.
+	// - `allow_ip_spoofing` must be `false`.
+	// - `interface_type` must not be `hipersocket`.
 	EnableInfrastructureNat *bool `json:"enable_infrastructure_nat,omitempty"`
 
 	// The network interface type:
@@ -25080,11 +25800,11 @@ type BareMetalServerPrimaryNetworkInterfacePrototype struct {
 
 // Constants associated with the BareMetalServerPrimaryNetworkInterfacePrototype.InterfaceType property.
 // The network interface type:
-// - `hipersocket`: a virtual network device that provides high-speed TCP/IP connectivity
-//   within a `s390x` based system.
+//   - `hipersocket`: a virtual network device that provides high-speed TCP/IP connectivity
+//     within a `s390x` based system.
 //   - Not supported on bare metal servers with a `cpu.architecture` of `amd64`
-// - `pci`: a physical PCI device which can only be created or deleted when the bare metal
-//   server is stopped
+//   - `pci`: a physical PCI device which can only be created or deleted when the bare metal
+//     server is stopped
 //   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 //     to use the PCI interface
 //   - Cannot directly use an IEEE 802.1q VLAN tag.
@@ -26064,13 +26784,15 @@ const (
 
 // Constants associated with the BareMetalServerProfileSupportedTrustedPlatformModuleModes.Values property.
 // The trusted platform module (TPM) mode:
+// - `disabled`: No TPM functionality
 // - `tpm_2`: TPM 2.0
 //
 // The enumerated values for this property are expected to expand in the future. When processing this property, check
 // for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
 // unexpected property value was encountered.
 const (
-	BareMetalServerProfileSupportedTrustedPlatformModuleModesValuesTpm2Const = "tpm_2"
+	BareMetalServerProfileSupportedTrustedPlatformModuleModesValuesDisabledConst = "disabled"
+	BareMetalServerProfileSupportedTrustedPlatformModuleModesValuesTpm2Const     = "tpm_2"
 )
 
 // UnmarshalBareMetalServerProfileSupportedTrustedPlatformModuleModes unmarshals an instance of BareMetalServerProfileSupportedTrustedPlatformModuleModes from the specified map of raw messages.
@@ -26145,23 +26867,42 @@ type BareMetalServerTrustedPlatformModule struct {
 	Enabled *bool `json:"enabled" validate:"required"`
 
 	// The trusted platform module (TPM) mode:
+	// - `disabled`: No TPM functionality
 	// - `tpm_2`: TPM 2.0
 	//
 	// The enumerated values for this property are expected to expand in the future. When processing this property, check
 	// for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
 	// unexpected property value was encountered.
-	Mode *string `json:"mode,omitempty"`
+	Mode *string `json:"mode" validate:"required"`
+
+	// The supported trusted platform module modes.
+	SupportedModes []string `json:"supported_modes" validate:"required"`
 }
 
 // Constants associated with the BareMetalServerTrustedPlatformModule.Mode property.
 // The trusted platform module (TPM) mode:
+// - `disabled`: No TPM functionality
 // - `tpm_2`: TPM 2.0
 //
 // The enumerated values for this property are expected to expand in the future. When processing this property, check
 // for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
 // unexpected property value was encountered.
 const (
-	BareMetalServerTrustedPlatformModuleModeTpm2Const = "tpm_2"
+	BareMetalServerTrustedPlatformModuleModeDisabledConst = "disabled"
+	BareMetalServerTrustedPlatformModuleModeTpm2Const     = "tpm_2"
+)
+
+// Constants associated with the BareMetalServerTrustedPlatformModule.SupportedModes property.
+// The trusted platform module (TPM) mode:
+// - `disabled`: No TPM functionality
+// - `tpm_2`: TPM 2.0
+//
+// The enumerated values for this property are expected to expand in the future. When processing this property, check
+// for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
+// unexpected property value was encountered.
+const (
+	BareMetalServerTrustedPlatformModuleSupportedModesDisabledConst = "disabled"
+	BareMetalServerTrustedPlatformModuleSupportedModesTpm2Const     = "tpm_2"
 )
 
 // UnmarshalBareMetalServerTrustedPlatformModule unmarshals an instance of BareMetalServerTrustedPlatformModule from the specified map of raw messages.
@@ -26171,6 +26912,66 @@ func UnmarshalBareMetalServerTrustedPlatformModule(m map[string]json.RawMessage,
 	if err != nil {
 		return
 	}
+	err = core.UnmarshalPrimitive(m, "mode", &obj.Mode)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "supported_modes", &obj.SupportedModes)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// BareMetalServerTrustedPlatformModulePatch : BareMetalServerTrustedPlatformModulePatch struct
+type BareMetalServerTrustedPlatformModulePatch struct {
+	// The trusted platform module mode to use. The specified value must be listed in the bare metal server's
+	// `supported_modes`.
+	//
+	// For the trusted platform module mode to be changed, the bare metal server `status` must be `stopped`.
+	Mode *string `json:"mode,omitempty"`
+}
+
+// Constants associated with the BareMetalServerTrustedPlatformModulePatch.Mode property.
+// The trusted platform module mode to use. The specified value must be listed in the bare metal server's
+// `supported_modes`.
+//
+// For the trusted platform module mode to be changed, the bare metal server `status` must be `stopped`.
+const (
+	BareMetalServerTrustedPlatformModulePatchModeDisabledConst = "disabled"
+	BareMetalServerTrustedPlatformModulePatchModeTpm2Const     = "tpm_2"
+)
+
+// UnmarshalBareMetalServerTrustedPlatformModulePatch unmarshals an instance of BareMetalServerTrustedPlatformModulePatch from the specified map of raw messages.
+func UnmarshalBareMetalServerTrustedPlatformModulePatch(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(BareMetalServerTrustedPlatformModulePatch)
+	err = core.UnmarshalPrimitive(m, "mode", &obj.Mode)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// BareMetalServerTrustedPlatformModulePrototype : BareMetalServerTrustedPlatformModulePrototype struct
+type BareMetalServerTrustedPlatformModulePrototype struct {
+	// The trusted platform module mode to use. The specified value must be listed in the bare metal server profile's
+	// `supported_trusted_platform_module_modes`.
+	Mode *string `json:"mode,omitempty"`
+}
+
+// Constants associated with the BareMetalServerTrustedPlatformModulePrototype.Mode property.
+// The trusted platform module mode to use. The specified value must be listed in the bare metal server profile's
+// `supported_trusted_platform_module_modes`.
+const (
+	BareMetalServerTrustedPlatformModulePrototypeModeDisabledConst = "disabled"
+	BareMetalServerTrustedPlatformModulePrototypeModeTpm2Const     = "tpm_2"
+)
+
+// UnmarshalBareMetalServerTrustedPlatformModulePrototype unmarshals an instance of BareMetalServerTrustedPlatformModulePrototype from the specified map of raw messages.
+func UnmarshalBareMetalServerTrustedPlatformModulePrototype(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(BareMetalServerTrustedPlatformModulePrototype)
 	err = core.UnmarshalPrimitive(m, "mode", &obj.Mode)
 	if err != nil {
 		return
@@ -26415,6 +27216,82 @@ func (options *CheckVPNGatewayConnectionPeerCIDROptions) SetHeaders(param map[st
 	return options
 }
 
+// CloudObjectStorageBucketIdentity : Identifies a Cloud Object Storage bucket by a unique property.
+// Models which "extend" this model:
+// - CloudObjectStorageBucketIdentityCloudObjectStorageBucketIdentityByName
+// - CloudObjectStorageBucketIdentityByCRN
+type CloudObjectStorageBucketIdentity struct {
+	// The globally unique name of this Cloud Object Storage bucket.
+	Name *string `json:"name,omitempty"`
+
+	// The CRN of this Cloud Object Storage bucket.
+	CRN *string `json:"crn,omitempty"`
+}
+
+func (*CloudObjectStorageBucketIdentity) isaCloudObjectStorageBucketIdentity() bool {
+	return true
+}
+
+type CloudObjectStorageBucketIdentityIntf interface {
+	isaCloudObjectStorageBucketIdentity() bool
+}
+
+// UnmarshalCloudObjectStorageBucketIdentity unmarshals an instance of CloudObjectStorageBucketIdentity from the specified map of raw messages.
+func UnmarshalCloudObjectStorageBucketIdentity(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(CloudObjectStorageBucketIdentity)
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// CloudObjectStorageBucketReference : CloudObjectStorageBucketReference struct
+type CloudObjectStorageBucketReference struct {
+	// The CRN of this Cloud Object Storage bucket.
+	CRN *string `json:"crn" validate:"required"`
+
+	// The globally unique name of this Cloud Object Storage bucket.
+	Name *string `json:"name" validate:"required"`
+}
+
+// UnmarshalCloudObjectStorageBucketReference unmarshals an instance of CloudObjectStorageBucketReference from the specified map of raw messages.
+func UnmarshalCloudObjectStorageBucketReference(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(CloudObjectStorageBucketReference)
+	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// CloudObjectStorageObjectReference : CloudObjectStorageObjectReference struct
+type CloudObjectStorageObjectReference struct {
+	// The name of this Cloud Object Storage object. Names are unique within a Cloud Object Storage bucket.
+	Name *string `json:"name" validate:"required"`
+}
+
+// UnmarshalCloudObjectStorageObjectReference unmarshals an instance of CloudObjectStorageObjectReference from the specified map of raw messages.
+func UnmarshalCloudObjectStorageObjectReference(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(CloudObjectStorageObjectReference)
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // CreateBackupPolicyOptions : The CreateBackupPolicy options.
 type CreateBackupPolicyOptions struct {
 	// A resource type this backup policy applies to. Resources that have both a matching type and a matching user tag will
@@ -26505,6 +27382,8 @@ type CreateBackupPolicyPlanOptions struct {
 	// User tags to attach to each backup (snapshot) created by this plan. If unspecified, no user tags will be attached.
 	AttachUserTags []string `json:"attach_user_tags,omitempty"`
 
+	ClonePolicy *BackupPolicyPlanClonePolicyPrototype `json:"clone_policy,omitempty"`
+
 	// Indicates whether to copy the source's user tags to the created backups (snapshots).
 	CopyUserTags *bool `json:"copy_user_tags,omitempty"`
 
@@ -26547,6 +27426,12 @@ func (_options *CreateBackupPolicyPlanOptions) SetActive(active bool) *CreateBac
 // SetAttachUserTags : Allow user to set AttachUserTags
 func (_options *CreateBackupPolicyPlanOptions) SetAttachUserTags(attachUserTags []string) *CreateBackupPolicyPlanOptions {
 	_options.AttachUserTags = attachUserTags
+	return _options
+}
+
+// SetClonePolicy : Allow user to set ClonePolicy
+func (_options *CreateBackupPolicyPlanOptions) SetClonePolicy(clonePolicy *BackupPolicyPlanClonePolicyPrototype) *CreateBackupPolicyPlanOptions {
+	_options.ClonePolicy = clonePolicy
 	return _options
 }
 
@@ -26685,6 +27570,10 @@ type CreateBareMetalServerOptions struct {
 	// The zone this bare metal server will reside in.
 	Zone ZoneIdentityIntf `json:"zone" validate:"required"`
 
+	// Indicates whether secure boot is enabled. If enabled, the image must support secure boot or the server will fail to
+	// boot.
+	EnableSecureBoot *bool `json:"enable_secure_boot,omitempty"`
+
 	// The name for this bare metal server. The name must not be used by another bare metal server in the region. If
 	// unspecified, the name will be a hyphenated list of randomly-selected words.
 	//
@@ -26697,6 +27586,8 @@ type CreateBareMetalServerOptions struct {
 	// The resource group to use. If unspecified, the account's [default resource
 	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
+
+	TrustedPlatformModule *BareMetalServerTrustedPlatformModulePrototype `json:"trusted_platform_module,omitempty"`
 
 	// The VPC this bare metal server will reside in.
 	//
@@ -26742,6 +27633,12 @@ func (_options *CreateBareMetalServerOptions) SetZone(zone ZoneIdentityIntf) *Cr
 	return _options
 }
 
+// SetEnableSecureBoot : Allow user to set EnableSecureBoot
+func (_options *CreateBareMetalServerOptions) SetEnableSecureBoot(enableSecureBoot bool) *CreateBareMetalServerOptions {
+	_options.EnableSecureBoot = core.BoolPtr(enableSecureBoot)
+	return _options
+}
+
 // SetName : Allow user to set Name
 func (_options *CreateBareMetalServerOptions) SetName(name string) *CreateBareMetalServerOptions {
 	_options.Name = core.StringPtr(name)
@@ -26757,6 +27654,12 @@ func (_options *CreateBareMetalServerOptions) SetNetworkInterfaces(networkInterf
 // SetResourceGroup : Allow user to set ResourceGroup
 func (_options *CreateBareMetalServerOptions) SetResourceGroup(resourceGroup ResourceGroupIdentityIntf) *CreateBareMetalServerOptions {
 	_options.ResourceGroup = resourceGroup
+	return _options
+}
+
+// SetTrustedPlatformModule : Allow user to set TrustedPlatformModule
+func (_options *CreateBareMetalServerOptions) SetTrustedPlatformModule(trustedPlatformModule *BareMetalServerTrustedPlatformModulePrototype) *CreateBareMetalServerOptions {
+	_options.TrustedPlatformModule = trustedPlatformModule
 	return _options
 }
 
@@ -27161,6 +28064,76 @@ func (_options *CreateIkePolicyOptions) SetResourceGroup(resourceGroup ResourceG
 
 // SetHeaders : Allow user to set Headers
 func (options *CreateIkePolicyOptions) SetHeaders(param map[string]string) *CreateIkePolicyOptions {
+	options.Headers = param
+	return options
+}
+
+// CreateImageExportJobOptions : The CreateImageExportJob options.
+type CreateImageExportJobOptions struct {
+	// The image identifier.
+	ImageID *string `json:"image_id" validate:"required,ne="`
+
+	// The Cloud Object Storage bucket to export the image to. The bucket must exist and an IAM
+	// service authorization must grant `Image Service for VPC` of
+	// `VPC Infrastructure Services` writer access to the bucket.
+	StorageBucket CloudObjectStorageBucketIdentityIntf `json:"storage_bucket" validate:"required"`
+
+	// The format to use for the exported image. If the image is encrypted, only `qcow2` is supported.
+	Format *string `json:"format,omitempty"`
+
+	// The name for this image export job. The name must not be used by another export job for the image. If unspecified,
+	// the name will be a hyphenated list of randomly-selected words prefixed with the first 16 characters of the parent
+	// image name.
+	//
+	// The exported image object name in Cloud Object Storage (`storage_object.name` in the response) will be based on this
+	// name. The object name will be unique within the bucket.
+	Name *string `json:"name,omitempty"`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// Constants associated with the CreateImageExportJobOptions.Format property.
+// The format to use for the exported image. If the image is encrypted, only `qcow2` is supported.
+const (
+	CreateImageExportJobOptionsFormatQcow2Const = "qcow2"
+	CreateImageExportJobOptionsFormatVhdConst   = "vhd"
+)
+
+// NewCreateImageExportJobOptions : Instantiate CreateImageExportJobOptions
+func (*VpcbetaV1) NewCreateImageExportJobOptions(imageID string, storageBucket CloudObjectStorageBucketIdentityIntf) *CreateImageExportJobOptions {
+	return &CreateImageExportJobOptions{
+		ImageID:       core.StringPtr(imageID),
+		StorageBucket: storageBucket,
+	}
+}
+
+// SetImageID : Allow user to set ImageID
+func (_options *CreateImageExportJobOptions) SetImageID(imageID string) *CreateImageExportJobOptions {
+	_options.ImageID = core.StringPtr(imageID)
+	return _options
+}
+
+// SetStorageBucket : Allow user to set StorageBucket
+func (_options *CreateImageExportJobOptions) SetStorageBucket(storageBucket CloudObjectStorageBucketIdentityIntf) *CreateImageExportJobOptions {
+	_options.StorageBucket = storageBucket
+	return _options
+}
+
+// SetFormat : Allow user to set Format
+func (_options *CreateImageExportJobOptions) SetFormat(format string) *CreateImageExportJobOptions {
+	_options.Format = core.StringPtr(format)
+	return _options
+}
+
+// SetName : Allow user to set Name
+func (_options *CreateImageExportJobOptions) SetName(name string) *CreateImageExportJobOptions {
+	_options.Name = core.StringPtr(name)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *CreateImageExportJobOptions) SetHeaders(param map[string]string) *CreateImageExportJobOptions {
 	options.Headers = param
 	return options
 }
@@ -27778,7 +28751,7 @@ type CreateIpsecPolicyOptions struct {
 // Constants associated with the CreateIpsecPolicyOptions.AuthenticationAlgorithm property.
 // The authentication algorithm
 //
-// The `md5` and `sha1` algorithms have been deprecated
+// # The `md5` and `sha1` algorithms have been deprecated
 //
 // Must be `disabled` if and only if the `encryption_algorithm` is
 // `aes128gcm16`, `aes192gcm16`, or `aes256gcm16`.
@@ -27994,6 +28967,9 @@ type CreateLoadBalancerListenerOptions struct {
 	// `protocol` of `http`, and the target listener must have a `protocol` of `https`.
 	HTTPSRedirect *LoadBalancerListenerHTTPSRedirectPrototype `json:"https_redirect,omitempty"`
 
+	// The idle connection timeout of the listener in seconds. Supported for load balancers in the `application` family.
+	IdleConnectionTimeout *int64 `json:"idle_connection_timeout,omitempty"`
+
 	// The policy prototype objects for this listener. The load balancer must be in the
 	// `application` family.
 	Policies []LoadBalancerListenerPolicyPrototype `json:"policies,omitempty"`
@@ -28036,10 +29012,10 @@ type CreateLoadBalancerListenerOptions struct {
 // `https`.
 //
 // Additional restrictions:
-// - If `default_pool` is set, the pool's protocol must match, or be compatible with
-//   the listener's protocol. At present, the compatible protocols are `http` and
-//   `https`.
-// - If `https_redirect` is set, the protocol must be `http`.
+//   - If `default_pool` is set, the pool's protocol must match, or be compatible with
+//     the listener's protocol. At present, the compatible protocols are `http` and
+//     `https`.
+//   - If `https_redirect` is set, the protocol must be `http`.
 const (
 	CreateLoadBalancerListenerOptionsProtocolHTTPConst  = "http"
 	CreateLoadBalancerListenerOptionsProtocolHTTPSConst = "https"
@@ -28094,6 +29070,12 @@ func (_options *CreateLoadBalancerListenerOptions) SetDefaultPool(defaultPool Lo
 // SetHTTPSRedirect : Allow user to set HTTPSRedirect
 func (_options *CreateLoadBalancerListenerOptions) SetHTTPSRedirect(httpsRedirect *LoadBalancerListenerHTTPSRedirectPrototype) *CreateLoadBalancerListenerOptions {
 	_options.HTTPSRedirect = httpsRedirect
+	return _options
+}
+
+// SetIdleConnectionTimeout : Allow user to set IdleConnectionTimeout
+func (_options *CreateLoadBalancerListenerOptions) SetIdleConnectionTimeout(idleConnectionTimeout int64) *CreateLoadBalancerListenerOptions {
+	_options.IdleConnectionTimeout = core.Int64Ptr(idleConnectionTimeout)
 	return _options
 }
 
@@ -28367,6 +29349,8 @@ type CreateLoadBalancerOptions struct {
 	// The datapath logging configuration for this load balancer.
 	Datapath *LoadBalancerLoggingDatapathPrototype `json:"datapath,omitempty"`
 
+	Dns *LoadBalancerDnsPrototype `json:"dns,omitempty"`
+
 	// The listeners of this load balancer.
 	Listeners []LoadBalancerListenerPrototypeLoadBalancerContext `json:"listeners,omitempty"`
 
@@ -28430,6 +29414,12 @@ func (_options *CreateLoadBalancerOptions) SetSubnets(subnets []SubnetIdentityIn
 // SetDatapath : Allow user to set Datapath
 func (_options *CreateLoadBalancerOptions) SetDatapath(datapath *LoadBalancerLoggingDatapathPrototype) *CreateLoadBalancerOptions {
 	_options.Datapath = datapath
+	return _options
+}
+
+// SetDns : Allow user to set Dns
+func (_options *CreateLoadBalancerOptions) SetDns(dns *LoadBalancerDnsPrototype) *CreateLoadBalancerOptions {
+	_options.Dns = dns
 	return _options
 }
 
@@ -29105,6 +30095,44 @@ func (options *CreateShareOptions) SetHeaders(param map[string]string) *CreateSh
 	return options
 }
 
+// CreateSnapshotCloneOptions : The CreateSnapshotClone options.
+type CreateSnapshotCloneOptions struct {
+	// The snapshot identifier.
+	ID *string `json:"id" validate:"required,ne="`
+
+	// The zone name.
+	ZoneName *string `json:"zone_name" validate:"required,ne="`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewCreateSnapshotCloneOptions : Instantiate CreateSnapshotCloneOptions
+func (*VpcbetaV1) NewCreateSnapshotCloneOptions(id string, zoneName string) *CreateSnapshotCloneOptions {
+	return &CreateSnapshotCloneOptions{
+		ID:       core.StringPtr(id),
+		ZoneName: core.StringPtr(zoneName),
+	}
+}
+
+// SetID : Allow user to set ID
+func (_options *CreateSnapshotCloneOptions) SetID(id string) *CreateSnapshotCloneOptions {
+	_options.ID = core.StringPtr(id)
+	return _options
+}
+
+// SetZoneName : Allow user to set ZoneName
+func (_options *CreateSnapshotCloneOptions) SetZoneName(zoneName string) *CreateSnapshotCloneOptions {
+	_options.ZoneName = core.StringPtr(zoneName)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *CreateSnapshotCloneOptions) SetHeaders(param map[string]string) *CreateSnapshotCloneOptions {
+	options.Headers = param
+	return options
+}
+
 // CreateSnapshotOptions : The CreateSnapshot options.
 type CreateSnapshotOptions struct {
 	// The snapshot prototype object.
@@ -29419,8 +30447,8 @@ type CreateVPCRouteOptions struct {
 	// The VPC identifier.
 	VPCID *string `json:"vpc_id" validate:"required,ne="`
 
-	// The destination of the route. At most two routes per `zone` in a table can have the same destination, and only if
-	// both routes have an `action` of `deliver` and the `next_hop` is an IP address.
+	// The destination of the route. At most two routes per `zone` in a table can have the same `destination` and
+	// `priority`, and only if both routes have an `action` of `deliver` and the `next_hop` is an IP address.
 	Destination *string `json:"destination" validate:"required"`
 
 	// The zone to apply the route to. (Traffic from subnets in this zone will be
@@ -29442,6 +30470,16 @@ type CreateVPCRouteOptions struct {
 	// If `action` is `deliver`, the next hop that packets will be delivered to. For other `action`
 	// values, it must be omitted or specified as `0.0.0.0`.
 	NextHop RoutePrototypeNextHopIntf `json:"next_hop,omitempty"`
+
+	// The priority of this route. Smaller values have higher priority.
+	//
+	// If a routing table contains multiple routes with the same `zone` and `destination`, the route with the highest
+	// priority (smallest value) is selected. If two routes have the same `destination` and `priority`, traffic is
+	// distributed between them.
+	//
+	// At most two routes per `zone` in a table can have the same `destination` and
+	// `priority`, and only if both routes have an `action` of `deliver` and the `next_hop` is an IP address.
+	Priority *int64 `json:"priority,omitempty"`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -29502,6 +30540,12 @@ func (_options *CreateVPCRouteOptions) SetName(name string) *CreateVPCRouteOptio
 // SetNextHop : Allow user to set NextHop
 func (_options *CreateVPCRouteOptions) SetNextHop(nextHop RoutePrototypeNextHopIntf) *CreateVPCRouteOptions {
 	_options.NextHop = nextHop
+	return _options
+}
+
+// SetPriority : Allow user to set Priority
+func (_options *CreateVPCRouteOptions) SetPriority(priority int64) *CreateVPCRouteOptions {
+	_options.Priority = core.Int64Ptr(priority)
 	return _options
 }
 
@@ -29648,8 +30692,8 @@ type CreateVPCRoutingTableRouteOptions struct {
 	// The routing table identifier.
 	RoutingTableID *string `json:"routing_table_id" validate:"required,ne="`
 
-	// The destination of the route. At most two routes per `zone` in a table can have the same destination, and only if
-	// both routes have an `action` of `deliver` and the `next_hop` is an IP address.
+	// The destination of the route. At most two routes per `zone` in a table can have the same `destination` and
+	// `priority`, and only if both routes have an `action` of `deliver` and the `next_hop` is an IP address.
 	Destination *string `json:"destination" validate:"required"`
 
 	// The zone to apply the route to. (Traffic from subnets in this zone will be
@@ -29671,6 +30715,16 @@ type CreateVPCRoutingTableRouteOptions struct {
 	// If `action` is `deliver`, the next hop that packets will be delivered to. For other `action`
 	// values, it must be omitted or specified as `0.0.0.0`.
 	NextHop RoutePrototypeNextHopIntf `json:"next_hop,omitempty"`
+
+	// The priority of this route. Smaller values have higher priority.
+	//
+	// If a routing table contains multiple routes with the same `zone` and `destination`, the route with the highest
+	// priority (smallest value) is selected. If two routes have the same `destination` and `priority`, traffic is
+	// distributed between them.
+	//
+	// At most two routes per `zone` in a table can have the same `destination` and
+	// `priority`, and only if both routes have an `action` of `deliver` and the `next_hop` is an IP address.
+	Priority *int64 `json:"priority,omitempty"`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -29738,6 +30792,12 @@ func (_options *CreateVPCRoutingTableRouteOptions) SetName(name string) *CreateV
 // SetNextHop : Allow user to set NextHop
 func (_options *CreateVPCRoutingTableRouteOptions) SetNextHop(nextHop RoutePrototypeNextHopIntf) *CreateVPCRoutingTableRouteOptions {
 	_options.NextHop = nextHop
+	return _options
+}
+
+// SetPriority : Allow user to set Priority
+func (_options *CreateVPCRoutingTableRouteOptions) SetPriority(priority int64) *CreateVPCRoutingTableRouteOptions {
+	_options.Priority = core.Int64Ptr(priority)
 	return _options
 }
 
@@ -30044,6 +31104,92 @@ func (_options *CreateVPNServerRouteOptions) SetName(name string) *CreateVPNServ
 func (options *CreateVPNServerRouteOptions) SetHeaders(param map[string]string) *CreateVPNServerRouteOptions {
 	options.Headers = param
 	return options
+}
+
+// DnsInstanceIdentity : Identifies a DNS instance by a unique property.
+// Models which "extend" this model:
+// - DnsInstanceIdentityByCRN
+type DnsInstanceIdentity struct {
+	// The CRN for this DNS instance.
+	CRN *string `json:"crn,omitempty"`
+}
+
+func (*DnsInstanceIdentity) isaDnsInstanceIdentity() bool {
+	return true
+}
+
+type DnsInstanceIdentityIntf interface {
+	isaDnsInstanceIdentity() bool
+}
+
+// UnmarshalDnsInstanceIdentity unmarshals an instance of DnsInstanceIdentity from the specified map of raw messages.
+func UnmarshalDnsInstanceIdentity(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(DnsInstanceIdentity)
+	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// DnsInstanceReference : DnsInstanceReference struct
+type DnsInstanceReference struct {
+	// The CRN for this DNS instance.
+	CRN *string `json:"crn" validate:"required"`
+}
+
+// UnmarshalDnsInstanceReference unmarshals an instance of DnsInstanceReference from the specified map of raw messages.
+func UnmarshalDnsInstanceReference(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(DnsInstanceReference)
+	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// DnsZoneIdentity : Identifies a DNS zone by a unique property.
+// Models which "extend" this model:
+// - DnsZoneIdentityByID
+type DnsZoneIdentity struct {
+	ID *string `json:"id,omitempty"`
+}
+
+func (*DnsZoneIdentity) isaDnsZoneIdentity() bool {
+	return true
+}
+
+type DnsZoneIdentityIntf interface {
+	isaDnsZoneIdentity() bool
+}
+
+// UnmarshalDnsZoneIdentity unmarshals an instance of DnsZoneIdentity from the specified map of raw messages.
+func UnmarshalDnsZoneIdentity(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(DnsZoneIdentity)
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// DnsZoneReference : DnsZoneReference struct
+type DnsZoneReference struct {
+	ID *string `json:"id" validate:"required"`
+}
+
+// UnmarshalDnsZoneReference unmarshals an instance of DnsZoneReference from the specified map of raw messages.
+func UnmarshalDnsZoneReference(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(DnsZoneReference)
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
 }
 
 // DedicatedHost : DedicatedHost struct
@@ -32419,6 +33565,44 @@ func (options *DeleteIkePolicyOptions) SetHeaders(param map[string]string) *Dele
 	return options
 }
 
+// DeleteImageExportJobOptions : The DeleteImageExportJob options.
+type DeleteImageExportJobOptions struct {
+	// The image identifier.
+	ImageID *string `json:"image_id" validate:"required,ne="`
+
+	// The image export job identifier.
+	ID *string `json:"id" validate:"required,ne="`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewDeleteImageExportJobOptions : Instantiate DeleteImageExportJobOptions
+func (*VpcbetaV1) NewDeleteImageExportJobOptions(imageID string, id string) *DeleteImageExportJobOptions {
+	return &DeleteImageExportJobOptions{
+		ImageID: core.StringPtr(imageID),
+		ID:      core.StringPtr(id),
+	}
+}
+
+// SetImageID : Allow user to set ImageID
+func (_options *DeleteImageExportJobOptions) SetImageID(imageID string) *DeleteImageExportJobOptions {
+	_options.ImageID = core.StringPtr(imageID)
+	return _options
+}
+
+// SetID : Allow user to set ID
+func (_options *DeleteImageExportJobOptions) SetID(id string) *DeleteImageExportJobOptions {
+	_options.ID = core.StringPtr(id)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *DeleteImageExportJobOptions) SetHeaders(param map[string]string) *DeleteImageExportJobOptions {
+	options.Headers = param
+	return options
+}
+
 // DeleteImageOptions : The DeleteImage options.
 type DeleteImageOptions struct {
 	// The image identifier.
@@ -33483,6 +34667,44 @@ func (_options *DeleteShareSourceOptions) SetShareID(shareID string) *DeleteShar
 
 // SetHeaders : Allow user to set Headers
 func (options *DeleteShareSourceOptions) SetHeaders(param map[string]string) *DeleteShareSourceOptions {
+	options.Headers = param
+	return options
+}
+
+// DeleteSnapshotCloneOptions : The DeleteSnapshotClone options.
+type DeleteSnapshotCloneOptions struct {
+	// The snapshot identifier.
+	ID *string `json:"id" validate:"required,ne="`
+
+	// The zone name.
+	ZoneName *string `json:"zone_name" validate:"required,ne="`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewDeleteSnapshotCloneOptions : Instantiate DeleteSnapshotCloneOptions
+func (*VpcbetaV1) NewDeleteSnapshotCloneOptions(id string, zoneName string) *DeleteSnapshotCloneOptions {
+	return &DeleteSnapshotCloneOptions{
+		ID:       core.StringPtr(id),
+		ZoneName: core.StringPtr(zoneName),
+	}
+}
+
+// SetID : Allow user to set ID
+func (_options *DeleteSnapshotCloneOptions) SetID(id string) *DeleteSnapshotCloneOptions {
+	_options.ID = core.StringPtr(id)
+	return _options
+}
+
+// SetZoneName : Allow user to set ZoneName
+func (_options *DeleteSnapshotCloneOptions) SetZoneName(zoneName string) *DeleteSnapshotCloneOptions {
+	_options.ZoneName = core.StringPtr(zoneName)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *DeleteSnapshotCloneOptions) SetHeaders(param map[string]string) *DeleteSnapshotCloneOptions {
 	options.Headers = param
 	return options
 }
@@ -34608,8 +35830,8 @@ type FailoverShareOptions struct {
 
 // Constants associated with the FailoverShareOptions.FallbackPolicy property.
 // The action to take if the failover request is accepted but cannot be performed or times out:
-// - `fail`: Fail the operation, resulting in the replication relationship being unchanged.
-// - `split`: Split the replica from its source, resulting in two individual read-write
+//   - `fail`: Fail the operation, resulting in the replication relationship being unchanged.
+//   - `split`: Split the replica from its source, resulting in two individual read-write
 //     file shares. Because the final sync was not completed, the replica may be
 //     out-of-date. This is useful in disaster recovery scenarios where the source is known
 //     to be unreachable.
@@ -35397,14 +36619,15 @@ func (flowLogCollectorPatch *FlowLogCollectorPatch) AsPatch() (_patch map[string
 }
 
 // FlowLogCollectorTarget : The target this collector is collecting flow logs for.
-// - If the target is a network interface, flow logs will be collected
-//   for that network interface.
-// - If the target is a virtual server instance, flow logs will be collected
-//   for all network interfaces attached to that instance.
-// - If the target is a subnet, flow logs will be collected
-//   for all network interfaces attached to that subnet.
-// - If the target is a VPC, flow logs will be collected for network interfaces
-//   attached to all subnets within that VPC. If the target is an instance, subnet, or VPC, flow logs will not be
+//   - If the target is a network interface, flow logs will be collected
+//     for that network interface.
+//   - If the target is a virtual server instance, flow logs will be collected
+//     for all network interfaces attached to that instance.
+//   - If the target is a subnet, flow logs will be collected
+//     for all network interfaces attached to that subnet.
+//   - If the target is a VPC, flow logs will be collected for network interfaces
+//     attached to all subnets within that VPC. If the target is an instance, subnet, or VPC, flow logs will not be
+//
 // collected for any network interfaces within the target that are themselves the target of a more specific flow log
 // collector.
 // Models which "extend" this model:
@@ -36170,6 +37393,44 @@ func (_options *GetIkePolicyOptions) SetID(id string) *GetIkePolicyOptions {
 
 // SetHeaders : Allow user to set Headers
 func (options *GetIkePolicyOptions) SetHeaders(param map[string]string) *GetIkePolicyOptions {
+	options.Headers = param
+	return options
+}
+
+// GetImageExportJobOptions : The GetImageExportJob options.
+type GetImageExportJobOptions struct {
+	// The image identifier.
+	ImageID *string `json:"image_id" validate:"required,ne="`
+
+	// The image export job identifier.
+	ID *string `json:"id" validate:"required,ne="`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewGetImageExportJobOptions : Instantiate GetImageExportJobOptions
+func (*VpcbetaV1) NewGetImageExportJobOptions(imageID string, id string) *GetImageExportJobOptions {
+	return &GetImageExportJobOptions{
+		ImageID: core.StringPtr(imageID),
+		ID:      core.StringPtr(id),
+	}
+}
+
+// SetImageID : Allow user to set ImageID
+func (_options *GetImageExportJobOptions) SetImageID(imageID string) *GetImageExportJobOptions {
+	_options.ImageID = core.StringPtr(imageID)
+	return _options
+}
+
+// SetID : Allow user to set ID
+func (_options *GetImageExportJobOptions) SetID(id string) *GetImageExportJobOptions {
+	_options.ID = core.StringPtr(id)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *GetImageExportJobOptions) SetHeaders(param map[string]string) *GetImageExportJobOptions {
 	options.Headers = param
 	return options
 }
@@ -37536,6 +38797,44 @@ func (options *GetShareSourceOptions) SetHeaders(param map[string]string) *GetSh
 	return options
 }
 
+// GetSnapshotCloneOptions : The GetSnapshotClone options.
+type GetSnapshotCloneOptions struct {
+	// The snapshot identifier.
+	ID *string `json:"id" validate:"required,ne="`
+
+	// The zone name.
+	ZoneName *string `json:"zone_name" validate:"required,ne="`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewGetSnapshotCloneOptions : Instantiate GetSnapshotCloneOptions
+func (*VpcbetaV1) NewGetSnapshotCloneOptions(id string, zoneName string) *GetSnapshotCloneOptions {
+	return &GetSnapshotCloneOptions{
+		ID:       core.StringPtr(id),
+		ZoneName: core.StringPtr(zoneName),
+	}
+}
+
+// SetID : Allow user to set ID
+func (_options *GetSnapshotCloneOptions) SetID(id string) *GetSnapshotCloneOptions {
+	_options.ID = core.StringPtr(id)
+	return _options
+}
+
+// SetZoneName : Allow user to set ZoneName
+func (_options *GetSnapshotCloneOptions) SetZoneName(zoneName string) *GetSnapshotCloneOptions {
+	_options.ZoneName = core.StringPtr(zoneName)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *GetSnapshotCloneOptions) SetHeaders(param map[string]string) *GetSnapshotCloneOptions {
+	options.Headers = param
+	return options
+}
+
 // GetSnapshotOptions : The GetSnapshot options.
 type GetSnapshotOptions struct {
 	// The snapshot identifier.
@@ -38673,7 +39972,7 @@ type IPsecPolicy struct {
 // Constants associated with the IPsecPolicy.AuthenticationAlgorithm property.
 // The authentication algorithm
 //
-// The `md5` and `sha1` algorithms have been deprecated
+// # The `md5` and `sha1` algorithms have been deprecated
 //
 // Must be `disabled` if and only if the `encryption_algorithm` is
 // `aes128gcm16`, `aes192gcm16`, or `aes256gcm16`.
@@ -38929,7 +40228,7 @@ type IPsecPolicyPatch struct {
 // Constants associated with the IPsecPolicyPatch.AuthenticationAlgorithm property.
 // The authentication algorithm
 //
-// The `md5` and `sha1` algorithms have been deprecated
+// # The `md5` and `sha1` algorithms have been deprecated
 //
 // Must be `disabled` if and only if the `encryption_algorithm` is
 // `aes128gcm16`, `aes192gcm16`, or `aes256gcm16`.
@@ -39233,13 +40532,13 @@ const (
 
 // Constants associated with the Image.Status property.
 // The status of this image
-// - available: image can be used (provisionable)
-// - deleting: image is being deleted, and can no longer be used to provision new
-//   resources
-// - deprecated: image is administratively slated to be deleted
-// - failed: image is corrupt or did not pass validation
-// - pending: image is being imported and is not yet `available`
-// - unusable: image cannot be used (see `status_reasons[]` for possible remediation)
+//   - available: image can be used (provisionable)
+//   - deleting: image is being deleted, and can no longer be used to provision new
+//     resources
+//   - deprecated: image is administratively slated to be deleted
+//   - failed: image is corrupt or did not pass validation
+//   - pending: image is being imported and is not yet `available`
+//   - unusable: image cannot be used (see `status_reasons[]` for possible remediation)
 //
 // The enumerated values for this property are expected to expand in the future. When processing this property, check
 // for and log unknown values. Optionally halt processing and surface the error, or bypass the image on which the
@@ -39440,6 +40739,254 @@ type ImageCollectionNext struct {
 func UnmarshalImageCollectionNext(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ImageCollectionNext)
 	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// ImageExportJob : ImageExportJob struct
+type ImageExportJob struct {
+	// The date and time that the image export job was completed.
+	//
+	// If absent, the export job has not yet completed.
+	CompletedAt *strfmt.DateTime `json:"completed_at,omitempty"`
+
+	// The date and time that the image export job was created.
+	CreatedAt *strfmt.DateTime `json:"created_at" validate:"required"`
+
+	// A base64-encoded, encrypted representation of the key that was used to encrypt the data for the exported image. This
+	// key can be unwrapped with the image's `encryption_key` root key using either Key Protect or Hyper Protect Crypto
+	// Services.
+	//
+	// If absent, the export job is for an unencrypted image.
+	EncryptedDataKey *[]byte `json:"encrypted_data_key,omitempty"`
+
+	// The format of the exported image.
+	Format *string `json:"format" validate:"required"`
+
+	// The URL for this image export job.
+	Href *string `json:"href" validate:"required"`
+
+	// The unique identifier for this image export job.
+	ID *string `json:"id" validate:"required"`
+
+	// The name for this image export job. The name must not be used by another export job for the image. Changing the name
+	// will not affect the exported image name,
+	// `storage_object.name`, or `storage_href` values.
+	Name *string `json:"name" validate:"required"`
+
+	// The type of resource referenced.
+	ResourceType *string `json:"resource_type" validate:"required"`
+
+	// The date and time that the image export job started running.
+	//
+	// If absent, the export job has not yet started.
+	StartedAt *strfmt.DateTime `json:"started_at,omitempty"`
+
+	// The status of this image export job:
+	// - `deleting`: Export job is being deleted
+	// - `failed`: Export job could not be completed successfully
+	// - `queued`: Export job is queued
+	// - `running`: Export job is in progress
+	// - `succeeded`: Export job was completed successfully
+	//
+	// The exported image object is automatically deleted for `failed` jobs.
+	Status *string `json:"status" validate:"required"`
+
+	// The reasons for the current status (if any).
+	//
+	// The enumerated reason code values for this property will expand in the future. When processing this property, check
+	// for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
+	// unexpected reason code was encountered.
+	StatusReasons []ImageExportJobStatusReason `json:"status_reasons" validate:"required"`
+
+	// The Cloud Object Storage bucket of the exported image object.
+	StorageBucket *CloudObjectStorageBucketReference `json:"storage_bucket" validate:"required"`
+
+	// The Cloud Object Storage location of the exported image object. The object at this location may not exist until the
+	// job is started, and will be incomplete while the job is running.
+	//
+	// After the job completes, the exported image object is not managed by the IBM VPC service, and may be removed or
+	// replaced with a different object by any user or service with IAM authorization to the bucket.
+	StorageHref *string `json:"storage_href" validate:"required"`
+
+	// The Cloud Object Storage object for the exported image. This object may not exist until
+	// the job is started, and will not be complete until the job completes.
+	StorageObject *CloudObjectStorageObjectReference `json:"storage_object" validate:"required"`
+}
+
+// Constants associated with the ImageExportJob.Format property.
+// The format of the exported image.
+const (
+	ImageExportJobFormatQcow2Const = "qcow2"
+	ImageExportJobFormatVhdConst   = "vhd"
+)
+
+// Constants associated with the ImageExportJob.ResourceType property.
+// The type of resource referenced.
+const (
+	ImageExportJobResourceTypeImageExportJobConst = "image_export_job"
+)
+
+// Constants associated with the ImageExportJob.Status property.
+// The status of this image export job:
+// - `deleting`: Export job is being deleted
+// - `failed`: Export job could not be completed successfully
+// - `queued`: Export job is queued
+// - `running`: Export job is in progress
+// - `succeeded`: Export job was completed successfully
+//
+// The exported image object is automatically deleted for `failed` jobs.
+const (
+	ImageExportJobStatusDeletingConst  = "deleting"
+	ImageExportJobStatusFailedConst    = "failed"
+	ImageExportJobStatusQueuedConst    = "queued"
+	ImageExportJobStatusRunningConst   = "running"
+	ImageExportJobStatusSucceededConst = "succeeded"
+)
+
+// UnmarshalImageExportJob unmarshals an instance of ImageExportJob from the specified map of raw messages.
+func UnmarshalImageExportJob(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(ImageExportJob)
+	err = core.UnmarshalPrimitive(m, "completed_at", &obj.CompletedAt)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "created_at", &obj.CreatedAt)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "encrypted_data_key", &obj.EncryptedDataKey)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "format", &obj.Format)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "resource_type", &obj.ResourceType)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "started_at", &obj.StartedAt)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "status", &obj.Status)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "status_reasons", &obj.StatusReasons, UnmarshalImageExportJobStatusReason)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "storage_bucket", &obj.StorageBucket, UnmarshalCloudObjectStorageBucketReference)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "storage_href", &obj.StorageHref)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "storage_object", &obj.StorageObject, UnmarshalCloudObjectStorageObjectReference)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// ImageExportJobPatch : ImageExportJobPatch struct
+type ImageExportJobPatch struct {
+	// The name for this image export job. The name must not be used by another export job for the image. Changing the name
+	// will not affect the exported image name,
+	// `storage_object.name`, or `storage_href` values.
+	Name *string `json:"name,omitempty"`
+}
+
+// UnmarshalImageExportJobPatch unmarshals an instance of ImageExportJobPatch from the specified map of raw messages.
+func UnmarshalImageExportJobPatch(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(ImageExportJobPatch)
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// AsPatch returns a generic map representation of the ImageExportJobPatch
+func (imageExportJobPatch *ImageExportJobPatch) AsPatch() (_patch map[string]interface{}, err error) {
+	var jsonData []byte
+	jsonData, err = json.Marshal(imageExportJobPatch)
+	if err == nil {
+		err = json.Unmarshal(jsonData, &_patch)
+	}
+	return
+}
+
+// ImageExportJobStatusReason : ImageExportJobStatusReason struct
+type ImageExportJobStatusReason struct {
+	// A snake case string succinctly identifying the status reason.
+	Code *string `json:"code" validate:"required"`
+
+	// An explanation of the status reason.
+	Message *string `json:"message" validate:"required"`
+
+	// Link to documentation about this status reason.
+	MoreInfo *string `json:"more_info,omitempty"`
+}
+
+// Constants associated with the ImageExportJobStatusReason.Code property.
+// A snake case string succinctly identifying the status reason.
+const (
+	ImageExportJobStatusReasonCodeCannotAccessStorageBucketConst = "cannot_access_storage_bucket"
+	ImageExportJobStatusReasonCodeInternalErrorConst             = "internal_error"
+)
+
+// UnmarshalImageExportJobStatusReason unmarshals an instance of ImageExportJobStatusReason from the specified map of raw messages.
+func UnmarshalImageExportJobStatusReason(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(ImageExportJobStatusReason)
+	err = core.UnmarshalPrimitive(m, "code", &obj.Code)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "message", &obj.Message)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// ImageExportJobUnpaginatedCollection : ImageExportJobUnpaginatedCollection struct
+type ImageExportJobUnpaginatedCollection struct {
+	// Collection of image export jobs.
+	ExportJobs []ImageExportJob `json:"export_jobs" validate:"required"`
+}
+
+// UnmarshalImageExportJobUnpaginatedCollection unmarshals an instance of ImageExportJobUnpaginatedCollection from the specified map of raw messages.
+func UnmarshalImageExportJobUnpaginatedCollection(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(ImageExportJobUnpaginatedCollection)
+	err = core.UnmarshalModel(m, "export_jobs", &obj.ExportJobs, UnmarshalImageExportJob)
 	if err != nil {
 		return
 	}
@@ -39837,7 +41384,7 @@ type Instance struct {
 	// The enumerated reason code values for this property will expand in the future. When processing this property, check
 	// for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
 	// unexpected reason code was encountered.
-	LifecycleReasons []LifecycleReason `json:"lifecycle_reasons" validate:"required"`
+	LifecycleReasons []InstanceLifecycleReason `json:"lifecycle_reasons" validate:"required"`
 
 	// The lifecycle state of the virtual server instance.
 	LifecycleState *string `json:"lifecycle_state" validate:"required"`
@@ -39994,7 +41541,7 @@ func UnmarshalInstance(m map[string]json.RawMessage, result interface{}) (err er
 	if err != nil {
 		return
 	}
-	err = core.UnmarshalModel(m, "lifecycle_reasons", &obj.LifecycleReasons, UnmarshalLifecycleReason)
+	err = core.UnmarshalModel(m, "lifecycle_reasons", &obj.LifecycleReasons, UnmarshalInstanceLifecycleReason)
 	if err != nil {
 		return
 	}
@@ -40206,22 +41753,14 @@ func UnmarshalInstanceAvailabilityPolicy(m map[string]json.RawMessage, result in
 type InstanceAvailabilityPolicyPatch struct {
 	// The action to perform if the compute host experiences a failure.
 	// - `restart`: Automatically restart the virtual server instance after host failure
-	// - `stop`: Leave the virtual server instance stopped after host failure
-	//
-	// The enumerated values for this property are expected to expand in the future. When processing this property, check
-	// for and log unknown values. Optionally halt processing and surface the error, or bypass the instance on which the
-	// unexpected property value was encountered.
+	// - `stop`: Leave the virtual server instance stopped after host failure.
 	HostFailure *string `json:"host_failure,omitempty"`
 }
 
 // Constants associated with the InstanceAvailabilityPolicyPatch.HostFailure property.
 // The action to perform if the compute host experiences a failure.
 // - `restart`: Automatically restart the virtual server instance after host failure
-// - `stop`: Leave the virtual server instance stopped after host failure
-//
-// The enumerated values for this property are expected to expand in the future. When processing this property, check
-// for and log unknown values. Optionally halt processing and surface the error, or bypass the instance on which the
-// unexpected property value was encountered.
+// - `stop`: Leave the virtual server instance stopped after host failure.
 const (
 	InstanceAvailabilityPolicyPatchHostFailureRestartConst = "restart"
 	InstanceAvailabilityPolicyPatchHostFailureStopConst    = "stop"
@@ -40238,34 +41777,26 @@ func UnmarshalInstanceAvailabilityPolicyPatch(m map[string]json.RawMessage, resu
 	return
 }
 
-// InstanceAvailabilityPrototype : InstanceAvailabilityPrototype struct
-type InstanceAvailabilityPrototype struct {
+// InstanceAvailabilityPolicyPrototype : InstanceAvailabilityPolicyPrototype struct
+type InstanceAvailabilityPolicyPrototype struct {
 	// The action to perform if the compute host experiences a failure.
 	// - `restart`: Automatically restart the virtual server instance after host failure
-	// - `stop`: Leave the virtual server instance stopped after host failure
-	//
-	// The enumerated values for this property are expected to expand in the future. When processing this property, check
-	// for and log unknown values. Optionally halt processing and surface the error, or bypass the instance on which the
-	// unexpected property value was encountered.
+	// - `stop`: Leave the virtual server instance stopped after host failure.
 	HostFailure *string `json:"host_failure,omitempty"`
 }
 
-// Constants associated with the InstanceAvailabilityPrototype.HostFailure property.
+// Constants associated with the InstanceAvailabilityPolicyPrototype.HostFailure property.
 // The action to perform if the compute host experiences a failure.
 // - `restart`: Automatically restart the virtual server instance after host failure
-// - `stop`: Leave the virtual server instance stopped after host failure
-//
-// The enumerated values for this property are expected to expand in the future. When processing this property, check
-// for and log unknown values. Optionally halt processing and surface the error, or bypass the instance on which the
-// unexpected property value was encountered.
+// - `stop`: Leave the virtual server instance stopped after host failure.
 const (
-	InstanceAvailabilityPrototypeHostFailureRestartConst = "restart"
-	InstanceAvailabilityPrototypeHostFailureStopConst    = "stop"
+	InstanceAvailabilityPolicyPrototypeHostFailureRestartConst = "restart"
+	InstanceAvailabilityPolicyPrototypeHostFailureStopConst    = "stop"
 )
 
-// UnmarshalInstanceAvailabilityPrototype unmarshals an instance of InstanceAvailabilityPrototype from the specified map of raw messages.
-func UnmarshalInstanceAvailabilityPrototype(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(InstanceAvailabilityPrototype)
+// UnmarshalInstanceAvailabilityPolicyPrototype unmarshals an instance of InstanceAvailabilityPolicyPrototype from the specified map of raw messages.
+func UnmarshalInstanceAvailabilityPolicyPrototype(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(InstanceAvailabilityPolicyPrototype)
 	err = core.UnmarshalPrimitive(m, "host_failure", &obj.HostFailure)
 	if err != nil {
 		return
@@ -40816,11 +42347,11 @@ type InstanceGroup struct {
 
 // Constants associated with the InstanceGroup.Status property.
 // The status of the instance group
-// - `deleting`: Group is being deleted
-// - `healthy`: Group has `membership_count` instances
-// - `scaling`: Instances in the group are being created or deleted to reach
-//              `membership_count`
-// - `unhealthy`: Group is unable to reach `membership_count` instances.
+//   - `deleting`: Group is being deleted
+//   - `healthy`: Group has `membership_count` instances
+//   - `scaling`: Instances in the group are being created or deleted to reach
+//     `membership_count`
+//   - `unhealthy`: Group is unable to reach `membership_count` instances.
 const (
 	InstanceGroupStatusDeletingConst  = "deleting"
 	InstanceGroupStatusHealthyConst   = "healthy"
@@ -42822,16 +44353,81 @@ func UnmarshalInstanceInitializationPassword(m map[string]json.RawMessage, resul
 	return
 }
 
+// InstanceLifecycleReason : InstanceLifecycleReason struct
+type InstanceLifecycleReason struct {
+	// A snake case string succinctly identifying the reason for this lifecycle state.
+	Code *string `json:"code" validate:"required"`
+
+	// An explanation of the reason for this lifecycle state.
+	Message *string `json:"message" validate:"required"`
+
+	// Link to documentation about the reason for this lifecycle state.
+	MoreInfo *string `json:"more_info,omitempty"`
+}
+
+// Constants associated with the InstanceLifecycleReason.Code property.
+// A snake case string succinctly identifying the reason for this lifecycle state.
+const (
+	InstanceLifecycleReasonCodeResourceSuspendedByProviderConst = "resource_suspended_by_provider"
+)
+
+// UnmarshalInstanceLifecycleReason unmarshals an instance of InstanceLifecycleReason from the specified map of raw messages.
+func UnmarshalInstanceLifecycleReason(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(InstanceLifecycleReason)
+	err = core.UnmarshalPrimitive(m, "code", &obj.Code)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "message", &obj.Message)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // InstanceMetadataService : The metadata service configuration.
 type InstanceMetadataService struct {
 	// Indicates whether the metadata service endpoint is available to the virtual server instance.
 	Enabled *bool `json:"enabled" validate:"required"`
+
+	// The communication protocol to use for the metadata service endpoint. Applies only when the metadata service is
+	// enabled.
+	// - `http`: HTTP protocol (unencrypted)
+	// - `https`: HTTP Secure protocol.
+	Protocol *string `json:"protocol" validate:"required"`
+
+	// The hop limit (IP time to live) for IP response packets from the metadata service. Applies only when the metadata
+	// service is enabled.
+	ResponseHopLimit *int64 `json:"response_hop_limit" validate:"required"`
 }
+
+// Constants associated with the InstanceMetadataService.Protocol property.
+// The communication protocol to use for the metadata service endpoint. Applies only when the metadata service is
+// enabled.
+// - `http`: HTTP protocol (unencrypted)
+// - `https`: HTTP Secure protocol.
+const (
+	InstanceMetadataServiceProtocolHTTPConst  = "http"
+	InstanceMetadataServiceProtocolHTTPSConst = "https"
+)
 
 // UnmarshalInstanceMetadataService unmarshals an instance of InstanceMetadataService from the specified map of raw messages.
 func UnmarshalInstanceMetadataService(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(InstanceMetadataService)
 	err = core.UnmarshalPrimitive(m, "enabled", &obj.Enabled)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "protocol", &obj.Protocol)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "response_hop_limit", &obj.ResponseHopLimit)
 	if err != nil {
 		return
 	}
@@ -42843,12 +44439,40 @@ func UnmarshalInstanceMetadataService(m map[string]json.RawMessage, result inter
 type InstanceMetadataServicePatch struct {
 	// Indicates whether the metadata service endpoint will be available to the virtual server instance.
 	Enabled *bool `json:"enabled,omitempty"`
+
+	// The communication protocol to use for the metadata service endpoint. Applies only when the metadata service is
+	// enabled.
+	// - `http`: HTTP protocol (unencrypted)
+	// - `https`: HTTP Secure protocol.
+	Protocol *string `json:"protocol,omitempty"`
+
+	// The hop limit (IP time to live) for IP response packets from the metadata service. Applies only when the metadata
+	// service is enabled.
+	ResponseHopLimit *int64 `json:"response_hop_limit,omitempty"`
 }
+
+// Constants associated with the InstanceMetadataServicePatch.Protocol property.
+// The communication protocol to use for the metadata service endpoint. Applies only when the metadata service is
+// enabled.
+// - `http`: HTTP protocol (unencrypted)
+// - `https`: HTTP Secure protocol.
+const (
+	InstanceMetadataServicePatchProtocolHTTPConst  = "http"
+	InstanceMetadataServicePatchProtocolHTTPSConst = "https"
+)
 
 // UnmarshalInstanceMetadataServicePatch unmarshals an instance of InstanceMetadataServicePatch from the specified map of raw messages.
 func UnmarshalInstanceMetadataServicePatch(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(InstanceMetadataServicePatch)
 	err = core.UnmarshalPrimitive(m, "enabled", &obj.Enabled)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "protocol", &obj.Protocol)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "response_hop_limit", &obj.ResponseHopLimit)
 	if err != nil {
 		return
 	}
@@ -42860,12 +44484,40 @@ func UnmarshalInstanceMetadataServicePatch(m map[string]json.RawMessage, result 
 type InstanceMetadataServicePrototype struct {
 	// Indicates whether the metadata service endpoint will be available to the virtual server instance.
 	Enabled *bool `json:"enabled,omitempty"`
+
+	// The communication protocol to use for the metadata service endpoint. Applies only when the metadata service is
+	// enabled.
+	// - `http`: HTTP protocol (unencrypted)
+	// - `https`: HTTP Secure protocol.
+	Protocol *string `json:"protocol,omitempty"`
+
+	// The hop limit (IP time to live) for IP response packets from the metadata service. Applies only when the metadata
+	// service is enabled.
+	ResponseHopLimit *int64 `json:"response_hop_limit,omitempty"`
 }
+
+// Constants associated with the InstanceMetadataServicePrototype.Protocol property.
+// The communication protocol to use for the metadata service endpoint. Applies only when the metadata service is
+// enabled.
+// - `http`: HTTP protocol (unencrypted)
+// - `https`: HTTP Secure protocol.
+const (
+	InstanceMetadataServicePrototypeProtocolHTTPConst  = "http"
+	InstanceMetadataServicePrototypeProtocolHTTPSConst = "https"
+)
 
 // UnmarshalInstanceMetadataServicePrototype unmarshals an instance of InstanceMetadataServicePrototype from the specified map of raw messages.
 func UnmarshalInstanceMetadataServicePrototype(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(InstanceMetadataServicePrototype)
 	err = core.UnmarshalPrimitive(m, "enabled", &obj.Enabled)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "protocol", &obj.Protocol)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "response_hop_limit", &obj.ResponseHopLimit)
 	if err != nil {
 		return
 	}
@@ -42899,6 +44551,7 @@ type InstancePatch struct {
 	//   instance is placed on a dedicated host, the requested profile `family` must be
 	//   the same as the dedicated host `family`.
 	// - Have the same `vcpu.architecture`.
+	// - Support the number of network interfaces currently attached to the instance.
 	Profile InstancePatchProfileIntf `json:"profile,omitempty"`
 
 	// The amount of bandwidth (in megabits per second) allocated exclusively to instance storage volumes. An increase in
@@ -42950,13 +44603,15 @@ func (instancePatch *InstancePatch) AsPatch() (_patch map[string]interface{}, er
 
 // InstancePatchProfile : The profile to use for this virtual server instance. For the profile to be changed, the instance `status` must be
 // `stopping` or `stopped`. In addition, the requested profile must:
-// - Have matching instance disk support. Any disks associated with the current profile
-//   will be deleted, and any disks associated with the requested profile will be
-//   created.
-// - Be compatible with any `placement_target` constraints. For example, if the
-//   instance is placed on a dedicated host, the requested profile `family` must be
-//   the same as the dedicated host `family`.
-// - Have the same `vcpu.architecture`.
+//   - Have matching instance disk support. Any disks associated with the current profile
+//     will be deleted, and any disks associated with the requested profile will be
+//     created.
+//   - Be compatible with any `placement_target` constraints. For example, if the
+//     instance is placed on a dedicated host, the requested profile `family` must be
+//     the same as the dedicated host `family`.
+//   - Have the same `vcpu.architecture`.
+//   - Support the number of network interfaces currently attached to the instance.
+//
 // Models which "extend" this model:
 // - InstancePatchProfileInstanceProfileIdentityByName
 // - InstancePatchProfileInstanceProfileIdentityByHref
@@ -43173,6 +44828,8 @@ type InstanceProfile struct {
 	// The globally unique name for this virtual server instance profile.
 	Name *string `json:"name" validate:"required"`
 
+	NetworkInterfaceCount InstanceProfileNetworkInterfaceCountIntf `json:"network_interface_count" validate:"required"`
+
 	OsArchitecture *InstanceProfileOsArchitecture `json:"os_architecture" validate:"required"`
 
 	PortSpeed InstanceProfilePortSpeedIntf `json:"port_speed" validate:"required"`
@@ -43226,6 +44883,10 @@ func UnmarshalInstanceProfile(m map[string]json.RawMessage, result interface{}) 
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "network_interface_count", &obj.NetworkInterfaceCount, UnmarshalInstanceProfileNetworkInterfaceCount)
 	if err != nil {
 		return
 	}
@@ -43928,6 +45589,54 @@ func UnmarshalInstanceProfileMemory(m map[string]json.RawMessage, result interfa
 	return
 }
 
+// InstanceProfileNetworkInterfaceCount : InstanceProfileNetworkInterfaceCount struct
+// Models which "extend" this model:
+// - InstanceProfileNetworkInterfaceCountRange
+// - InstanceProfileNetworkInterfaceCountDependent
+type InstanceProfileNetworkInterfaceCount struct {
+	// The maximum value for this profile field.
+	Max *int64 `json:"max,omitempty"`
+
+	// The minimum value for this profile field.
+	Min *int64 `json:"min,omitempty"`
+
+	// The type for this profile field.
+	Type *string `json:"type,omitempty"`
+}
+
+// Constants associated with the InstanceProfileNetworkInterfaceCount.Type property.
+// The type for this profile field.
+const (
+	InstanceProfileNetworkInterfaceCountTypeRangeConst = "range"
+)
+
+func (*InstanceProfileNetworkInterfaceCount) isaInstanceProfileNetworkInterfaceCount() bool {
+	return true
+}
+
+type InstanceProfileNetworkInterfaceCountIntf interface {
+	isaInstanceProfileNetworkInterfaceCount() bool
+}
+
+// UnmarshalInstanceProfileNetworkInterfaceCount unmarshals an instance of InstanceProfileNetworkInterfaceCount from the specified map of raw messages.
+func UnmarshalInstanceProfileNetworkInterfaceCount(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(InstanceProfileNetworkInterfaceCount)
+	err = core.UnmarshalPrimitive(m, "max", &obj.Max)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "min", &obj.Min)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // InstanceProfileOsArchitecture : InstanceProfileOsArchitecture struct
 type InstanceProfileOsArchitecture struct {
 	// The default OS architecture for an instance with this profile.
@@ -44269,7 +45978,7 @@ func UnmarshalInstanceProfileVolumeBandwidth(m map[string]json.RawMessage, resul
 // - InstancePrototypeInstanceBySourceTemplate
 type InstancePrototype struct {
 	// The availability policy to use for this virtual server instance.
-	AvailabilityPolicy *InstanceAvailabilityPrototype `json:"availability_policy,omitempty"`
+	AvailabilityPolicy *InstanceAvailabilityPolicyPrototype `json:"availability_policy,omitempty"`
 
 	// The default trusted profile configuration to use for this virtual server instance
 	//
@@ -44374,7 +46083,7 @@ type InstancePrototypeIntf interface {
 // UnmarshalInstancePrototype unmarshals an instance of InstancePrototype from the specified map of raw messages.
 func UnmarshalInstancePrototype(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(InstancePrototype)
-	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPrototype)
+	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPolicyPrototype)
 	if err != nil {
 		return
 	}
@@ -44571,7 +46280,7 @@ func UnmarshalInstanceStatusReason(m map[string]json.RawMessage, result interfac
 // - InstanceTemplateInstanceByCatalogOffering
 type InstanceTemplate struct {
 	// The availability policy to use for this virtual server instance.
-	AvailabilityPolicy *InstanceAvailabilityPrototype `json:"availability_policy,omitempty"`
+	AvailabilityPolicy *InstanceAvailabilityPolicyPrototype `json:"availability_policy,omitempty"`
 
 	// The date and time that the instance template was created.
 	CreatedAt *strfmt.DateTime `json:"created_at" validate:"required"`
@@ -44681,7 +46390,7 @@ type InstanceTemplateIntf interface {
 // UnmarshalInstanceTemplate unmarshals an instance of InstanceTemplate from the specified map of raw messages.
 func UnmarshalInstanceTemplate(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(InstanceTemplate)
-	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPrototype)
+	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPolicyPrototype)
 	if err != nil {
 		return
 	}
@@ -44931,7 +46640,7 @@ func (instanceTemplatePatch *InstanceTemplatePatch) AsPatch() (_patch map[string
 // - InstanceTemplatePrototypeInstanceByCatalogOffering
 type InstanceTemplatePrototype struct {
 	// The availability policy to use for this virtual server instance.
-	AvailabilityPolicy *InstanceAvailabilityPrototype `json:"availability_policy,omitempty"`
+	AvailabilityPolicy *InstanceAvailabilityPolicyPrototype `json:"availability_policy,omitempty"`
 
 	// The default trusted profile configuration to use for this virtual server instance
 	//
@@ -45035,7 +46744,7 @@ type InstanceTemplatePrototypeIntf interface {
 // UnmarshalInstanceTemplatePrototype unmarshals an instance of InstanceTemplatePrototype from the specified map of raw messages.
 func UnmarshalInstanceTemplatePrototype(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(InstanceTemplatePrototype)
-	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPrototype)
+	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPolicyPrototype)
 	if err != nil {
 		return
 	}
@@ -45578,43 +47287,6 @@ type LegacyCloudObjectStorageBucketReference struct {
 func UnmarshalLegacyCloudObjectStorageBucketReference(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(LegacyCloudObjectStorageBucketReference)
 	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
-	if err != nil {
-		return
-	}
-	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
-	return
-}
-
-// LifecycleReason : LifecycleReason struct
-type LifecycleReason struct {
-	// A snake case string succinctly identifying the reason for this lifecycle state.
-	Code *string `json:"code" validate:"required"`
-
-	// An explanation of the reason for this lifecycle state.
-	Message *string `json:"message" validate:"required"`
-
-	// Link to documentation about the reason for this lifecycle state.
-	MoreInfo *string `json:"more_info,omitempty"`
-}
-
-// Constants associated with the LifecycleReason.Code property.
-// A snake case string succinctly identifying the reason for this lifecycle state.
-const (
-	LifecycleReasonCodeResourceSuspendedByProviderConst = "resource_suspended_by_provider"
-)
-
-// UnmarshalLifecycleReason unmarshals an instance of LifecycleReason from the specified map of raw messages.
-func UnmarshalLifecycleReason(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(LifecycleReason)
-	err = core.UnmarshalPrimitive(m, "code", &obj.Code)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "message", &obj.Message)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
 	if err != nil {
 		return
 	}
@@ -46670,6 +48342,43 @@ func (_options *ListIkePolicyConnectionsOptions) SetID(id string) *ListIkePolicy
 
 // SetHeaders : Allow user to set Headers
 func (options *ListIkePolicyConnectionsOptions) SetHeaders(param map[string]string) *ListIkePolicyConnectionsOptions {
+	options.Headers = param
+	return options
+}
+
+// ListImageExportJobsOptions : The ListImageExportJobs options.
+type ListImageExportJobsOptions struct {
+	// The image identifier.
+	ImageID *string `json:"image_id" validate:"required,ne="`
+
+	// Filters the collection to resources with the exact specified name.
+	Name *string `json:"name,omitempty"`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewListImageExportJobsOptions : Instantiate ListImageExportJobsOptions
+func (*VpcbetaV1) NewListImageExportJobsOptions(imageID string) *ListImageExportJobsOptions {
+	return &ListImageExportJobsOptions{
+		ImageID: core.StringPtr(imageID),
+	}
+}
+
+// SetImageID : Allow user to set ImageID
+func (_options *ListImageExportJobsOptions) SetImageID(imageID string) *ListImageExportJobsOptions {
+	_options.ImageID = core.StringPtr(imageID)
+	return _options
+}
+
+// SetName : Allow user to set Name
+func (_options *ListImageExportJobsOptions) SetName(name string) *ListImageExportJobsOptions {
+	_options.Name = core.StringPtr(name)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *ListImageExportJobsOptions) SetHeaders(param map[string]string) *ListImageExportJobsOptions {
 	options.Headers = param
 	return options
 }
@@ -48271,6 +49980,34 @@ func (options *ListSharesOptions) SetHeaders(param map[string]string) *ListShare
 	return options
 }
 
+// ListSnapshotClonesOptions : The ListSnapshotClones options.
+type ListSnapshotClonesOptions struct {
+	// The snapshot identifier.
+	ID *string `json:"id" validate:"required,ne="`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewListSnapshotClonesOptions : Instantiate ListSnapshotClonesOptions
+func (*VpcbetaV1) NewListSnapshotClonesOptions(id string) *ListSnapshotClonesOptions {
+	return &ListSnapshotClonesOptions{
+		ID: core.StringPtr(id),
+	}
+}
+
+// SetID : Allow user to set ID
+func (_options *ListSnapshotClonesOptions) SetID(id string) *ListSnapshotClonesOptions {
+	_options.ID = core.StringPtr(id)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *ListSnapshotClonesOptions) SetHeaders(param map[string]string) *ListSnapshotClonesOptions {
+	options.Headers = param
+	return options
+}
+
 // ListSnapshotsOptions : The ListSnapshots options.
 type ListSnapshotsOptions struct {
 	// A server-provided token determining what resource to start the page on.
@@ -48313,6 +50050,9 @@ type ListSnapshotsOptions struct {
 
 	// Filters the collection to backup policy jobs with the backup plan with the specified identifier.
 	BackupPolicyPlanID *string `json:"backup_policy_plan.id,omitempty"`
+
+	// Filters the collection to resources with a clone in the specified zone.
+	ClonesZoneName *string `json:"clones[].zone.name,omitempty"`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -48395,6 +50135,12 @@ func (_options *ListSnapshotsOptions) SetSort(sort string) *ListSnapshotsOptions
 // SetBackupPolicyPlanID : Allow user to set BackupPolicyPlanID
 func (_options *ListSnapshotsOptions) SetBackupPolicyPlanID(backupPolicyPlanID string) *ListSnapshotsOptions {
 	_options.BackupPolicyPlanID = core.StringPtr(backupPolicyPlanID)
+	return _options
+}
+
+// SetClonesZoneName : Allow user to set ClonesZoneName
+func (_options *ListSnapshotsOptions) SetClonesZoneName(clonesZoneName string) *ListSnapshotsOptions {
+	_options.ClonesZoneName = core.StringPtr(clonesZoneName)
 	return _options
 }
 
@@ -49348,6 +51094,12 @@ type LoadBalancer struct {
 	// The load balancer's CRN.
 	CRN *string `json:"crn" validate:"required"`
 
+	// The DNS configuration for this load balancer.
+	//
+	// If absent, DNS `A` records for this load balancer's `hostname` property will be added to
+	// the public DNS zone `lb.appdomain.cloud`.
+	Dns *LoadBalancerDns `json:"dns,omitempty"`
+
 	// Fully qualified domain name assigned to this load balancer.
 	Hostname *string `json:"hostname" validate:"required"`
 
@@ -49443,20 +51195,25 @@ const (
 // Constants associated with the LoadBalancer.ProvisioningStatus property.
 // The provisioning status of this load balancer:
 //
-// - `active`: The load balancer is running.
-// - `create_pending`: The load balancer is being created.
-// - `delete_pending`: The load balancer is being deleted.
-// - `maintenance_pending`: The load balancer is unavailable due to an internal
-//                           error (contact IBM support).
-// - `migrate_pending`: The load balancer is migrating to the requested configuration.
-//                       Performance may be degraded.
-// - `update_pending`: The load balancer is being updated
+//   - `active`: The load balancer is running.
+//
+//   - `create_pending`: The load balancer is being created.
+//
+//   - `delete_pending`: The load balancer is being deleted.
+//
+//   - `maintenance_pending`: The load balancer is unavailable due to an internal
+//     error (contact IBM support).
+//
+//   - `migrate_pending`: The load balancer is migrating to the requested configuration.
+//     Performance may be degraded.
+//
+//   - `update_pending`: The load balancer is being updated
 //     to the requested configuration.
 //
-//   The enumerated values for this property are expected to expand in the future. When
-//   processing this property, check for and log unknown values. Optionally halt
-//   processing and surface the error, or bypass the load balancer on which the
-//   unexpected property value was encountered.
+//     The enumerated values for this property are expected to expand in the future. When
+//     processing this property, check for and log unknown values. Optionally halt
+//     processing and surface the error, or bypass the load balancer on which the
+//     unexpected property value was encountered.
 const (
 	LoadBalancerProvisioningStatusActiveConst             = "active"
 	LoadBalancerProvisioningStatusCreatePendingConst      = "create_pending"
@@ -49481,6 +51238,10 @@ func UnmarshalLoadBalancer(m map[string]json.RawMessage, result interface{}) (er
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "dns", &obj.Dns, UnmarshalLoadBalancerDns)
 	if err != nil {
 		return
 	}
@@ -49660,6 +51421,101 @@ func UnmarshalLoadBalancerCollectionNext(m map[string]json.RawMessage, result in
 	return
 }
 
+// LoadBalancerDns : The DNS configuration for this load balancer.
+//
+// If absent, DNS `A` records for this load balancer's `hostname` property will be added to the public DNS zone
+// `lb.appdomain.cloud`.
+type LoadBalancerDns struct {
+	// The DNS instance associated with this load balancer.
+	Instance *DnsInstanceReference `json:"instance" validate:"required"`
+
+	// The DNS zone associated with this load balancer.
+	Zone *DnsZoneReference `json:"zone" validate:"required"`
+}
+
+// UnmarshalLoadBalancerDns unmarshals an instance of LoadBalancerDns from the specified map of raw messages.
+func UnmarshalLoadBalancerDns(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(LoadBalancerDns)
+	err = core.UnmarshalModel(m, "instance", &obj.Instance, UnmarshalDnsInstanceReference)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "zone", &obj.Zone, UnmarshalDnsZoneReference)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// LoadBalancerDnsPatch : LoadBalancerDnsPatch struct
+type LoadBalancerDnsPatch struct {
+	// The DNS instance to associate with this load balancer.
+	//
+	// The specified instance may be in a different region or account, subject to IAM
+	// policies.
+	Instance DnsInstanceIdentityIntf `json:"instance,omitempty"`
+
+	// The DNS zone to associate with this load balancer.
+	//
+	// The specified zone may be in a different region or account, subject to IAM policies.
+	Zone DnsZoneIdentityIntf `json:"zone,omitempty"`
+}
+
+// UnmarshalLoadBalancerDnsPatch unmarshals an instance of LoadBalancerDnsPatch from the specified map of raw messages.
+func UnmarshalLoadBalancerDnsPatch(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(LoadBalancerDnsPatch)
+	err = core.UnmarshalModel(m, "instance", &obj.Instance, UnmarshalDnsInstanceIdentity)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "zone", &obj.Zone, UnmarshalDnsZoneIdentity)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// LoadBalancerDnsPrototype : LoadBalancerDnsPrototype struct
+type LoadBalancerDnsPrototype struct {
+	// The DNS instance to associate with this load balancer.
+	//
+	// The specified instance may be in a different region or account, subject to IAM
+	// policies.
+	Instance DnsInstanceIdentityIntf `json:"instance" validate:"required"`
+
+	// The DNS zone to associate with this load balancer.
+	//
+	// The specified zone may be in a different region or account, subject to IAM policies.
+	Zone DnsZoneIdentityIntf `json:"zone" validate:"required"`
+}
+
+// NewLoadBalancerDnsPrototype : Instantiate LoadBalancerDnsPrototype (Generic Model Constructor)
+func (*VpcbetaV1) NewLoadBalancerDnsPrototype(instance DnsInstanceIdentityIntf, zone DnsZoneIdentityIntf) (_model *LoadBalancerDnsPrototype, err error) {
+	_model = &LoadBalancerDnsPrototype{
+		Instance: instance,
+		Zone:     zone,
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+// UnmarshalLoadBalancerDnsPrototype unmarshals an instance of LoadBalancerDnsPrototype from the specified map of raw messages.
+func UnmarshalLoadBalancerDnsPrototype(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(LoadBalancerDnsPrototype)
+	err = core.UnmarshalModel(m, "instance", &obj.Instance, UnmarshalDnsInstanceIdentity)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "zone", &obj.Zone, UnmarshalDnsZoneIdentity)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // LoadBalancerIdentity : Identifies a load balancer by a unique property.
 // Models which "extend" this model:
 // - LoadBalancerIdentityByID
@@ -49735,6 +51591,10 @@ type LoadBalancerListener struct {
 
 	// The unique identifier for this load balancer listener.
 	ID *string `json:"id" validate:"required"`
+
+	// The idle connection timeout of the listener in seconds. This property will be present for load balancers in the
+	// `application` family.
+	IdleConnectionTimeout *int64 `json:"idle_connection_timeout,omitempty"`
 
 	// The policies for this listener.
 	Policies []LoadBalancerListenerPolicyReference `json:"policies,omitempty"`
@@ -49826,6 +51686,10 @@ func UnmarshalLoadBalancerListener(m map[string]json.RawMessage, result interfac
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "idle_connection_timeout", &obj.IdleConnectionTimeout)
 	if err != nil {
 		return
 	}
@@ -50044,6 +51908,9 @@ type LoadBalancerListenerPatch struct {
 	// Specify `null` to remove any existing https redirect.
 	HTTPSRedirect *LoadBalancerListenerHTTPSRedirectPatch `json:"https_redirect,omitempty"`
 
+	// The idle connection timeout of the listener in seconds. Supported for load balancers in the `application` family.
+	IdleConnectionTimeout *int64 `json:"idle_connection_timeout,omitempty"`
+
 	// The listener port number, or the inclusive lower bound of the port range. Each listener in the load balancer must
 	// have a unique `port` and `protocol` combination.
 	//
@@ -50123,6 +51990,10 @@ func UnmarshalLoadBalancerListenerPatch(m map[string]json.RawMessage, result int
 		return
 	}
 	err = core.UnmarshalModel(m, "https_redirect", &obj.HTTPSRedirect, UnmarshalLoadBalancerListenerHTTPSRedirectPatch)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "idle_connection_timeout", &obj.IdleConnectionTimeout)
 	if err != nil {
 		return
 	}
@@ -50882,9 +52753,10 @@ func UnmarshalLoadBalancerListenerPolicyTarget(m map[string]json.RawMessage, res
 }
 
 // LoadBalancerListenerPolicyTargetPatch : - If `action` is `forward`, specify a `LoadBalancerPoolIdentity`.
-// - If `action` is `redirect`, specify a `LoadBalancerListenerPolicyRedirectURLPatch`.
-// - If `action` is `https_redirect`, specify a
-//   `LoadBalancerListenerPolicyHTTPSRedirectPatch`.
+//   - If `action` is `redirect`, specify a `LoadBalancerListenerPolicyRedirectURLPatch`.
+//   - If `action` is `https_redirect`, specify a
+//     `LoadBalancerListenerPolicyHTTPSRedirectPatch`.
+//
 // Models which "extend" this model:
 // - LoadBalancerListenerPolicyTargetPatchLoadBalancerPoolIdentity
 // - LoadBalancerListenerPolicyTargetPatchLoadBalancerListenerPolicyRedirectURLPatch
@@ -50949,9 +52821,10 @@ func UnmarshalLoadBalancerListenerPolicyTargetPatch(m map[string]json.RawMessage
 }
 
 // LoadBalancerListenerPolicyTargetPrototype : - If `action` is `forward`, specify a `LoadBalancerPoolIdentity`.
-// - If `action` is `redirect`, specify a `LoadBalancerListenerPolicyRedirectURLPrototype`.
-// - If `action` is `https_redirect`, specify a
-//   `LoadBalancerListenerPolicyHTTPSRedirectPrototype`.
+//   - If `action` is `redirect`, specify a `LoadBalancerListenerPolicyRedirectURLPrototype`.
+//   - If `action` is `https_redirect`, specify a
+//     `LoadBalancerListenerPolicyHTTPSRedirectPrototype`.
+//
 // Models which "extend" this model:
 // - LoadBalancerListenerPolicyTargetPrototypeLoadBalancerPoolIdentity
 // - LoadBalancerListenerPolicyTargetPrototypeLoadBalancerListenerPolicyRedirectURLPrototype
@@ -51046,6 +52919,9 @@ type LoadBalancerListenerPrototypeLoadBalancerContext struct {
 	// `protocol` of `http`, and the target listener must have a `protocol` of `https`.
 	HTTPSRedirect *LoadBalancerListenerHTTPSRedirectPrototype `json:"https_redirect,omitempty"`
 
+	// The idle connection timeout of the listener in seconds. Supported for load balancers in the `application` family.
+	IdleConnectionTimeout *int64 `json:"idle_connection_timeout,omitempty"`
+
 	// The listener port number, or the inclusive lower bound of the port range. Each listener in the load balancer must
 	// have a unique `port` and `protocol` combination.
 	//
@@ -51094,10 +52970,10 @@ type LoadBalancerListenerPrototypeLoadBalancerContext struct {
 // `https`.
 //
 // Additional restrictions:
-// - If `default_pool` is set, the pool's protocol must match, or be compatible with
-//   the listener's protocol. At present, the compatible protocols are `http` and
-//   `https`.
-// - If `https_redirect` is set, the protocol must be `http`.
+//   - If `default_pool` is set, the pool's protocol must match, or be compatible with
+//     the listener's protocol. At present, the compatible protocols are `http` and
+//     `https`.
+//   - If `https_redirect` is set, the protocol must be `http`.
 const (
 	LoadBalancerListenerPrototypeLoadBalancerContextProtocolHTTPConst  = "http"
 	LoadBalancerListenerPrototypeLoadBalancerContextProtocolHTTPSConst = "https"
@@ -51134,6 +53010,10 @@ func UnmarshalLoadBalancerListenerPrototypeLoadBalancerContext(m map[string]json
 		return
 	}
 	err = core.UnmarshalModel(m, "https_redirect", &obj.HTTPSRedirect, UnmarshalLoadBalancerListenerHTTPSRedirectPrototype)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "idle_connection_timeout", &obj.IdleConnectionTimeout)
 	if err != nil {
 		return
 	}
@@ -51311,6 +53191,8 @@ func UnmarshalLoadBalancerLoggingPrototype(m map[string]json.RawMessage, result 
 
 // LoadBalancerPatch : LoadBalancerPatch struct
 type LoadBalancerPatch struct {
+	Dns *LoadBalancerDnsPatch `json:"dns,omitempty"`
+
 	// The logging configuration to use for this load balancer.
 	//
 	// To activate logging, the load balancer profile must support the specified logging type.
@@ -51332,6 +53214,10 @@ type LoadBalancerPatch struct {
 // UnmarshalLoadBalancerPatch unmarshals an instance of LoadBalancerPatch from the specified map of raw messages.
 func UnmarshalLoadBalancerPatch(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(LoadBalancerPatch)
+	err = core.UnmarshalModel(m, "dns", &obj.Dns, UnmarshalLoadBalancerDnsPatch)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalModel(m, "logging", &obj.Logging, UnmarshalLoadBalancerLoggingPatch)
 	if err != nil {
 		return
@@ -53887,7 +55773,9 @@ type NetworkACLRulePatch struct {
 	// Specify `null` to move this rule after all existing rules.
 	Before NetworkACLRuleBeforePatchIntf `json:"before,omitempty"`
 
-	// The ICMP traffic code to match.
+	// The ICMP traffic code to match. If set, `type` must also be set.
+	//
+	// Specify `null` to remove an existing ICMP traffic code.
 	Code *int64 `json:"code,omitempty"`
 
 	// The destination IP address or CIDR block to match. The CIDR block `0.0.0.0/0` matches all destination addresses.
@@ -53918,6 +55806,8 @@ type NetworkACLRulePatch struct {
 	SourcePortMin *int64 `json:"source_port_min,omitempty"`
 
 	// The ICMP traffic type to match.
+	//
+	// Specify `null` to remove an existing ICMP traffic type value.
 	Type *int64 `json:"type,omitempty"`
 }
 
@@ -54033,6 +55923,9 @@ type NetworkACLRulePrototype struct {
 	// The direction of traffic to match.
 	Direction *string `json:"direction" validate:"required"`
 
+	// The IP version for this rule.
+	IPVersion *string `json:"ip_version,omitempty"`
+
 	// The name for this network ACL rule. The name must not be used by another rule for the network ACL. If unspecified,
 	// the name will be a hyphenated list of randomly-selected words.
 	Name *string `json:"name,omitempty"`
@@ -54078,6 +55971,12 @@ const (
 const (
 	NetworkACLRulePrototypeDirectionInboundConst  = "inbound"
 	NetworkACLRulePrototypeDirectionOutboundConst = "outbound"
+)
+
+// Constants associated with the NetworkACLRulePrototype.IPVersion property.
+// The IP version for this rule.
+const (
+	NetworkACLRulePrototypeIPVersionIpv4Const = "ipv4"
 )
 
 // Constants associated with the NetworkACLRulePrototype.Protocol property.
@@ -54139,6 +56038,9 @@ type NetworkACLRulePrototypeNetworkACLContext struct {
 	// The direction of traffic to match.
 	Direction *string `json:"direction" validate:"required"`
 
+	// The IP version for this rule.
+	IPVersion *string `json:"ip_version,omitempty"`
+
 	// The name for this network ACL rule. The name must not be used by another rule for the network ACL. If unspecified,
 	// the name will be a hyphenated list of randomly-selected words.
 	Name *string `json:"name,omitempty"`
@@ -54184,6 +56086,12 @@ const (
 const (
 	NetworkACLRulePrototypeNetworkACLContextDirectionInboundConst  = "inbound"
 	NetworkACLRulePrototypeNetworkACLContextDirectionOutboundConst = "outbound"
+)
+
+// Constants associated with the NetworkACLRulePrototypeNetworkACLContext.IPVersion property.
+// The IP version for this rule.
+const (
+	NetworkACLRulePrototypeNetworkACLContextIPVersionIpv4Const = "ipv4"
 )
 
 // Constants associated with the NetworkACLRulePrototypeNetworkACLContext.Protocol property.
@@ -54297,7 +56205,7 @@ type NetworkInterface struct {
 	CreatedAt *strfmt.DateTime `json:"created_at" validate:"required"`
 
 	// The floating IPs associated with this network interface.
-	FloatingIps []FloatingIPReference `json:"floating_ips,omitempty"`
+	FloatingIps []FloatingIPReference `json:"floating_ips" validate:"required"`
 
 	// The URL for this network interface.
 	Href *string `json:"href" validate:"required"`
@@ -56919,6 +58827,13 @@ type Route struct {
 	// unexpected property value was encountered.
 	Origin *string `json:"origin,omitempty"`
 
+	// The priority of this route. Smaller values have higher priority.
+	//
+	// If a routing table contains multiple routes with the same `zone` and `destination`, the route with the highest
+	// priority (smallest value) is selected. If two routes have the same `destination` and `priority`, traffic is
+	// distributed between them.
+	Priority *int64 `json:"priority" validate:"required"`
+
 	// The zone the route applies to. (Traffic from subnets in this zone will be
 	// subject to this route.).
 	Zone *ZoneReference `json:"zone" validate:"required"`
@@ -57002,6 +58917,10 @@ func UnmarshalRoute(m map[string]json.RawMessage, result interface{}) (err error
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "origin", &obj.Origin)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "priority", &obj.Priority)
 	if err != nil {
 		return
 	}
@@ -57251,17 +59170,92 @@ func UnmarshalRouteNextHop(m map[string]json.RawMessage, result interface{}) (er
 	return
 }
 
+// RouteNextHopPatch : The next hop that packets will be delivered to, if `action` is `deliver`. For other `action` values, specify
+// `0.0.0.0` or remove it by specifying `null`.
+//
+// At most two routes per `zone` in a table can have the same `destination` and `priority`, and only if both routes have
+// an `action` of `deliver` and the `next_hop` is an IP address.
+// Models which "extend" this model:
+// - RouteNextHopPatchRouteNextHopIP
+// - RouteNextHopPatchVPNGatewayConnectionIdentity
+type RouteNextHopPatch struct {
+	// The IP address.
+	//
+	// This property may add support for IPv6 addresses in the future. When processing a value in this property, verify
+	// that the address is in an expected format. If it is not, log an error. Optionally halt processing and surface the
+	// error, or bypass the resource on which the unexpected IP address format was encountered.
+	Address *string `json:"address,omitempty"`
+
+	// The unique identifier for this VPN gateway connection.
+	ID *string `json:"id,omitempty"`
+
+	// The VPN connection's canonical URL.
+	Href *string `json:"href,omitempty"`
+}
+
+func (*RouteNextHopPatch) isaRouteNextHopPatch() bool {
+	return true
+}
+
+type RouteNextHopPatchIntf interface {
+	isaRouteNextHopPatch() bool
+}
+
+// UnmarshalRouteNextHopPatch unmarshals an instance of RouteNextHopPatch from the specified map of raw messages.
+func UnmarshalRouteNextHopPatch(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(RouteNextHopPatch)
+	err = core.UnmarshalPrimitive(m, "address", &obj.Address)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // RoutePatch : RoutePatch struct
 type RoutePatch struct {
 	// The name for this route. The name must not be used by another route in the routing table. Names starting with `ibm-`
 	// are reserved for system-provided routes, and are not allowed.
 	Name *string `json:"name,omitempty"`
+
+	// The next hop that packets will be delivered to, if `action` is `deliver`. For other `action`
+	// values, specify `0.0.0.0` or remove it by specifying `null`.
+	//
+	// At most two routes per `zone` in a table can have the same `destination` and `priority`, and
+	// only if both routes have an `action` of `deliver` and the `next_hop` is an IP address.
+	NextHop RouteNextHopPatchIntf `json:"next_hop,omitempty"`
+
+	// The priority of this route. Smaller values have higher priority.
+	//
+	// If a routing table contains multiple routes with the same `zone` and `destination`, the route with the highest
+	// priority (smallest value) is selected. If two routes have the same `destination` and `priority`, traffic is
+	// distributed between them.
+	//
+	// At most two routes per `zone` in a table can have the same `destination` and
+	// `priority`, and only if both routes have an `action` of `deliver` and the `next_hop` is an IP address.
+	Priority *int64 `json:"priority,omitempty"`
 }
 
 // UnmarshalRoutePatch unmarshals an instance of RoutePatch from the specified map of raw messages.
 func UnmarshalRoutePatch(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(RoutePatch)
 	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "next_hop", &obj.NextHop, UnmarshalRouteNextHopPatch)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "priority", &obj.Priority)
 	if err != nil {
 		return
 	}
@@ -57288,8 +59282,8 @@ type RoutePrototype struct {
 	// - `drop`: drop the packet.
 	Action *string `json:"action,omitempty"`
 
-	// The destination of the route. At most two routes per `zone` in a table can have the same destination, and only if
-	// both routes have an `action` of `deliver` and the `next_hop` is an IP address.
+	// The destination of the route. At most two routes per `zone` in a table can have the same `destination` and
+	// `priority`, and only if both routes have an `action` of `deliver` and the `next_hop` is an IP address.
 	Destination *string `json:"destination" validate:"required"`
 
 	// The name for this route. The name must not be used by another route in the routing table. Names starting with `ibm-`
@@ -57300,6 +59294,16 @@ type RoutePrototype struct {
 	// If `action` is `deliver`, the next hop that packets will be delivered to. For other `action`
 	// values, it must be omitted or specified as `0.0.0.0`.
 	NextHop RoutePrototypeNextHopIntf `json:"next_hop,omitempty"`
+
+	// The priority of this route. Smaller values have higher priority.
+	//
+	// If a routing table contains multiple routes with the same `zone` and `destination`, the route with the highest
+	// priority (smallest value) is selected. If two routes have the same `destination` and `priority`, traffic is
+	// distributed between them.
+	//
+	// At most two routes per `zone` in a table can have the same `destination` and
+	// `priority`, and only if both routes have an `action` of `deliver` and the `next_hop` is an IP address.
+	Priority *int64 `json:"priority,omitempty"`
 
 	// The zone to apply the route to. (Traffic from subnets in this zone will be
 	// subject to this route.).
@@ -57345,6 +59349,10 @@ func UnmarshalRoutePrototype(m map[string]json.RawMessage, result interface{}) (
 		return
 	}
 	err = core.UnmarshalModel(m, "next_hop", &obj.NextHop, UnmarshalRoutePrototypeNextHop)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "priority", &obj.Priority)
 	if err != nil {
 		return
 	}
@@ -57759,7 +59767,8 @@ type RoutingTablePatch struct {
 	// Indicates whether this routing table is used to route traffic that originates from
 	// [Direct Link](https://cloud.ibm.com/docs/dl/) to this VPC. Updating to `true` selects this routing table, provided
 	// no other routing table in the VPC already has this property set to `true`, and no subnets are attached to this
-	// routing table. Updating to `false` deselects this routing table.
+	// routing table. Updating to
+	// `false` deselects this routing table.
 	//
 	// Incoming traffic will be routed according to the routing table with one exception: routes with an `action` of
 	// `deliver` are treated as `drop` unless the `next_hop` is an IP address bound to a network interface on a subnet in
@@ -60358,6 +62367,9 @@ type Snapshot struct {
 	// created before 1 January 2022.
 	CapturedAt *strfmt.DateTime `json:"captured_at,omitempty"`
 
+	// Clones for this snapshot.
+	Clones []SnapshotClone `json:"clones" validate:"required"`
+
 	// The date and time that this snapshot was created.
 	CreatedAt *strfmt.DateTime `json:"created_at" validate:"required"`
 
@@ -60461,6 +62473,10 @@ func UnmarshalSnapshot(m map[string]json.RawMessage, result interface{}) (err er
 	if err != nil {
 		return
 	}
+	err = core.UnmarshalModel(m, "clones", &obj.Clones, UnmarshalSnapshotClone)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "created_at", &obj.CreatedAt)
 	if err != nil {
 		return
@@ -60530,6 +62546,81 @@ func UnmarshalSnapshot(m map[string]json.RawMessage, result interface{}) (err er
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "user_tags", &obj.UserTags)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// SnapshotClone : SnapshotClone struct
+type SnapshotClone struct {
+	// Indicates whether this snapshot clone is available for use.
+	Available *bool `json:"available" validate:"required"`
+
+	// The date and time that this snapshot clone was created.
+	CreatedAt *strfmt.DateTime `json:"created_at" validate:"required"`
+
+	// The zone this snapshot clone resides in.
+	Zone *ZoneReference `json:"zone" validate:"required"`
+}
+
+// UnmarshalSnapshotClone unmarshals an instance of SnapshotClone from the specified map of raw messages.
+func UnmarshalSnapshotClone(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(SnapshotClone)
+	err = core.UnmarshalPrimitive(m, "available", &obj.Available)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "created_at", &obj.CreatedAt)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "zone", &obj.Zone, UnmarshalZoneReference)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// SnapshotCloneCollection : SnapshotCloneCollection struct
+type SnapshotCloneCollection struct {
+	// Collection of snapshot clones.
+	Clones []SnapshotClone `json:"clones" validate:"required"`
+}
+
+// UnmarshalSnapshotCloneCollection unmarshals an instance of SnapshotCloneCollection from the specified map of raw messages.
+func UnmarshalSnapshotCloneCollection(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(SnapshotCloneCollection)
+	err = core.UnmarshalModel(m, "clones", &obj.Clones, UnmarshalSnapshotClone)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// SnapshotClonePrototype : SnapshotClonePrototype struct
+type SnapshotClonePrototype struct {
+	// The zone this snapshot clone will reside in. Must be in the same region as the
+	// snapshot.
+	Zone ZoneIdentityIntf `json:"zone" validate:"required"`
+}
+
+// NewSnapshotClonePrototype : Instantiate SnapshotClonePrototype (Generic Model Constructor)
+func (*VpcbetaV1) NewSnapshotClonePrototype(zone ZoneIdentityIntf) (_model *SnapshotClonePrototype, err error) {
+	_model = &SnapshotClonePrototype{
+		Zone: zone,
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+// UnmarshalSnapshotClonePrototype unmarshals an instance of SnapshotClonePrototype from the specified map of raw messages.
+func UnmarshalSnapshotClonePrototype(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(SnapshotClonePrototype)
+	err = core.UnmarshalModel(m, "zone", &obj.Zone, UnmarshalZoneIdentity)
 	if err != nil {
 		return
 	}
@@ -60710,6 +62801,9 @@ func (snapshotPatch *SnapshotPatch) AsPatch() (_patch map[string]interface{}, er
 // Models which "extend" this model:
 // - SnapshotPrototypeSnapshotBySourceVolume
 type SnapshotPrototype struct {
+	// Clones to create for this snapshot.
+	Clones []SnapshotClonePrototype `json:"clones,omitempty"`
+
 	// The name for this snapshot. The name must not be used by another snapshot in the region. If unspecified, the name
 	// will be a hyphenated list of randomly-selected words.
 	Name *string `json:"name,omitempty"`
@@ -60736,6 +62830,10 @@ type SnapshotPrototypeIntf interface {
 // UnmarshalSnapshotPrototype unmarshals an instance of SnapshotPrototype from the specified map of raw messages.
 func UnmarshalSnapshotPrototype(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(SnapshotPrototype)
+	err = core.UnmarshalModel(m, "clones", &obj.Clones, UnmarshalSnapshotClonePrototype)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
 	if err != nil {
 		return
@@ -62089,6 +64187,54 @@ func (_options *UpdateIkePolicyOptions) SetIkePolicyPatch(ikePolicyPatch map[str
 
 // SetHeaders : Allow user to set Headers
 func (options *UpdateIkePolicyOptions) SetHeaders(param map[string]string) *UpdateIkePolicyOptions {
+	options.Headers = param
+	return options
+}
+
+// UpdateImageExportJobOptions : The UpdateImageExportJob options.
+type UpdateImageExportJobOptions struct {
+	// The image identifier.
+	ImageID *string `json:"image_id" validate:"required,ne="`
+
+	// The image export job identifier.
+	ID *string `json:"id" validate:"required,ne="`
+
+	// The image export job patch.
+	ImageExportJobPatch map[string]interface{} `json:"ImageExportJob_patch" validate:"required"`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewUpdateImageExportJobOptions : Instantiate UpdateImageExportJobOptions
+func (*VpcbetaV1) NewUpdateImageExportJobOptions(imageID string, id string, imageExportJobPatch map[string]interface{}) *UpdateImageExportJobOptions {
+	return &UpdateImageExportJobOptions{
+		ImageID:             core.StringPtr(imageID),
+		ID:                  core.StringPtr(id),
+		ImageExportJobPatch: imageExportJobPatch,
+	}
+}
+
+// SetImageID : Allow user to set ImageID
+func (_options *UpdateImageExportJobOptions) SetImageID(imageID string) *UpdateImageExportJobOptions {
+	_options.ImageID = core.StringPtr(imageID)
+	return _options
+}
+
+// SetID : Allow user to set ID
+func (_options *UpdateImageExportJobOptions) SetID(id string) *UpdateImageExportJobOptions {
+	_options.ID = core.StringPtr(id)
+	return _options
+}
+
+// SetImageExportJobPatch : Allow user to set ImageExportJobPatch
+func (_options *UpdateImageExportJobOptions) SetImageExportJobPatch(imageExportJobPatch map[string]interface{}) *UpdateImageExportJobOptions {
+	_options.ImageExportJobPatch = imageExportJobPatch
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *UpdateImageExportJobOptions) SetHeaders(param map[string]string) *UpdateImageExportJobOptions {
 	options.Headers = param
 	return options
 }
@@ -64017,7 +66163,9 @@ type VPC struct {
 	// The default routing table to use for subnets created in this VPC.
 	DefaultRoutingTable *RoutingTableReference `json:"default_routing_table" validate:"required"`
 
-	// The default security group to use for network interfaces created in this VPC.
+	// The default security group for this VPC. Resources created in this VPC that allow
+	// a security group to be optionally specified will use this security group by
+	// default.
 	DefaultSecurityGroup *SecurityGroupReference `json:"default_security_group" validate:"required"`
 
 	// The URL for this VPC.
@@ -66648,8 +68796,7 @@ type Volume struct {
 	// The unique identifier for this volume.
 	ID *string `json:"id" validate:"required"`
 
-	// The maximum I/O operations per second (IOPS) to use for the volume. Applicable only to volumes using a profile
-	// `family` of `custom`.
+	// The maximum I/O operations per second (IOPS) for this volume.
 	Iops *int64 `json:"iops" validate:"required"`
 
 	// The name for this volume. The name is unique across all volumes in the region.
@@ -66888,7 +69035,7 @@ type VolumeAttachment struct {
 	// The attached volume.
 	//
 	// This property will be absent if the volume has not yet been provisioned.
-	Volume *VolumeReference `json:"volume,omitempty"`
+	Volume *VolumeReferenceVolumeAttachmentContext `json:"volume,omitempty"`
 }
 
 // Constants associated with the VolumeAttachment.Status property.
@@ -66946,7 +69093,7 @@ func UnmarshalVolumeAttachment(m map[string]json.RawMessage, result interface{})
 	if err != nil {
 		return
 	}
-	err = core.UnmarshalModel(m, "volume", &obj.Volume, UnmarshalVolumeReference)
+	err = core.UnmarshalModel(m, "volume", &obj.Volume, UnmarshalVolumeReferenceVolumeAttachmentContext)
 	if err != nil {
 		return
 	}
@@ -67200,7 +69347,7 @@ type VolumeAttachmentPrototypeVolume struct {
 	// The URL for this volume.
 	Href *string `json:"href,omitempty"`
 
-	// The maximum I/O operations per second (IOPS) to use for the volume. Applicable only to volumes using a profile
+	// The maximum I/O operations per second (IOPS) to use for this volume. Applicable only to volumes using a profile
 	// `family` of `custom`.
 	Iops *int64 `json:"iops,omitempty"`
 
@@ -67306,7 +69453,7 @@ type VolumeAttachmentReferenceInstanceContext struct {
 	// The attached volume.
 	//
 	// This property will be absent if the volume has not yet been provisioned.
-	Volume *VolumeReference `json:"volume,omitempty"`
+	Volume *VolumeReferenceVolumeAttachmentContext `json:"volume,omitempty"`
 }
 
 // UnmarshalVolumeAttachmentReferenceInstanceContext unmarshals an instance of VolumeAttachmentReferenceInstanceContext from the specified map of raw messages.
@@ -67332,7 +69479,7 @@ func UnmarshalVolumeAttachmentReferenceInstanceContext(m map[string]json.RawMess
 	if err != nil {
 		return
 	}
-	err = core.UnmarshalModel(m, "volume", &obj.Volume, UnmarshalVolumeReference)
+	err = core.UnmarshalModel(m, "volume", &obj.Volume, UnmarshalVolumeReferenceVolumeAttachmentContext)
 	if err != nil {
 		return
 	}
@@ -67626,7 +69773,7 @@ type VolumePatch struct {
 	// The minimum and maximum capacity limits for creating or updating volumes may expand in the future.
 	Capacity *int64 `json:"capacity,omitempty"`
 
-	// The maximum I/O operations per second (IOPS) to use for the volume. Applicable only to volumes using a profile
+	// The maximum I/O operations per second (IOPS) to use for this volume. Applicable only to volumes using a profile
 	// `family` of `custom`. The volume must be attached as a data volume to a running virtual server instance.
 	Iops *int64 `json:"iops,omitempty"`
 
@@ -67882,7 +70029,7 @@ func UnmarshalVolumeProfileReference(m map[string]json.RawMessage, result interf
 // - VolumePrototypeVolumeByCapacity
 // - VolumePrototypeVolumeBySourceSnapshot
 type VolumePrototype struct {
-	// The maximum I/O operations per second (IOPS) to use for the volume. Applicable only to volumes using a profile
+	// The maximum I/O operations per second (IOPS) to use for this volume. Applicable only to volumes using a profile
 	// `family` of `custom`.
 	Iops *int64 `json:"iops,omitempty"`
 
@@ -67981,7 +70128,7 @@ type VolumePrototypeInstanceByImageContext struct {
 	// If unspecified, the `encryption` type for the volume will be `provider_managed`.
 	EncryptionKey EncryptionKeyIdentityIntf `json:"encryption_key,omitempty"`
 
-	// The maximum I/O operations per second (IOPS) to use for the volume. Applicable only to volumes using a profile
+	// The maximum I/O operations per second (IOPS) to use for this volume. Applicable only to volumes using a profile
 	// `family` of `custom`.
 	Iops *int64 `json:"iops,omitempty"`
 
@@ -68050,7 +70197,7 @@ type VolumePrototypeInstanceBySourceSnapshotContext struct {
 	// If unspecified, the `encryption` type for the volume will be `provider_managed`.
 	EncryptionKey EncryptionKeyIdentityIntf `json:"encryption_key,omitempty"`
 
-	// The maximum I/O operations per second (IOPS) to use for the volume. Applicable only to volumes using a profile
+	// The maximum I/O operations per second (IOPS) to use for this volume. Applicable only to volumes using a profile
 	// `family` of `custom`.
 	Iops *int64 `json:"iops,omitempty"`
 
@@ -68170,6 +70317,70 @@ type VolumeReferenceDeleted struct {
 // UnmarshalVolumeReferenceDeleted unmarshals an instance of VolumeReferenceDeleted from the specified map of raw messages.
 func UnmarshalVolumeReferenceDeleted(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(VolumeReferenceDeleted)
+	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VolumeReferenceVolumeAttachmentContext : VolumeReferenceVolumeAttachmentContext struct
+type VolumeReferenceVolumeAttachmentContext struct {
+	// The CRN for this volume.
+	CRN *string `json:"crn" validate:"required"`
+
+	// If present, this property indicates the referenced resource has been deleted, and provides
+	// some supplementary information.
+	Deleted *VolumeReferenceVolumeAttachmentContextDeleted `json:"deleted,omitempty"`
+
+	// The URL for this volume.
+	Href *string `json:"href" validate:"required"`
+
+	// The unique identifier for this volume.
+	ID *string `json:"id" validate:"required"`
+
+	// The name for this volume. The name is unique across all volumes in the region.
+	Name *string `json:"name" validate:"required"`
+}
+
+// UnmarshalVolumeReferenceVolumeAttachmentContext unmarshals an instance of VolumeReferenceVolumeAttachmentContext from the specified map of raw messages.
+func UnmarshalVolumeReferenceVolumeAttachmentContext(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VolumeReferenceVolumeAttachmentContext)
+	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "deleted", &obj.Deleted, UnmarshalVolumeReferenceVolumeAttachmentContextDeleted)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VolumeReferenceVolumeAttachmentContextDeleted : If present, this property indicates the referenced resource has been deleted, and provides some supplementary
+// information.
+type VolumeReferenceVolumeAttachmentContextDeleted struct {
+	// Link to documentation about deleted resources.
+	MoreInfo *string `json:"more_info" validate:"required"`
+}
+
+// UnmarshalVolumeReferenceVolumeAttachmentContextDeleted unmarshals an instance of VolumeReferenceVolumeAttachmentContextDeleted from the specified map of raw messages.
+func UnmarshalVolumeReferenceVolumeAttachmentContextDeleted(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VolumeReferenceVolumeAttachmentContextDeleted)
 	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
 	if err != nil {
 		return
@@ -68505,20 +70716,18 @@ type BareMetalServerNetworkInterfaceByHiperSocket struct {
 	CreatedAt *strfmt.DateTime `json:"created_at" validate:"required"`
 
 	// If `true`:
-	//   - The VPC infrastructure performs any needed NAT operations.
-	//   - A single floating IP can be assigned to the network interface.
+	// - The VPC infrastructure performs any needed NAT operations.
+	// - `floating_ips` must not have more than one floating IP.
 	//
 	// If `false`:
-	//   - Packets are passed unchanged to/from the network interface,
-	//     allowing the workload to perform any needed NAT operations.
-	//   - Multiple floating IPs can be assigned to the network interface.
-	//   - `allow_ip_spoofing` must be set to `false`.
-	//
-	// This must be `true` when `interface_type` is `hipersocket`.
+	// - Packets are passed unchanged to/from the network interface,
+	//   allowing the workload to perform any needed NAT operations.
+	// - `allow_ip_spoofing` must be `false`.
+	// - `interface_type` must not be `hipersocket`.
 	EnableInfrastructureNat *bool `json:"enable_infrastructure_nat" validate:"required"`
 
 	// The floating IPs associated with this network interface.
-	FloatingIps []FloatingIPReference `json:"floating_ips,omitempty"`
+	FloatingIps []FloatingIPReference `json:"floating_ips" validate:"required"`
 
 	// The URL for this network interface.
 	Href *string `json:"href" validate:"required"`
@@ -68580,8 +70789,8 @@ const (
 )
 
 // Constants associated with the BareMetalServerNetworkInterfaceByHiperSocket.InterfaceType property.
-// - `hipersocket`: a virtual network device that provides high-speed TCP/IP connectivity
-//   within a `s390x` based system.
+//   - `hipersocket`: a virtual network device that provides high-speed TCP/IP connectivity
+//     within a `s390x` based system.
 const (
 	BareMetalServerNetworkInterfaceByHiperSocketInterfaceTypeHipersocketConst = "hipersocket"
 )
@@ -68672,20 +70881,18 @@ type BareMetalServerNetworkInterfaceByPci struct {
 	CreatedAt *strfmt.DateTime `json:"created_at" validate:"required"`
 
 	// If `true`:
-	//   - The VPC infrastructure performs any needed NAT operations.
-	//   - A single floating IP can be assigned to the network interface.
+	// - The VPC infrastructure performs any needed NAT operations.
+	// - `floating_ips` must not have more than one floating IP.
 	//
 	// If `false`:
-	//   - Packets are passed unchanged to/from the network interface,
-	//     allowing the workload to perform any needed NAT operations.
-	//   - Multiple floating IPs can be assigned to the network interface.
-	//   - `allow_ip_spoofing` must be set to `false`.
-	//
-	// This must be `true` when `interface_type` is `hipersocket`.
+	// - Packets are passed unchanged to/from the network interface,
+	//   allowing the workload to perform any needed NAT operations.
+	// - `allow_ip_spoofing` must be `false`.
+	// - `interface_type` must not be `hipersocket`.
 	EnableInfrastructureNat *bool `json:"enable_infrastructure_nat" validate:"required"`
 
 	// The floating IPs associated with this network interface.
-	FloatingIps []FloatingIPReference `json:"floating_ips,omitempty"`
+	FloatingIps []FloatingIPReference `json:"floating_ips" validate:"required"`
 
 	// The URL for this network interface.
 	Href *string `json:"href" validate:"required"`
@@ -68753,8 +70960,8 @@ const (
 )
 
 // Constants associated with the BareMetalServerNetworkInterfaceByPci.InterfaceType property.
-// - `pci`: a physical PCI device which can only be created or deleted when the bare metal
-//   server is stopped
+//   - `pci`: a physical PCI device which can only be created or deleted when the bare metal
+//     server is stopped
 //   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 //     to use the PCI interface
 //   - Cannot directly use an IEEE 802.1q VLAN tag.
@@ -68852,20 +71059,18 @@ type BareMetalServerNetworkInterfaceByVlan struct {
 	CreatedAt *strfmt.DateTime `json:"created_at" validate:"required"`
 
 	// If `true`:
-	//   - The VPC infrastructure performs any needed NAT operations.
-	//   - A single floating IP can be assigned to the network interface.
+	// - The VPC infrastructure performs any needed NAT operations.
+	// - `floating_ips` must not have more than one floating IP.
 	//
 	// If `false`:
-	//   - Packets are passed unchanged to/from the network interface,
-	//     allowing the workload to perform any needed NAT operations.
-	//   - Multiple floating IPs can be assigned to the network interface.
-	//   - `allow_ip_spoofing` must be set to `false`.
-	//
-	// This must be `true` when `interface_type` is `hipersocket`.
+	// - Packets are passed unchanged to/from the network interface,
+	//   allowing the workload to perform any needed NAT operations.
+	// - `allow_ip_spoofing` must be `false`.
+	// - `interface_type` must not be `hipersocket`.
 	EnableInfrastructureNat *bool `json:"enable_infrastructure_nat" validate:"required"`
 
 	// The floating IPs associated with this network interface.
-	FloatingIps []FloatingIPReference `json:"floating_ips,omitempty"`
+	FloatingIps []FloatingIPReference `json:"floating_ips" validate:"required"`
 
 	// The URL for this network interface.
 	Href *string `json:"href" validate:"required"`
@@ -68938,8 +71143,8 @@ const (
 )
 
 // Constants associated with the BareMetalServerNetworkInterfaceByVlan.InterfaceType property.
-// - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its array
-//    of `allowed_vlans`.
+//   - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its array
+//     of `allowed_vlans`.
 //   - Must use an IEEE 802.1q tag.
 //   - Has its own security groups and does not inherit those of the PCI device through
 //     which traffic flows.
@@ -69038,16 +71243,14 @@ type BareMetalServerNetworkInterfacePrototypeBareMetalServerNetworkInterfaceByHi
 	AllowIPSpoofing *bool `json:"allow_ip_spoofing,omitempty"`
 
 	// If `true`:
-	//   - The VPC infrastructure performs any needed NAT operations.
-	//   - A single floating IP can be assigned to the network interface.
+	// - The VPC infrastructure performs any needed NAT operations.
+	// - `floating_ips` must not have more than one floating IP.
 	//
 	// If `false`:
-	//   - Packets are passed unchanged to/from the network interface,
-	//     allowing the workload to perform any needed NAT operations.
-	//   - Multiple floating IPs can be assigned to the network interface.
-	//   - `allow_ip_spoofing` must be set to `false`.
-	//
-	// This must be `true` when `interface_type` is `hipersocket`.
+	// - Packets are passed unchanged to/from the network interface,
+	//   allowing the workload to perform any needed NAT operations.
+	// - `allow_ip_spoofing` must be `false`.
+	// - `interface_type` must not be `hipersocket`.
 	EnableInfrastructureNat *bool `json:"enable_infrastructure_nat,omitempty"`
 
 	// The name for this network interface. The name must not be used by another network interface on the bare metal
@@ -69074,8 +71277,8 @@ type BareMetalServerNetworkInterfacePrototypeBareMetalServerNetworkInterfaceByHi
 }
 
 // Constants associated with the BareMetalServerNetworkInterfacePrototypeBareMetalServerNetworkInterfaceByHiperSocketPrototype.InterfaceType property.
-// - `hipersocket`: a virtual network device that provides high-speed TCP/IP connectivity
-//   within a `s390x` based system.
+//   - `hipersocket`: a virtual network device that provides high-speed TCP/IP connectivity
+//     within a `s390x` based system.
 //   - Not supported on bare metal servers with a `cpu.architecture` of `amd64`.
 const (
 	BareMetalServerNetworkInterfacePrototypeBareMetalServerNetworkInterfaceByHiperSocketPrototypeInterfaceTypeHipersocketConst = "hipersocket"
@@ -69138,16 +71341,14 @@ type BareMetalServerNetworkInterfacePrototypeBareMetalServerNetworkInterfaceByPc
 	AllowIPSpoofing *bool `json:"allow_ip_spoofing,omitempty"`
 
 	// If `true`:
-	//   - The VPC infrastructure performs any needed NAT operations.
-	//   - A single floating IP can be assigned to the network interface.
+	// - The VPC infrastructure performs any needed NAT operations.
+	// - `floating_ips` must not have more than one floating IP.
 	//
 	// If `false`:
-	//   - Packets are passed unchanged to/from the network interface,
-	//     allowing the workload to perform any needed NAT operations.
-	//   - Multiple floating IPs can be assigned to the network interface.
-	//   - `allow_ip_spoofing` must be set to `false`.
-	//
-	// This must be `true` when `interface_type` is `hipersocket`.
+	// - Packets are passed unchanged to/from the network interface,
+	//   allowing the workload to perform any needed NAT operations.
+	// - `allow_ip_spoofing` must be `false`.
+	// - `interface_type` must not be `hipersocket`.
 	EnableInfrastructureNat *bool `json:"enable_infrastructure_nat,omitempty"`
 
 	// The name for this network interface. The name must not be used by another network interface on the bare metal
@@ -69180,8 +71381,8 @@ type BareMetalServerNetworkInterfacePrototypeBareMetalServerNetworkInterfaceByPc
 }
 
 // Constants associated with the BareMetalServerNetworkInterfacePrototypeBareMetalServerNetworkInterfaceByPciPrototype.InterfaceType property.
-// - `pci`: a physical PCI device which can only be created or deleted when the bare metal
-//   server is stopped
+//   - `pci`: a physical PCI device which can only be created or deleted when the bare metal
+//     server is stopped
 //   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 //     to use the PCI interface
 //   - Cannot directly use an IEEE 802.1q VLAN tag.
@@ -69251,16 +71452,14 @@ type BareMetalServerNetworkInterfacePrototypeBareMetalServerNetworkInterfaceByVl
 	AllowIPSpoofing *bool `json:"allow_ip_spoofing,omitempty"`
 
 	// If `true`:
-	//   - The VPC infrastructure performs any needed NAT operations.
-	//   - A single floating IP can be assigned to the network interface.
+	// - The VPC infrastructure performs any needed NAT operations.
+	// - `floating_ips` must not have more than one floating IP.
 	//
 	// If `false`:
-	//   - Packets are passed unchanged to/from the network interface,
-	//     allowing the workload to perform any needed NAT operations.
-	//   - Multiple floating IPs can be assigned to the network interface.
-	//   - `allow_ip_spoofing` must be set to `false`.
-	//
-	// This must be `true` when `interface_type` is `hipersocket`.
+	// - Packets are passed unchanged to/from the network interface,
+	//   allowing the workload to perform any needed NAT operations.
+	// - `allow_ip_spoofing` must be `false`.
+	// - `interface_type` must not be `hipersocket`.
 	EnableInfrastructureNat *bool `json:"enable_infrastructure_nat,omitempty"`
 
 	// The name for this network interface. The name must not be used by another network interface on the bare metal
@@ -69298,8 +71497,8 @@ type BareMetalServerNetworkInterfacePrototypeBareMetalServerNetworkInterfaceByVl
 }
 
 // Constants associated with the BareMetalServerNetworkInterfacePrototypeBareMetalServerNetworkInterfaceByVlanPrototype.InterfaceType property.
-// - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its array
-//    of `allowed_vlans`.
+//   - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its array
+//     of `allowed_vlans`.
 //   - Must use an IEEE 802.1q tag.
 //   - Has its own security groups and does not inherit those of the PCI device through
 //     which traffic flows.
@@ -70489,6 +72688,129 @@ func (*CertificateInstanceIdentityByCRN) isaCertificateInstanceIdentity() bool {
 func UnmarshalCertificateInstanceIdentityByCRN(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(CertificateInstanceIdentityByCRN)
 	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// CloudObjectStorageBucketIdentityByCRN : CloudObjectStorageBucketIdentityByCRN struct
+// This model "extends" CloudObjectStorageBucketIdentity
+type CloudObjectStorageBucketIdentityByCRN struct {
+	// The CRN of this Cloud Object Storage bucket.
+	CRN *string `json:"crn" validate:"required"`
+}
+
+// NewCloudObjectStorageBucketIdentityByCRN : Instantiate CloudObjectStorageBucketIdentityByCRN (Generic Model Constructor)
+func (*VpcbetaV1) NewCloudObjectStorageBucketIdentityByCRN(crn string) (_model *CloudObjectStorageBucketIdentityByCRN, err error) {
+	_model = &CloudObjectStorageBucketIdentityByCRN{
+		CRN: core.StringPtr(crn),
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+func (*CloudObjectStorageBucketIdentityByCRN) isaCloudObjectStorageBucketIdentity() bool {
+	return true
+}
+
+// UnmarshalCloudObjectStorageBucketIdentityByCRN unmarshals an instance of CloudObjectStorageBucketIdentityByCRN from the specified map of raw messages.
+func UnmarshalCloudObjectStorageBucketIdentityByCRN(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(CloudObjectStorageBucketIdentityByCRN)
+	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// CloudObjectStorageBucketIdentityCloudObjectStorageBucketIdentityByName : CloudObjectStorageBucketIdentityCloudObjectStorageBucketIdentityByName struct
+// This model "extends" CloudObjectStorageBucketIdentity
+type CloudObjectStorageBucketIdentityCloudObjectStorageBucketIdentityByName struct {
+	// The globally unique name of this Cloud Object Storage bucket.
+	Name *string `json:"name" validate:"required"`
+}
+
+// NewCloudObjectStorageBucketIdentityCloudObjectStorageBucketIdentityByName : Instantiate CloudObjectStorageBucketIdentityCloudObjectStorageBucketIdentityByName (Generic Model Constructor)
+func (*VpcbetaV1) NewCloudObjectStorageBucketIdentityCloudObjectStorageBucketIdentityByName(name string) (_model *CloudObjectStorageBucketIdentityCloudObjectStorageBucketIdentityByName, err error) {
+	_model = &CloudObjectStorageBucketIdentityCloudObjectStorageBucketIdentityByName{
+		Name: core.StringPtr(name),
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+func (*CloudObjectStorageBucketIdentityCloudObjectStorageBucketIdentityByName) isaCloudObjectStorageBucketIdentity() bool {
+	return true
+}
+
+// UnmarshalCloudObjectStorageBucketIdentityCloudObjectStorageBucketIdentityByName unmarshals an instance of CloudObjectStorageBucketIdentityCloudObjectStorageBucketIdentityByName from the specified map of raw messages.
+func UnmarshalCloudObjectStorageBucketIdentityCloudObjectStorageBucketIdentityByName(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(CloudObjectStorageBucketIdentityCloudObjectStorageBucketIdentityByName)
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// DnsInstanceIdentityByCRN : DnsInstanceIdentityByCRN struct
+// This model "extends" DnsInstanceIdentity
+type DnsInstanceIdentityByCRN struct {
+	// The CRN for this DNS instance.
+	CRN *string `json:"crn" validate:"required"`
+}
+
+// NewDnsInstanceIdentityByCRN : Instantiate DnsInstanceIdentityByCRN (Generic Model Constructor)
+func (*VpcbetaV1) NewDnsInstanceIdentityByCRN(crn string) (_model *DnsInstanceIdentityByCRN, err error) {
+	_model = &DnsInstanceIdentityByCRN{
+		CRN: core.StringPtr(crn),
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+func (*DnsInstanceIdentityByCRN) isaDnsInstanceIdentity() bool {
+	return true
+}
+
+// UnmarshalDnsInstanceIdentityByCRN unmarshals an instance of DnsInstanceIdentityByCRN from the specified map of raw messages.
+func UnmarshalDnsInstanceIdentityByCRN(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(DnsInstanceIdentityByCRN)
+	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// DnsZoneIdentityByID : DnsZoneIdentityByID struct
+// This model "extends" DnsZoneIdentity
+type DnsZoneIdentityByID struct {
+	ID *string `json:"id" validate:"required"`
+}
+
+// NewDnsZoneIdentityByID : Instantiate DnsZoneIdentityByID (Generic Model Constructor)
+func (*VpcbetaV1) NewDnsZoneIdentityByID(id string) (_model *DnsZoneIdentityByID, err error) {
+	_model = &DnsZoneIdentityByID{
+		ID: core.StringPtr(id),
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+func (*DnsZoneIdentityByID) isaDnsZoneIdentity() bool {
+	return true
+}
+
+// UnmarshalDnsZoneIdentityByID unmarshals an instance of DnsZoneIdentityByID from the specified map of raw messages.
+func UnmarshalDnsZoneIdentityByID(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(DnsZoneIdentityByID)
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
 	if err != nil {
 		return
 	}
@@ -74971,6 +77293,76 @@ func UnmarshalInstanceProfileMemoryRange(m map[string]json.RawMessage, result in
 	return
 }
 
+// InstanceProfileNetworkInterfaceCountDependent : The number of network interfaces supported on an instance with this profile is dependent on its configuration.
+// This model "extends" InstanceProfileNetworkInterfaceCount
+type InstanceProfileNetworkInterfaceCountDependent struct {
+	// The type for this profile field.
+	Type *string `json:"type" validate:"required"`
+}
+
+// Constants associated with the InstanceProfileNetworkInterfaceCountDependent.Type property.
+// The type for this profile field.
+const (
+	InstanceProfileNetworkInterfaceCountDependentTypeDependentConst = "dependent"
+)
+
+func (*InstanceProfileNetworkInterfaceCountDependent) isaInstanceProfileNetworkInterfaceCount() bool {
+	return true
+}
+
+// UnmarshalInstanceProfileNetworkInterfaceCountDependent unmarshals an instance of InstanceProfileNetworkInterfaceCountDependent from the specified map of raw messages.
+func UnmarshalInstanceProfileNetworkInterfaceCountDependent(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(InstanceProfileNetworkInterfaceCountDependent)
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// InstanceProfileNetworkInterfaceCountRange : The number of network interfaces supported on an instance with this profile.
+// This model "extends" InstanceProfileNetworkInterfaceCount
+type InstanceProfileNetworkInterfaceCountRange struct {
+	// The maximum value for this profile field.
+	Max *int64 `json:"max,omitempty"`
+
+	// The minimum value for this profile field.
+	Min *int64 `json:"min,omitempty"`
+
+	// The type for this profile field.
+	Type *string `json:"type" validate:"required"`
+}
+
+// Constants associated with the InstanceProfileNetworkInterfaceCountRange.Type property.
+// The type for this profile field.
+const (
+	InstanceProfileNetworkInterfaceCountRangeTypeRangeConst = "range"
+)
+
+func (*InstanceProfileNetworkInterfaceCountRange) isaInstanceProfileNetworkInterfaceCount() bool {
+	return true
+}
+
+// UnmarshalInstanceProfileNetworkInterfaceCountRange unmarshals an instance of InstanceProfileNetworkInterfaceCountRange from the specified map of raw messages.
+func UnmarshalInstanceProfileNetworkInterfaceCountRange(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(InstanceProfileNetworkInterfaceCountRange)
+	err = core.UnmarshalPrimitive(m, "max", &obj.Max)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "min", &obj.Min)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // InstanceProfilePortSpeedDependent : The port speed of each network interface of an instance with this profile depends on its configuration.
 // This model "extends" InstanceProfilePortSpeed
 type InstanceProfilePortSpeedDependent struct {
@@ -75363,7 +77755,7 @@ func UnmarshalInstanceProfileVolumeBandwidthRange(m map[string]json.RawMessage, 
 // This model "extends" InstancePrototype
 type InstancePrototypeInstanceByCatalogOffering struct {
 	// The availability policy to use for this virtual server instance.
-	AvailabilityPolicy *InstanceAvailabilityPrototype `json:"availability_policy,omitempty"`
+	AvailabilityPolicy *InstanceAvailabilityPolicyPrototype `json:"availability_policy,omitempty"`
 
 	// The default trusted profile configuration to use for this virtual server instance  This property's value is used
 	// when provisioning the virtual server instance, but not subsequently managed. Accordingly, it is reflected as an
@@ -75458,7 +77850,7 @@ func (*InstancePrototypeInstanceByCatalogOffering) isaInstancePrototype() bool {
 // UnmarshalInstancePrototypeInstanceByCatalogOffering unmarshals an instance of InstancePrototypeInstanceByCatalogOffering from the specified map of raw messages.
 func UnmarshalInstancePrototypeInstanceByCatalogOffering(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(InstancePrototypeInstanceByCatalogOffering)
-	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPrototype)
+	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPolicyPrototype)
 	if err != nil {
 		return
 	}
@@ -75534,7 +77926,7 @@ func UnmarshalInstancePrototypeInstanceByCatalogOffering(m map[string]json.RawMe
 // This model "extends" InstancePrototype
 type InstancePrototypeInstanceByImage struct {
 	// The availability policy to use for this virtual server instance.
-	AvailabilityPolicy *InstanceAvailabilityPrototype `json:"availability_policy,omitempty"`
+	AvailabilityPolicy *InstanceAvailabilityPolicyPrototype `json:"availability_policy,omitempty"`
 
 	// The default trusted profile configuration to use for this virtual server instance  This property's value is used
 	// when provisioning the virtual server instance, but not subsequently managed. Accordingly, it is reflected as an
@@ -75622,7 +78014,7 @@ func (*InstancePrototypeInstanceByImage) isaInstancePrototype() bool {
 // UnmarshalInstancePrototypeInstanceByImage unmarshals an instance of InstancePrototypeInstanceByImage from the specified map of raw messages.
 func UnmarshalInstancePrototypeInstanceByImage(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(InstancePrototypeInstanceByImage)
-	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPrototype)
+	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPolicyPrototype)
 	if err != nil {
 		return
 	}
@@ -75698,7 +78090,7 @@ func UnmarshalInstancePrototypeInstanceByImage(m map[string]json.RawMessage, res
 // This model "extends" InstancePrototype
 type InstancePrototypeInstanceBySourceSnapshot struct {
 	// The availability policy to use for this virtual server instance.
-	AvailabilityPolicy *InstanceAvailabilityPrototype `json:"availability_policy,omitempty"`
+	AvailabilityPolicy *InstanceAvailabilityPolicyPrototype `json:"availability_policy,omitempty"`
 
 	// The default trusted profile configuration to use for this virtual server instance  This property's value is used
 	// when provisioning the virtual server instance, but not subsequently managed. Accordingly, it is reflected as an
@@ -75783,7 +78175,7 @@ func (*InstancePrototypeInstanceBySourceSnapshot) isaInstancePrototype() bool {
 // UnmarshalInstancePrototypeInstanceBySourceSnapshot unmarshals an instance of InstancePrototypeInstanceBySourceSnapshot from the specified map of raw messages.
 func UnmarshalInstancePrototypeInstanceBySourceSnapshot(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(InstancePrototypeInstanceBySourceSnapshot)
-	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPrototype)
+	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPolicyPrototype)
 	if err != nil {
 		return
 	}
@@ -75855,7 +78247,7 @@ func UnmarshalInstancePrototypeInstanceBySourceSnapshot(m map[string]json.RawMes
 // This model "extends" InstancePrototype
 type InstancePrototypeInstanceBySourceTemplate struct {
 	// The availability policy to use for this virtual server instance.
-	AvailabilityPolicy *InstanceAvailabilityPrototype `json:"availability_policy,omitempty"`
+	AvailabilityPolicy *InstanceAvailabilityPolicyPrototype `json:"availability_policy,omitempty"`
 
 	// The default trusted profile configuration to use for this virtual server instance  This property's value is used
 	// when provisioning the virtual server instance, but not subsequently managed. Accordingly, it is reflected as an
@@ -75955,7 +78347,7 @@ func (*InstancePrototypeInstanceBySourceTemplate) isaInstancePrototype() bool {
 // UnmarshalInstancePrototypeInstanceBySourceTemplate unmarshals an instance of InstancePrototypeInstanceBySourceTemplate from the specified map of raw messages.
 func UnmarshalInstancePrototypeInstanceBySourceTemplate(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(InstancePrototypeInstanceBySourceTemplate)
-	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPrototype)
+	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPolicyPrototype)
 	if err != nil {
 		return
 	}
@@ -76039,7 +78431,7 @@ func UnmarshalInstancePrototypeInstanceBySourceTemplate(m map[string]json.RawMes
 // This model "extends" InstancePrototype
 type InstancePrototypeInstanceByVolume struct {
 	// The availability policy to use for this virtual server instance.
-	AvailabilityPolicy *InstanceAvailabilityPrototype `json:"availability_policy,omitempty"`
+	AvailabilityPolicy *InstanceAvailabilityPolicyPrototype `json:"availability_policy,omitempty"`
 
 	// The default trusted profile configuration to use for this virtual server instance  This property's value is used
 	// when provisioning the virtual server instance, but not subsequently managed. Accordingly, it is reflected as an
@@ -76124,7 +78516,7 @@ func (*InstancePrototypeInstanceByVolume) isaInstancePrototype() bool {
 // UnmarshalInstancePrototypeInstanceByVolume unmarshals an instance of InstancePrototypeInstanceByVolume from the specified map of raw messages.
 func UnmarshalInstancePrototypeInstanceByVolume(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(InstancePrototypeInstanceByVolume)
-	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPrototype)
+	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPolicyPrototype)
 	if err != nil {
 		return
 	}
@@ -76289,7 +78681,7 @@ func UnmarshalInstanceTemplateIdentityByID(m map[string]json.RawMessage, result 
 // This model "extends" InstanceTemplatePrototype
 type InstanceTemplatePrototypeInstanceByCatalogOffering struct {
 	// The availability policy to use for this virtual server instance.
-	AvailabilityPolicy *InstanceAvailabilityPrototype `json:"availability_policy,omitempty"`
+	AvailabilityPolicy *InstanceAvailabilityPolicyPrototype `json:"availability_policy,omitempty"`
 
 	// The default trusted profile configuration to use for this virtual server instance  This property's value is used
 	// when provisioning the virtual server instance, but not subsequently managed. Accordingly, it is reflected as an
@@ -76382,7 +78774,7 @@ func (*InstanceTemplatePrototypeInstanceByCatalogOffering) isaInstanceTemplatePr
 // UnmarshalInstanceTemplatePrototypeInstanceByCatalogOffering unmarshals an instance of InstanceTemplatePrototypeInstanceByCatalogOffering from the specified map of raw messages.
 func UnmarshalInstanceTemplatePrototypeInstanceByCatalogOffering(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(InstanceTemplatePrototypeInstanceByCatalogOffering)
-	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPrototype)
+	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPolicyPrototype)
 	if err != nil {
 		return
 	}
@@ -76458,7 +78850,7 @@ func UnmarshalInstanceTemplatePrototypeInstanceByCatalogOffering(m map[string]js
 // This model "extends" InstanceTemplatePrototype
 type InstanceTemplatePrototypeInstanceByImage struct {
 	// The availability policy to use for this virtual server instance.
-	AvailabilityPolicy *InstanceAvailabilityPrototype `json:"availability_policy,omitempty"`
+	AvailabilityPolicy *InstanceAvailabilityPolicyPrototype `json:"availability_policy,omitempty"`
 
 	// The default trusted profile configuration to use for this virtual server instance  This property's value is used
 	// when provisioning the virtual server instance, but not subsequently managed. Accordingly, it is reflected as an
@@ -76544,7 +78936,7 @@ func (*InstanceTemplatePrototypeInstanceByImage) isaInstanceTemplatePrototype() 
 // UnmarshalInstanceTemplatePrototypeInstanceByImage unmarshals an instance of InstanceTemplatePrototypeInstanceByImage from the specified map of raw messages.
 func UnmarshalInstanceTemplatePrototypeInstanceByImage(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(InstanceTemplatePrototypeInstanceByImage)
-	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPrototype)
+	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPolicyPrototype)
 	if err != nil {
 		return
 	}
@@ -76620,7 +79012,7 @@ func UnmarshalInstanceTemplatePrototypeInstanceByImage(m map[string]json.RawMess
 // This model "extends" InstanceTemplatePrototype
 type InstanceTemplatePrototypeInstanceBySourceSnapshot struct {
 	// The availability policy to use for this virtual server instance.
-	AvailabilityPolicy *InstanceAvailabilityPrototype `json:"availability_policy,omitempty"`
+	AvailabilityPolicy *InstanceAvailabilityPolicyPrototype `json:"availability_policy,omitempty"`
 
 	// The default trusted profile configuration to use for this virtual server instance  This property's value is used
 	// when provisioning the virtual server instance, but not subsequently managed. Accordingly, it is reflected as an
@@ -76703,7 +79095,7 @@ func (*InstanceTemplatePrototypeInstanceBySourceSnapshot) isaInstanceTemplatePro
 // UnmarshalInstanceTemplatePrototypeInstanceBySourceSnapshot unmarshals an instance of InstanceTemplatePrototypeInstanceBySourceSnapshot from the specified map of raw messages.
 func UnmarshalInstanceTemplatePrototypeInstanceBySourceSnapshot(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(InstanceTemplatePrototypeInstanceBySourceSnapshot)
-	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPrototype)
+	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPolicyPrototype)
 	if err != nil {
 		return
 	}
@@ -76775,7 +79167,7 @@ func UnmarshalInstanceTemplatePrototypeInstanceBySourceSnapshot(m map[string]jso
 // This model "extends" InstanceTemplatePrototype
 type InstanceTemplatePrototypeInstanceBySourceTemplate struct {
 	// The availability policy to use for this virtual server instance.
-	AvailabilityPolicy *InstanceAvailabilityPrototype `json:"availability_policy,omitempty"`
+	AvailabilityPolicy *InstanceAvailabilityPolicyPrototype `json:"availability_policy,omitempty"`
 
 	// The default trusted profile configuration to use for this virtual server instance  This property's value is used
 	// when provisioning the virtual server instance, but not subsequently managed. Accordingly, it is reflected as an
@@ -76873,7 +79265,7 @@ func (*InstanceTemplatePrototypeInstanceBySourceTemplate) isaInstanceTemplatePro
 // UnmarshalInstanceTemplatePrototypeInstanceBySourceTemplate unmarshals an instance of InstanceTemplatePrototypeInstanceBySourceTemplate from the specified map of raw messages.
 func UnmarshalInstanceTemplatePrototypeInstanceBySourceTemplate(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(InstanceTemplatePrototypeInstanceBySourceTemplate)
-	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPrototype)
+	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPolicyPrototype)
 	if err != nil {
 		return
 	}
@@ -76957,7 +79349,7 @@ func UnmarshalInstanceTemplatePrototypeInstanceBySourceTemplate(m map[string]jso
 // This model "extends" InstanceTemplate
 type InstanceTemplateInstanceByCatalogOffering struct {
 	// The availability policy to use for this virtual server instance.
-	AvailabilityPolicy *InstanceAvailabilityPrototype `json:"availability_policy,omitempty"`
+	AvailabilityPolicy *InstanceAvailabilityPolicyPrototype `json:"availability_policy,omitempty"`
 
 	// The date and time that the instance template was created.
 	CreatedAt *strfmt.DateTime `json:"created_at" validate:"required"`
@@ -77051,7 +79443,7 @@ func (*InstanceTemplateInstanceByCatalogOffering) isaInstanceTemplate() bool {
 // UnmarshalInstanceTemplateInstanceByCatalogOffering unmarshals an instance of InstanceTemplateInstanceByCatalogOffering from the specified map of raw messages.
 func UnmarshalInstanceTemplateInstanceByCatalogOffering(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(InstanceTemplateInstanceByCatalogOffering)
-	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPrototype)
+	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPolicyPrototype)
 	if err != nil {
 		return
 	}
@@ -77143,7 +79535,7 @@ func UnmarshalInstanceTemplateInstanceByCatalogOffering(m map[string]json.RawMes
 // This model "extends" InstanceTemplate
 type InstanceTemplateInstanceByImage struct {
 	// The availability policy to use for this virtual server instance.
-	AvailabilityPolicy *InstanceAvailabilityPrototype `json:"availability_policy,omitempty"`
+	AvailabilityPolicy *InstanceAvailabilityPolicyPrototype `json:"availability_policy,omitempty"`
 
 	// The date and time that the instance template was created.
 	CreatedAt *strfmt.DateTime `json:"created_at" validate:"required"`
@@ -77230,7 +79622,7 @@ func (*InstanceTemplateInstanceByImage) isaInstanceTemplate() bool {
 // UnmarshalInstanceTemplateInstanceByImage unmarshals an instance of InstanceTemplateInstanceByImage from the specified map of raw messages.
 func UnmarshalInstanceTemplateInstanceByImage(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(InstanceTemplateInstanceByImage)
-	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPrototype)
+	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPolicyPrototype)
 	if err != nil {
 		return
 	}
@@ -77322,7 +79714,7 @@ func UnmarshalInstanceTemplateInstanceByImage(m map[string]json.RawMessage, resu
 // This model "extends" InstanceTemplate
 type InstanceTemplateInstanceBySourceSnapshot struct {
 	// The availability policy to use for this virtual server instance.
-	AvailabilityPolicy *InstanceAvailabilityPrototype `json:"availability_policy,omitempty"`
+	AvailabilityPolicy *InstanceAvailabilityPolicyPrototype `json:"availability_policy,omitempty"`
 
 	// The date and time that the instance template was created.
 	CreatedAt *strfmt.DateTime `json:"created_at" validate:"required"`
@@ -77406,7 +79798,7 @@ func (*InstanceTemplateInstanceBySourceSnapshot) isaInstanceTemplate() bool {
 // UnmarshalInstanceTemplateInstanceBySourceSnapshot unmarshals an instance of InstanceTemplateInstanceBySourceSnapshot from the specified map of raw messages.
 func UnmarshalInstanceTemplateInstanceBySourceSnapshot(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(InstanceTemplateInstanceBySourceSnapshot)
-	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPrototype)
+	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPolicyPrototype)
 	if err != nil {
 		return
 	}
@@ -79354,6 +81746,9 @@ type NetworkACLRulePrototypeNetworkACLContextNetworkACLRuleProtocolAllPrototype 
 	// The direction of traffic to match.
 	Direction *string `json:"direction" validate:"required"`
 
+	// The IP version for this rule.
+	IPVersion *string `json:"ip_version,omitempty"`
+
 	// The name for this network ACL rule. The name must not be used by another rule for the network ACL. If unspecified,
 	// the name will be a hyphenated list of randomly-selected words.
 	Name *string `json:"name,omitempty"`
@@ -79377,6 +81772,12 @@ const (
 const (
 	NetworkACLRulePrototypeNetworkACLContextNetworkACLRuleProtocolAllPrototypeDirectionInboundConst  = "inbound"
 	NetworkACLRulePrototypeNetworkACLContextNetworkACLRuleProtocolAllPrototypeDirectionOutboundConst = "outbound"
+)
+
+// Constants associated with the NetworkACLRulePrototypeNetworkACLContextNetworkACLRuleProtocolAllPrototype.IPVersion property.
+// The IP version for this rule.
+const (
+	NetworkACLRulePrototypeNetworkACLContextNetworkACLRuleProtocolAllPrototypeIPVersionIpv4Const = "ipv4"
 )
 
 // Constants associated with the NetworkACLRulePrototypeNetworkACLContextNetworkACLRuleProtocolAllPrototype.Protocol property.
@@ -79417,6 +81818,10 @@ func UnmarshalNetworkACLRulePrototypeNetworkACLContextNetworkACLRuleProtocolAllP
 	if err != nil {
 		return
 	}
+	err = core.UnmarshalPrimitive(m, "ip_version", &obj.IPVersion)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
 	if err != nil {
 		return
@@ -79444,6 +81849,9 @@ type NetworkACLRulePrototypeNetworkACLContextNetworkACLRuleProtocolIcmpPrototype
 
 	// The direction of traffic to match.
 	Direction *string `json:"direction" validate:"required"`
+
+	// The IP version for this rule.
+	IPVersion *string `json:"ip_version,omitempty"`
 
 	// The name for this network ACL rule. The name must not be used by another rule for the network ACL. If unspecified,
 	// the name will be a hyphenated list of randomly-selected words.
@@ -79478,6 +81886,12 @@ const (
 const (
 	NetworkACLRulePrototypeNetworkACLContextNetworkACLRuleProtocolIcmpPrototypeDirectionInboundConst  = "inbound"
 	NetworkACLRulePrototypeNetworkACLContextNetworkACLRuleProtocolIcmpPrototypeDirectionOutboundConst = "outbound"
+)
+
+// Constants associated with the NetworkACLRulePrototypeNetworkACLContextNetworkACLRuleProtocolIcmpPrototype.IPVersion property.
+// The IP version for this rule.
+const (
+	NetworkACLRulePrototypeNetworkACLContextNetworkACLRuleProtocolIcmpPrototypeIPVersionIpv4Const = "ipv4"
 )
 
 // Constants associated with the NetworkACLRulePrototypeNetworkACLContextNetworkACLRuleProtocolIcmpPrototype.Protocol property.
@@ -79518,6 +81932,10 @@ func UnmarshalNetworkACLRulePrototypeNetworkACLContextNetworkACLRuleProtocolIcmp
 	if err != nil {
 		return
 	}
+	err = core.UnmarshalPrimitive(m, "ip_version", &obj.IPVersion)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
 	if err != nil {
 		return
@@ -79553,6 +81971,9 @@ type NetworkACLRulePrototypeNetworkACLContextNetworkACLRuleProtocolTcpudpPrototy
 
 	// The direction of traffic to match.
 	Direction *string `json:"direction" validate:"required"`
+
+	// The IP version for this rule.
+	IPVersion *string `json:"ip_version,omitempty"`
 
 	// The name for this network ACL rule. The name must not be used by another rule for the network ACL. If unspecified,
 	// the name will be a hyphenated list of randomly-selected words.
@@ -79591,6 +82012,12 @@ const (
 	NetworkACLRulePrototypeNetworkACLContextNetworkACLRuleProtocolTcpudpPrototypeDirectionOutboundConst = "outbound"
 )
 
+// Constants associated with the NetworkACLRulePrototypeNetworkACLContextNetworkACLRuleProtocolTcpudpPrototype.IPVersion property.
+// The IP version for this rule.
+const (
+	NetworkACLRulePrototypeNetworkACLContextNetworkACLRuleProtocolTcpudpPrototypeIPVersionIpv4Const = "ipv4"
+)
+
 // Constants associated with the NetworkACLRulePrototypeNetworkACLContextNetworkACLRuleProtocolTcpudpPrototype.Protocol property.
 // The protocol to enforce.
 const (
@@ -79627,6 +82054,10 @@ func UnmarshalNetworkACLRulePrototypeNetworkACLContextNetworkACLRuleProtocolTcpu
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "direction", &obj.Direction)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "ip_version", &obj.IPVersion)
 	if err != nil {
 		return
 	}
@@ -79676,6 +82107,9 @@ type NetworkACLRulePrototypeNetworkACLRuleProtocolAllPrototype struct {
 	// The direction of traffic to match.
 	Direction *string `json:"direction" validate:"required"`
 
+	// The IP version for this rule.
+	IPVersion *string `json:"ip_version,omitempty"`
+
 	// The name for this network ACL rule. The name must not be used by another rule for the network ACL. If unspecified,
 	// the name will be a hyphenated list of randomly-selected words.
 	Name *string `json:"name,omitempty"`
@@ -79699,6 +82133,12 @@ const (
 const (
 	NetworkACLRulePrototypeNetworkACLRuleProtocolAllPrototypeDirectionInboundConst  = "inbound"
 	NetworkACLRulePrototypeNetworkACLRuleProtocolAllPrototypeDirectionOutboundConst = "outbound"
+)
+
+// Constants associated with the NetworkACLRulePrototypeNetworkACLRuleProtocolAllPrototype.IPVersion property.
+// The IP version for this rule.
+const (
+	NetworkACLRulePrototypeNetworkACLRuleProtocolAllPrototypeIPVersionIpv4Const = "ipv4"
 )
 
 // Constants associated with the NetworkACLRulePrototypeNetworkACLRuleProtocolAllPrototype.Protocol property.
@@ -79743,6 +82183,10 @@ func UnmarshalNetworkACLRulePrototypeNetworkACLRuleProtocolAllPrototype(m map[st
 	if err != nil {
 		return
 	}
+	err = core.UnmarshalPrimitive(m, "ip_version", &obj.IPVersion)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
 	if err != nil {
 		return
@@ -79772,6 +82216,9 @@ type NetworkACLRulePrototypeNetworkACLRuleProtocolIcmpPrototype struct {
 
 	// The direction of traffic to match.
 	Direction *string `json:"direction" validate:"required"`
+
+	// The IP version for this rule.
+	IPVersion *string `json:"ip_version,omitempty"`
 
 	// The name for this network ACL rule. The name must not be used by another rule for the network ACL. If unspecified,
 	// the name will be a hyphenated list of randomly-selected words.
@@ -79806,6 +82253,12 @@ const (
 const (
 	NetworkACLRulePrototypeNetworkACLRuleProtocolIcmpPrototypeDirectionInboundConst  = "inbound"
 	NetworkACLRulePrototypeNetworkACLRuleProtocolIcmpPrototypeDirectionOutboundConst = "outbound"
+)
+
+// Constants associated with the NetworkACLRulePrototypeNetworkACLRuleProtocolIcmpPrototype.IPVersion property.
+// The IP version for this rule.
+const (
+	NetworkACLRulePrototypeNetworkACLRuleProtocolIcmpPrototypeIPVersionIpv4Const = "ipv4"
 )
 
 // Constants associated with the NetworkACLRulePrototypeNetworkACLRuleProtocolIcmpPrototype.Protocol property.
@@ -79850,6 +82303,10 @@ func UnmarshalNetworkACLRulePrototypeNetworkACLRuleProtocolIcmpPrototype(m map[s
 	if err != nil {
 		return
 	}
+	err = core.UnmarshalPrimitive(m, "ip_version", &obj.IPVersion)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
 	if err != nil {
 		return
@@ -79888,6 +82345,9 @@ type NetworkACLRulePrototypeNetworkACLRuleProtocolTcpudpPrototype struct {
 	// The direction of traffic to match.
 	Direction *string `json:"direction" validate:"required"`
 
+	// The IP version for this rule.
+	IPVersion *string `json:"ip_version,omitempty"`
+
 	// The name for this network ACL rule. The name must not be used by another rule for the network ACL. If unspecified,
 	// the name will be a hyphenated list of randomly-selected words.
 	Name *string `json:"name,omitempty"`
@@ -79923,6 +82383,12 @@ const (
 const (
 	NetworkACLRulePrototypeNetworkACLRuleProtocolTcpudpPrototypeDirectionInboundConst  = "inbound"
 	NetworkACLRulePrototypeNetworkACLRuleProtocolTcpudpPrototypeDirectionOutboundConst = "outbound"
+)
+
+// Constants associated with the NetworkACLRulePrototypeNetworkACLRuleProtocolTcpudpPrototype.IPVersion property.
+// The IP version for this rule.
+const (
+	NetworkACLRulePrototypeNetworkACLRuleProtocolTcpudpPrototypeIPVersionIpv4Const = "ipv4"
 )
 
 // Constants associated with the NetworkACLRulePrototypeNetworkACLRuleProtocolTcpudpPrototype.Protocol property.
@@ -79965,6 +82431,10 @@ func UnmarshalNetworkACLRulePrototypeNetworkACLRuleProtocolTcpudpPrototype(m map
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "direction", &obj.Direction)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "ip_version", &obj.IPVersion)
 	if err != nil {
 		return
 	}
@@ -81309,6 +83779,82 @@ func (*RouteNextHopIP) isaRouteNextHop() bool {
 func UnmarshalRouteNextHopIP(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(RouteNextHopIP)
 	err = core.UnmarshalPrimitive(m, "address", &obj.Address)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// RouteNextHopPatchRouteNextHopIP : The IP address of the next hop to which to route packets.
+// This model "extends" RouteNextHopPatch
+type RouteNextHopPatchRouteNextHopIP struct {
+	// The IP address.
+	//
+	// This property may add support for IPv6 addresses in the future. When processing a value in this property, verify
+	// that the address is in an expected format. If it is not, log an error. Optionally halt processing and surface the
+	// error, or bypass the resource on which the unexpected IP address format was encountered.
+	Address *string `json:"address" validate:"required"`
+}
+
+// NewRouteNextHopPatchRouteNextHopIP : Instantiate RouteNextHopPatchRouteNextHopIP (Generic Model Constructor)
+func (*VpcbetaV1) NewRouteNextHopPatchRouteNextHopIP(address string) (_model *RouteNextHopPatchRouteNextHopIP, err error) {
+	_model = &RouteNextHopPatchRouteNextHopIP{
+		Address: core.StringPtr(address),
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+func (*RouteNextHopPatchRouteNextHopIP) isaRouteNextHopPatch() bool {
+	return true
+}
+
+// UnmarshalRouteNextHopPatchRouteNextHopIP unmarshals an instance of RouteNextHopPatchRouteNextHopIP from the specified map of raw messages.
+func UnmarshalRouteNextHopPatchRouteNextHopIP(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(RouteNextHopPatchRouteNextHopIP)
+	err = core.UnmarshalPrimitive(m, "address", &obj.Address)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// RouteNextHopPatchVPNGatewayConnectionIdentity : Identifies a VPN gateway connection by a unique property.
+// Models which "extend" this model:
+// - RouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByID
+// - RouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByHref
+// This model "extends" RouteNextHopPatch
+type RouteNextHopPatchVPNGatewayConnectionIdentity struct {
+	// The unique identifier for this VPN gateway connection.
+	ID *string `json:"id,omitempty"`
+
+	// The VPN connection's canonical URL.
+	Href *string `json:"href,omitempty"`
+}
+
+func (*RouteNextHopPatchVPNGatewayConnectionIdentity) isaRouteNextHopPatchVPNGatewayConnectionIdentity() bool {
+	return true
+}
+
+type RouteNextHopPatchVPNGatewayConnectionIdentityIntf interface {
+	RouteNextHopPatchIntf
+	isaRouteNextHopPatchVPNGatewayConnectionIdentity() bool
+}
+
+func (*RouteNextHopPatchVPNGatewayConnectionIdentity) isaRouteNextHopPatch() bool {
+	return true
+}
+
+// UnmarshalRouteNextHopPatchVPNGatewayConnectionIdentity unmarshals an instance of RouteNextHopPatchVPNGatewayConnectionIdentity from the specified map of raw messages.
+func UnmarshalRouteNextHopPatchVPNGatewayConnectionIdentity(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(RouteNextHopPatchVPNGatewayConnectionIdentity)
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
 	if err != nil {
 		return
 	}
@@ -83208,6 +85754,9 @@ func UnmarshalSnapshotIdentityByID(m map[string]json.RawMessage, result interfac
 // SnapshotPrototypeSnapshotBySourceVolume : SnapshotPrototypeSnapshotBySourceVolume struct
 // This model "extends" SnapshotPrototype
 type SnapshotPrototypeSnapshotBySourceVolume struct {
+	// Clones to create for this snapshot.
+	Clones []SnapshotClonePrototype `json:"clones,omitempty"`
+
 	// The name for this snapshot. The name must not be used by another snapshot in the region. If unspecified, the name
 	// will be a hyphenated list of randomly-selected words.
 	Name *string `json:"name,omitempty"`
@@ -83237,6 +85786,10 @@ func (*SnapshotPrototypeSnapshotBySourceVolume) isaSnapshotPrototype() bool {
 // UnmarshalSnapshotPrototypeSnapshotBySourceVolume unmarshals an instance of SnapshotPrototypeSnapshotBySourceVolume from the specified map of raw messages.
 func UnmarshalSnapshotPrototypeSnapshotBySourceVolume(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(SnapshotPrototypeSnapshotBySourceVolume)
+	err = core.UnmarshalModel(m, "clones", &obj.Clones, UnmarshalSnapshotClonePrototype)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
 	if err != nil {
 		return
@@ -85265,7 +87818,7 @@ func UnmarshalVolumeAttachmentPrototypeVolumeVolumeIdentity(m map[string]json.Ra
 // - VolumeAttachmentPrototypeVolumeVolumePrototypeInstanceContextVolumePrototypeInstanceContextVolumeBySourceSnapshot
 // This model "extends" VolumeAttachmentPrototypeVolume
 type VolumeAttachmentPrototypeVolumeVolumePrototypeInstanceContext struct {
-	// The maximum I/O operations per second (IOPS) to use for the volume. Applicable only to volumes using a profile
+	// The maximum I/O operations per second (IOPS) to use for this volume. Applicable only to volumes using a profile
 	// `family` of `custom`.
 	Iops *int64 `json:"iops,omitempty"`
 
@@ -85499,7 +88052,7 @@ func UnmarshalVolumeProfileIdentityByName(m map[string]json.RawMessage, result i
 // VolumePrototypeVolumeByCapacity : VolumePrototypeVolumeByCapacity struct
 // This model "extends" VolumePrototype
 type VolumePrototypeVolumeByCapacity struct {
-	// The maximum I/O operations per second (IOPS) to use for the volume. Applicable only to volumes using a profile
+	// The maximum I/O operations per second (IOPS) to use for this volume. Applicable only to volumes using a profile
 	// `family` of `custom`.
 	Iops *int64 `json:"iops,omitempty"`
 
@@ -85585,7 +88138,7 @@ func UnmarshalVolumePrototypeVolumeByCapacity(m map[string]json.RawMessage, resu
 // VolumePrototypeVolumeBySourceSnapshot : VolumePrototypeVolumeBySourceSnapshot struct
 // This model "extends" VolumePrototype
 type VolumePrototypeVolumeBySourceSnapshot struct {
-	// The maximum I/O operations per second (IOPS) to use for the volume. Applicable only to volumes using a profile
+	// The maximum I/O operations per second (IOPS) to use for this volume. Applicable only to volumes using a profile
 	// `family` of `custom`.
 	Iops *int64 `json:"iops,omitempty"`
 
@@ -87905,6 +90458,76 @@ func UnmarshalReservedIPTargetPrototypeEndpointGatewayIdentityEndpointGatewayIde
 	return
 }
 
+// RouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByHref : RouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByHref struct
+// This model "extends" RouteNextHopPatchVPNGatewayConnectionIdentity
+type RouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByHref struct {
+	// The VPN connection's canonical URL.
+	Href *string `json:"href" validate:"required"`
+}
+
+// NewRouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByHref : Instantiate RouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByHref (Generic Model Constructor)
+func (*VpcbetaV1) NewRouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByHref(href string) (_model *RouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByHref, err error) {
+	_model = &RouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByHref{
+		Href: core.StringPtr(href),
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+func (*RouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByHref) isaRouteNextHopPatchVPNGatewayConnectionIdentity() bool {
+	return true
+}
+
+func (*RouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByHref) isaRouteNextHopPatch() bool {
+	return true
+}
+
+// UnmarshalRouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByHref unmarshals an instance of RouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByHref from the specified map of raw messages.
+func UnmarshalRouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByHref(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(RouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByHref)
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// RouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByID : RouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByID struct
+// This model "extends" RouteNextHopPatchVPNGatewayConnectionIdentity
+type RouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByID struct {
+	// The unique identifier for this VPN gateway connection.
+	ID *string `json:"id" validate:"required"`
+}
+
+// NewRouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByID : Instantiate RouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByID (Generic Model Constructor)
+func (*VpcbetaV1) NewRouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByID(id string) (_model *RouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByID, err error) {
+	_model = &RouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByID{
+		ID: core.StringPtr(id),
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+func (*RouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByID) isaRouteNextHopPatchVPNGatewayConnectionIdentity() bool {
+	return true
+}
+
+func (*RouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByID) isaRouteNextHopPatch() bool {
+	return true
+}
+
+// UnmarshalRouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByID unmarshals an instance of RouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByID from the specified map of raw messages.
+func UnmarshalRouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByID(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(RouteNextHopPatchVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByID)
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // RoutePrototypeNextHopRouteNextHopPrototypeVPNGatewayConnectionIdentityRouteNextHopPrototypeVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByHref : RoutePrototypeNextHopRouteNextHopPrototypeVPNGatewayConnectionIdentityRouteNextHopPrototypeVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByHref struct
 // This model "extends" RoutePrototypeNextHopRouteNextHopPrototypeVPNGatewayConnectionIdentity
 type RoutePrototypeNextHopRouteNextHopPrototypeVPNGatewayConnectionIdentityRouteNextHopPrototypeVPNGatewayConnectionIdentityVPNGatewayConnectionIdentityByHref struct {
@@ -88293,7 +90916,7 @@ func UnmarshalVolumeAttachmentPrototypeVolumeVolumeIdentityVolumeIdentityByID(m 
 // VolumeAttachmentPrototypeVolumeVolumePrototypeInstanceContextVolumePrototypeInstanceContextVolumeByCapacity : VolumeAttachmentPrototypeVolumeVolumePrototypeInstanceContextVolumePrototypeInstanceContextVolumeByCapacity struct
 // This model "extends" VolumeAttachmentPrototypeVolumeVolumePrototypeInstanceContext
 type VolumeAttachmentPrototypeVolumeVolumePrototypeInstanceContextVolumePrototypeInstanceContextVolumeByCapacity struct {
-	// The maximum I/O operations per second (IOPS) to use for the volume. Applicable only to volumes using a profile
+	// The maximum I/O operations per second (IOPS) to use for this volume. Applicable only to volumes using a profile
 	// `family` of `custom`.
 	Iops *int64 `json:"iops,omitempty"`
 
@@ -88369,7 +90992,7 @@ func UnmarshalVolumeAttachmentPrototypeVolumeVolumePrototypeInstanceContextVolum
 // VolumeAttachmentPrototypeVolumeVolumePrototypeInstanceContextVolumePrototypeInstanceContextVolumeBySourceSnapshot : VolumeAttachmentPrototypeVolumeVolumePrototypeInstanceContextVolumePrototypeInstanceContextVolumeBySourceSnapshot struct
 // This model "extends" VolumeAttachmentPrototypeVolumeVolumePrototypeInstanceContext
 type VolumeAttachmentPrototypeVolumeVolumePrototypeInstanceContextVolumePrototypeInstanceContextVolumeBySourceSnapshot struct {
-	// The maximum I/O operations per second (IOPS) to use for the volume. Applicable only to volumes using a profile
+	// The maximum I/O operations per second (IOPS) to use for this volume. Applicable only to volumes using a profile
 	// `family` of `custom`.
 	Iops *int64 `json:"iops,omitempty"`
 
@@ -88665,9 +91288,7 @@ func UnmarshalInstanceGroupManagerActionPrototypeScheduledActionPrototypeByRunAt
 	return
 }
 
-//
 // VpcsPager can be used to simplify the use of the "ListVpcs" method.
-//
 type VpcsPager struct {
 	hasNext     bool
 	options     *ListVpcsOptions
@@ -88752,9 +91373,7 @@ func (pager *VpcsPager) GetAll() (allItems []VPC, err error) {
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // VPCAddressPrefixesPager can be used to simplify the use of the "ListVPCAddressPrefixes" method.
-//
 type VPCAddressPrefixesPager struct {
 	hasNext     bool
 	options     *ListVPCAddressPrefixesOptions
@@ -88839,9 +91458,7 @@ func (pager *VPCAddressPrefixesPager) GetAll() (allItems []AddressPrefix, err er
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // VPCRoutesPager can be used to simplify the use of the "ListVPCRoutes" method.
-//
 type VPCRoutesPager struct {
 	hasNext     bool
 	options     *ListVPCRoutesOptions
@@ -88926,9 +91543,7 @@ func (pager *VPCRoutesPager) GetAll() (allItems []Route, err error) {
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // VPCRoutingTablesPager can be used to simplify the use of the "ListVPCRoutingTables" method.
-//
 type VPCRoutingTablesPager struct {
 	hasNext     bool
 	options     *ListVPCRoutingTablesOptions
@@ -89013,9 +91628,7 @@ func (pager *VPCRoutingTablesPager) GetAll() (allItems []RoutingTable, err error
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // VPCRoutingTableRoutesPager can be used to simplify the use of the "ListVPCRoutingTableRoutes" method.
-//
 type VPCRoutingTableRoutesPager struct {
 	hasNext     bool
 	options     *ListVPCRoutingTableRoutesOptions
@@ -89100,9 +91713,7 @@ func (pager *VPCRoutingTableRoutesPager) GetAll() (allItems []Route, err error) 
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // SubnetsPager can be used to simplify the use of the "ListSubnets" method.
-//
 type SubnetsPager struct {
 	hasNext     bool
 	options     *ListSubnetsOptions
@@ -89187,9 +91798,7 @@ func (pager *SubnetsPager) GetAll() (allItems []Subnet, err error) {
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // SubnetReservedIpsPager can be used to simplify the use of the "ListSubnetReservedIps" method.
-//
 type SubnetReservedIpsPager struct {
 	hasNext     bool
 	options     *ListSubnetReservedIpsOptions
@@ -89274,9 +91883,7 @@ func (pager *SubnetReservedIpsPager) GetAll() (allItems []ReservedIP, err error)
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // ImagesPager can be used to simplify the use of the "ListImages" method.
-//
 type ImagesPager struct {
 	hasNext     bool
 	options     *ListImagesOptions
@@ -89361,9 +91968,7 @@ func (pager *ImagesPager) GetAll() (allItems []Image, err error) {
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // OperatingSystemsPager can be used to simplify the use of the "ListOperatingSystems" method.
-//
 type OperatingSystemsPager struct {
 	hasNext     bool
 	options     *ListOperatingSystemsOptions
@@ -89448,9 +92053,7 @@ func (pager *OperatingSystemsPager) GetAll() (allItems []OperatingSystem, err er
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // KeysPager can be used to simplify the use of the "ListKeys" method.
-//
 type KeysPager struct {
 	hasNext     bool
 	options     *ListKeysOptions
@@ -89535,9 +92138,7 @@ func (pager *KeysPager) GetAll() (allItems []Key, err error) {
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // InstancesPager can be used to simplify the use of the "ListInstances" method.
-//
 type InstancesPager struct {
 	hasNext     bool
 	options     *ListInstancesOptions
@@ -89622,9 +92223,7 @@ func (pager *InstancesPager) GetAll() (allItems []Instance, err error) {
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // InstanceNetworkInterfaceIpsPager can be used to simplify the use of the "ListInstanceNetworkInterfaceIps" method.
-//
 type InstanceNetworkInterfaceIpsPager struct {
 	hasNext     bool
 	options     *ListInstanceNetworkInterfaceIpsOptions
@@ -89709,9 +92308,7 @@ func (pager *InstanceNetworkInterfaceIpsPager) GetAll() (allItems []ReservedIP, 
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // InstanceGroupsPager can be used to simplify the use of the "ListInstanceGroups" method.
-//
 type InstanceGroupsPager struct {
 	hasNext     bool
 	options     *ListInstanceGroupsOptions
@@ -89796,9 +92393,7 @@ func (pager *InstanceGroupsPager) GetAll() (allItems []InstanceGroup, err error)
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // InstanceGroupManagersPager can be used to simplify the use of the "ListInstanceGroupManagers" method.
-//
 type InstanceGroupManagersPager struct {
 	hasNext     bool
 	options     *ListInstanceGroupManagersOptions
@@ -89883,9 +92478,7 @@ func (pager *InstanceGroupManagersPager) GetAll() (allItems []InstanceGroupManag
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // InstanceGroupManagerActionsPager can be used to simplify the use of the "ListInstanceGroupManagerActions" method.
-//
 type InstanceGroupManagerActionsPager struct {
 	hasNext     bool
 	options     *ListInstanceGroupManagerActionsOptions
@@ -89970,9 +92563,7 @@ func (pager *InstanceGroupManagerActionsPager) GetAll() (allItems []InstanceGrou
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // InstanceGroupManagerPoliciesPager can be used to simplify the use of the "ListInstanceGroupManagerPolicies" method.
-//
 type InstanceGroupManagerPoliciesPager struct {
 	hasNext     bool
 	options     *ListInstanceGroupManagerPoliciesOptions
@@ -90057,9 +92648,7 @@ func (pager *InstanceGroupManagerPoliciesPager) GetAll() (allItems []InstanceGro
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // InstanceGroupMembershipsPager can be used to simplify the use of the "ListInstanceGroupMemberships" method.
-//
 type InstanceGroupMembershipsPager struct {
 	hasNext     bool
 	options     *ListInstanceGroupMembershipsOptions
@@ -90144,9 +92733,7 @@ func (pager *InstanceGroupMembershipsPager) GetAll() (allItems []InstanceGroupMe
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // DedicatedHostGroupsPager can be used to simplify the use of the "ListDedicatedHostGroups" method.
-//
 type DedicatedHostGroupsPager struct {
 	hasNext     bool
 	options     *ListDedicatedHostGroupsOptions
@@ -90231,9 +92818,7 @@ func (pager *DedicatedHostGroupsPager) GetAll() (allItems []DedicatedHostGroup, 
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // DedicatedHostProfilesPager can be used to simplify the use of the "ListDedicatedHostProfiles" method.
-//
 type DedicatedHostProfilesPager struct {
 	hasNext     bool
 	options     *ListDedicatedHostProfilesOptions
@@ -90318,9 +92903,7 @@ func (pager *DedicatedHostProfilesPager) GetAll() (allItems []DedicatedHostProfi
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // DedicatedHostsPager can be used to simplify the use of the "ListDedicatedHosts" method.
-//
 type DedicatedHostsPager struct {
 	hasNext     bool
 	options     *ListDedicatedHostsOptions
@@ -90405,9 +92988,7 @@ func (pager *DedicatedHostsPager) GetAll() (allItems []DedicatedHost, err error)
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // BackupPoliciesPager can be used to simplify the use of the "ListBackupPolicies" method.
-//
 type BackupPoliciesPager struct {
 	hasNext     bool
 	options     *ListBackupPoliciesOptions
@@ -90492,9 +93073,7 @@ func (pager *BackupPoliciesPager) GetAll() (allItems []BackupPolicy, err error) 
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // BackupPolicyJobsPager can be used to simplify the use of the "ListBackupPolicyJobs" method.
-//
 type BackupPolicyJobsPager struct {
 	hasNext     bool
 	options     *ListBackupPolicyJobsOptions
@@ -90579,9 +93158,7 @@ func (pager *BackupPolicyJobsPager) GetAll() (allItems []BackupPolicyJob, err er
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // PlacementGroupsPager can be used to simplify the use of the "ListPlacementGroups" method.
-//
 type PlacementGroupsPager struct {
 	hasNext     bool
 	options     *ListPlacementGroupsOptions
@@ -90666,9 +93243,7 @@ func (pager *PlacementGroupsPager) GetAll() (allItems []PlacementGroup, err erro
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // BareMetalServerProfilesPager can be used to simplify the use of the "ListBareMetalServerProfiles" method.
-//
 type BareMetalServerProfilesPager struct {
 	hasNext     bool
 	options     *ListBareMetalServerProfilesOptions
@@ -90753,9 +93328,7 @@ func (pager *BareMetalServerProfilesPager) GetAll() (allItems []BareMetalServerP
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // BareMetalServersPager can be used to simplify the use of the "ListBareMetalServers" method.
-//
 type BareMetalServersPager struct {
 	hasNext     bool
 	options     *ListBareMetalServersOptions
@@ -90840,9 +93413,7 @@ func (pager *BareMetalServersPager) GetAll() (allItems []BareMetalServer, err er
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // BareMetalServerNetworkInterfacesPager can be used to simplify the use of the "ListBareMetalServerNetworkInterfaces" method.
-//
 type BareMetalServerNetworkInterfacesPager struct {
 	hasNext     bool
 	options     *ListBareMetalServerNetworkInterfacesOptions
@@ -90927,9 +93498,7 @@ func (pager *BareMetalServerNetworkInterfacesPager) GetAll() (allItems []BareMet
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // VolumeProfilesPager can be used to simplify the use of the "ListVolumeProfiles" method.
-//
 type VolumeProfilesPager struct {
 	hasNext     bool
 	options     *ListVolumeProfilesOptions
@@ -91014,9 +93583,7 @@ func (pager *VolumeProfilesPager) GetAll() (allItems []VolumeProfile, err error)
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // VolumesPager can be used to simplify the use of the "ListVolumes" method.
-//
 type VolumesPager struct {
 	hasNext     bool
 	options     *ListVolumesOptions
@@ -91101,9 +93668,7 @@ func (pager *VolumesPager) GetAll() (allItems []Volume, err error) {
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // SnapshotsPager can be used to simplify the use of the "ListSnapshots" method.
-//
 type SnapshotsPager struct {
 	hasNext     bool
 	options     *ListSnapshotsOptions
@@ -91188,9 +93753,7 @@ func (pager *SnapshotsPager) GetAll() (allItems []Snapshot, err error) {
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // ShareProfilesPager can be used to simplify the use of the "ListShareProfiles" method.
-//
 type ShareProfilesPager struct {
 	hasNext     bool
 	options     *ListShareProfilesOptions
@@ -91275,9 +93838,7 @@ func (pager *ShareProfilesPager) GetAll() (allItems []ShareProfile, err error) {
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // SharesPager can be used to simplify the use of the "ListShares" method.
-//
 type SharesPager struct {
 	hasNext     bool
 	options     *ListSharesOptions
@@ -91362,9 +93923,7 @@ func (pager *SharesPager) GetAll() (allItems []Share, err error) {
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // PublicGatewaysPager can be used to simplify the use of the "ListPublicGateways" method.
-//
 type PublicGatewaysPager struct {
 	hasNext     bool
 	options     *ListPublicGatewaysOptions
@@ -91449,9 +94008,7 @@ func (pager *PublicGatewaysPager) GetAll() (allItems []PublicGateway, err error)
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // FloatingIpsPager can be used to simplify the use of the "ListFloatingIps" method.
-//
 type FloatingIpsPager struct {
 	hasNext     bool
 	options     *ListFloatingIpsOptions
@@ -91536,9 +94093,7 @@ func (pager *FloatingIpsPager) GetAll() (allItems []FloatingIP, err error) {
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // NetworkAclsPager can be used to simplify the use of the "ListNetworkAcls" method.
-//
 type NetworkAclsPager struct {
 	hasNext     bool
 	options     *ListNetworkAclsOptions
@@ -91623,9 +94178,7 @@ func (pager *NetworkAclsPager) GetAll() (allItems []NetworkACL, err error) {
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // NetworkACLRulesPager can be used to simplify the use of the "ListNetworkACLRules" method.
-//
 type NetworkACLRulesPager struct {
 	hasNext     bool
 	options     *ListNetworkACLRulesOptions
@@ -91710,9 +94263,7 @@ func (pager *NetworkACLRulesPager) GetAll() (allItems []NetworkACLRuleItemIntf, 
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // SecurityGroupsPager can be used to simplify the use of the "ListSecurityGroups" method.
-//
 type SecurityGroupsPager struct {
 	hasNext     bool
 	options     *ListSecurityGroupsOptions
@@ -91797,9 +94348,7 @@ func (pager *SecurityGroupsPager) GetAll() (allItems []SecurityGroup, err error)
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // SecurityGroupTargetsPager can be used to simplify the use of the "ListSecurityGroupTargets" method.
-//
 type SecurityGroupTargetsPager struct {
 	hasNext     bool
 	options     *ListSecurityGroupTargetsOptions
@@ -91884,9 +94433,7 @@ func (pager *SecurityGroupTargetsPager) GetAll() (allItems []SecurityGroupTarget
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // IkePoliciesPager can be used to simplify the use of the "ListIkePolicies" method.
-//
 type IkePoliciesPager struct {
 	hasNext     bool
 	options     *ListIkePoliciesOptions
@@ -91971,9 +94518,7 @@ func (pager *IkePoliciesPager) GetAll() (allItems []IkePolicy, err error) {
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // IpsecPoliciesPager can be used to simplify the use of the "ListIpsecPolicies" method.
-//
 type IpsecPoliciesPager struct {
 	hasNext     bool
 	options     *ListIpsecPoliciesOptions
@@ -92058,9 +94603,7 @@ func (pager *IpsecPoliciesPager) GetAll() (allItems []IPsecPolicy, err error) {
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // VPNGatewaysPager can be used to simplify the use of the "ListVPNGateways" method.
-//
 type VPNGatewaysPager struct {
 	hasNext     bool
 	options     *ListVPNGatewaysOptions
@@ -92145,9 +94688,7 @@ func (pager *VPNGatewaysPager) GetAll() (allItems []VPNGatewayIntf, err error) {
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // VPNServersPager can be used to simplify the use of the "ListVPNServers" method.
-//
 type VPNServersPager struct {
 	hasNext     bool
 	options     *ListVPNServersOptions
@@ -92232,9 +94773,7 @@ func (pager *VPNServersPager) GetAll() (allItems []VPNServer, err error) {
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // VPNServerClientsPager can be used to simplify the use of the "ListVPNServerClients" method.
-//
 type VPNServerClientsPager struct {
 	hasNext     bool
 	options     *ListVPNServerClientsOptions
@@ -92319,9 +94858,7 @@ func (pager *VPNServerClientsPager) GetAll() (allItems []VPNServerClient, err er
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // VPNServerRoutesPager can be used to simplify the use of the "ListVPNServerRoutes" method.
-//
 type VPNServerRoutesPager struct {
 	hasNext     bool
 	options     *ListVPNServerRoutesOptions
@@ -92406,9 +94943,7 @@ func (pager *VPNServerRoutesPager) GetAll() (allItems []VPNServerRoute, err erro
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // LoadBalancerProfilesPager can be used to simplify the use of the "ListLoadBalancerProfiles" method.
-//
 type LoadBalancerProfilesPager struct {
 	hasNext     bool
 	options     *ListLoadBalancerProfilesOptions
@@ -92493,9 +95028,7 @@ func (pager *LoadBalancerProfilesPager) GetAll() (allItems []LoadBalancerProfile
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // LoadBalancersPager can be used to simplify the use of the "ListLoadBalancers" method.
-//
 type LoadBalancersPager struct {
 	hasNext     bool
 	options     *ListLoadBalancersOptions
@@ -92580,9 +95113,7 @@ func (pager *LoadBalancersPager) GetAll() (allItems []LoadBalancer, err error) {
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // EndpointGatewaysPager can be used to simplify the use of the "ListEndpointGateways" method.
-//
 type EndpointGatewaysPager struct {
 	hasNext     bool
 	options     *ListEndpointGatewaysOptions
@@ -92667,9 +95198,7 @@ func (pager *EndpointGatewaysPager) GetAll() (allItems []EndpointGateway, err er
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // EndpointGatewayIpsPager can be used to simplify the use of the "ListEndpointGatewayIps" method.
-//
 type EndpointGatewayIpsPager struct {
 	hasNext     bool
 	options     *ListEndpointGatewayIpsOptions
@@ -92754,9 +95283,7 @@ func (pager *EndpointGatewayIpsPager) GetAll() (allItems []ReservedIP, err error
 	return pager.GetAllWithContext(context.Background())
 }
 
-//
 // FlowLogCollectorsPager can be used to simplify the use of the "ListFlowLogCollectors" method.
-//
 type FlowLogCollectorsPager struct {
 	hasNext     bool
 	options     *ListFlowLogCollectorsOptions
