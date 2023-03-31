@@ -39,4 +39,4 @@ deploy:
   skip_cleanup: true
   on:
     go: '1.18.x'
-    branch: master
+    branch: main
