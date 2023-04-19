@@ -682,8 +682,8 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 				Name: &[]string{"my-network-acl"}[0],
 				VPC:  vpcIDentityModel,
 			}
-			createNetworkACLOptions := vpcService.NewCreateNetworkACLOptions()
-			createNetworkACLOptions.SetNetworkACLPrototype(networkACLPrototypeModel)
+			createNetworkACLOptions := vpcService.NewCreateNetworkACLOptions(networkACLPrototypeModel)
+
 			networkACL, _, _ := vpcService.CreateNetworkACL(createNetworkACLOptions)
 			Expect(networkACL).ToNot(BeNil())
 			networkACLID := networkACL.ID
@@ -1026,6 +1026,48 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 			Expect(response.StatusCode).To(Equal(200))
 			Expect(image).ToNot(BeNil())
 
+		})
+		It(`DeprecateImage request example`, func() {
+			fmt.Println("\nDeprecateImage result:")
+			// begin-deprecate_image
+
+			deprecateImageOptions := vpcService.NewDeprecateImageOptions(
+				imageID,
+			)
+
+			response, err := vpcService.DeprecateImage(deprecateImageOptions)
+			if err != nil {
+				panic(err)
+			}
+			if response.StatusCode != 204 {
+				fmt.Printf("\nUnexpected response status code received from DeprecateImage(): %d\n", response.StatusCode)
+			}
+
+			// end-deprecate_image
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(204))
+		})
+		It(`ObsoleteImage request example`, func() {
+			fmt.Println("\nObsoleteImage result:")
+			// begin-obsolete_image
+
+			obsoleteImageOptions := vpcService.NewObsoleteImageOptions(
+				imageID,
+			)
+
+			response, err := vpcService.ObsoleteImage(obsoleteImageOptions)
+			if err != nil {
+				panic(err)
+			}
+			if response.StatusCode != 204 {
+				fmt.Printf("\nUnexpected response status code received from ObsoleteImage(): %d\n", response.StatusCode)
+			}
+
+			// end-obsolete_image
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(204))
 		})
 		It(`ListImageExportJobs request example`, func() {
 			fmt.Println("\nListImageExportJobs() result:")
@@ -2835,7 +2877,6 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 			fmt.Println("\nCreateShare() result:")
 			// begin-create_share
 
-			createShareOptions := vpcService.NewCreateShareOptions()
 			vpcIdentityModel := &vpcbetav1.VPCIdentityByID{
 				ID: &vpcID,
 			}
@@ -2865,8 +2906,8 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 				ReplicaShare: sharePrototypeShareContextModel,
 				Zone:         zoneIdentityModel,
 			}
+			createShareOptions := vpcService.NewCreateShareOptions(sharePrototype)
 
-			createShareOptions.SetSharePrototype(sharePrototype)
 			share, response, err := vpcService.CreateShare(createShareOptions)
 			if err != nil {
 				panic(err)
@@ -4795,8 +4836,8 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 			fmt.Println("\nCreateBackupPolicy() result:")
 			// begin-create_backup_policy
 
-			createBackupPolicyOptions := vpcService.NewCreateBackupPolicyOptions()
 			userTags := []string{"tag1", "tag2"}
+			createBackupPolicyOptions := vpcService.NewCreateBackupPolicyOptions(userTags)
 			createBackupPolicyOptions.SetName("my-backup-policy")
 			createBackupPolicyOptions.SetMatchUserTags(userTags)
 

@@ -15,7 +15,7 @@
  */
 
 /*
- * IBM OpenAPI SDK Code Generator Version: 3.68.2-ac7def68-20230310-195410
+ * IBM OpenAPI SDK Code Generator Version: 3.69.0-370d6400-20230329-174648
  */
 
 // Package vpcbetav1 : Operations and models for the VpcbetaV1 service
@@ -27,6 +27,7 @@ import (
 	"fmt"
 	"net/http"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/IBM/go-sdk-core/v5/core"
@@ -37,7 +38,7 @@ import (
 // VpcbetaV1 : The IBM Cloud Virtual Private Cloud (VPC) API can be used to programmatically provision and manage
 // virtual server instances, along with subnets, volumes, load balancers, and more.
 //
-// API Version: beta-2023-02-14
+// API Version: beta-2023-04-20
 type VpcbetaV1 struct {
 	Service *core.BaseService
 
@@ -45,7 +46,7 @@ type VpcbetaV1 struct {
 	// `2`.
 	generation *int64
 
-	// The API version, in format `YYYY-MM-DD`. For the API behavior documented here, specify any date between `2023-02-12`
+	// The API version, in format `YYYY-MM-DD`. For the API behavior documented here, specify any date between `2023-03-05`
 	// and today's date (UTC).
 	Version *string
 }
@@ -62,7 +63,7 @@ type VpcbetaV1Options struct {
 	URL           string
 	Authenticator core.Authenticator
 
-	// The API version, in format `YYYY-MM-DD`. For the API behavior documented here, specify any date between `2023-02-12`
+	// The API version, in format `YYYY-MM-DD`. For the API behavior documented here, specify any date between `2023-03-05`
 	// and today's date (UTC).
 	Version *string
 }
@@ -121,7 +122,7 @@ func NewVpcbetaV1(options *VpcbetaV1Options) (service *VpcbetaV1, err error) {
 	}
 
 	if options.Version == nil {
-		options.Version = core.StringPtr("2023-02-14")
+		options.Version = core.StringPtr("2023-04-11")
 	}
 	service = &VpcbetaV1{
 		Service:    baseService,
@@ -3256,9 +3257,6 @@ func (vpcbeta *VpcbetaV1) UpdateSubnetReservedIPWithContext(ctx context.Context,
 // ListImages : List all images
 // This request lists all images available in the region. An image provides source data for a volume. Images are either
 // system-provided, or created from another source, such as importing from Cloud Object Storage.
-//
-// The images will be sorted by their `created_at` property values, with the newest first. Images with identical
-// `created_at` values will be secondarily sorted by ascending `id` property values.
 func (vpcbeta *VpcbetaV1) ListImages(listImagesOptions *ListImagesOptions) (result *ImageCollection, response *core.DetailedResponse, err error) {
 	return vpcbeta.ListImagesWithContext(context.Background(), listImagesOptions)
 }
@@ -3301,6 +3299,9 @@ func (vpcbeta *VpcbetaV1) ListImagesWithContext(ctx context.Context, listImagesO
 	}
 	if listImagesOptions.Name != nil {
 		builder.AddQuery("name", fmt.Sprint(*listImagesOptions.Name))
+	}
+	if listImagesOptions.Status != nil {
+		builder.AddQuery("status", strings.Join(listImagesOptions.Status, ","))
 	}
 	if listImagesOptions.Visibility != nil {
 		builder.AddQuery("visibility", fmt.Sprint(*listImagesOptions.Visibility))
@@ -3580,6 +3581,128 @@ func (vpcbeta *VpcbetaV1) UpdateImageWithContext(ctx context.Context, updateImag
 		}
 		response.Result = result
 	}
+
+	return
+}
+
+// DeprecateImage : Deprecate an image
+// This request deprecates an image, resulting in its `status` becoming `deprecated` and
+// `deprecated_at` being set to the current date and time.
+//
+// The image must:
+// - have a `status` of `available`
+// - have `catalog_offering.managed` set to `false`
+// - not have `deprecated_at` set
+//
+// The image must not have `deprecated_at` set, must have `catalog_offering.managed` set to
+// `false`, and must have a `status` of `available`.
+//
+// A system-provided image is not allowed to be deprecated.
+func (vpcbeta *VpcbetaV1) DeprecateImage(deprecateImageOptions *DeprecateImageOptions) (response *core.DetailedResponse, err error) {
+	return vpcbeta.DeprecateImageWithContext(context.Background(), deprecateImageOptions)
+}
+
+// DeprecateImageWithContext is an alternate form of the DeprecateImage method which supports a Context parameter
+func (vpcbeta *VpcbetaV1) DeprecateImageWithContext(ctx context.Context, deprecateImageOptions *DeprecateImageOptions) (response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(deprecateImageOptions, "deprecateImageOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(deprecateImageOptions, "deprecateImageOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"id": *deprecateImageOptions.ID,
+	}
+
+	builder := core.NewRequestBuilder(core.POST)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = vpcbeta.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(vpcbeta.Service.Options.URL, `/images/{id}/deprecate`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range deprecateImageOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("vpcbeta", "V1", "DeprecateImage")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
+	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	response, err = vpcbeta.Service.Request(request, nil)
+
+	return
+}
+
+// ObsoleteImage : Obsolete an image
+// This request obsoletes an image, resulting in its `status` becoming `obsolete` and
+// `obsoleted_at` being set to the current date and time.
+//
+// The image must:
+// - have a `status` of `available` or `deprecated`
+// - have `catalog_offering.managed` set to `false`
+// - not have `deprecated_at` set in the future
+// - not have `obsoleted_at` set
+//
+// A system-provided image is not allowed to be obsoleted.
+func (vpcbeta *VpcbetaV1) ObsoleteImage(obsoleteImageOptions *ObsoleteImageOptions) (response *core.DetailedResponse, err error) {
+	return vpcbeta.ObsoleteImageWithContext(context.Background(), obsoleteImageOptions)
+}
+
+// ObsoleteImageWithContext is an alternate form of the ObsoleteImage method which supports a Context parameter
+func (vpcbeta *VpcbetaV1) ObsoleteImageWithContext(ctx context.Context, obsoleteImageOptions *ObsoleteImageOptions) (response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(obsoleteImageOptions, "obsoleteImageOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(obsoleteImageOptions, "obsoleteImageOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"id": *obsoleteImageOptions.ID,
+	}
+
+	builder := core.NewRequestBuilder(core.POST)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = vpcbeta.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(vpcbeta.Service.Options.URL, `/images/{id}/obsolete`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range obsoleteImageOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("vpcbeta", "V1", "ObsoleteImage")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
+	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	response, err = vpcbeta.Service.Request(request, nil)
 
 	return
 }
@@ -8392,6 +8515,10 @@ func (vpcbeta *VpcbetaV1) CreateDedicatedHostGroup(createDedicatedHostGroupOptio
 
 // CreateDedicatedHostGroupWithContext is an alternate form of the CreateDedicatedHostGroup method which supports a Context parameter
 func (vpcbeta *VpcbetaV1) CreateDedicatedHostGroupWithContext(ctx context.Context, createDedicatedHostGroupOptions *CreateDedicatedHostGroupOptions) (result *DedicatedHostGroup, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(createDedicatedHostGroupOptions, "createDedicatedHostGroupOptions cannot be nil")
+	if err != nil {
+		return
+	}
 	err = core.ValidateStruct(createDedicatedHostGroupOptions, "createDedicatedHostGroupOptions")
 	if err != nil {
 		return
@@ -8426,14 +8553,14 @@ func (vpcbeta *VpcbetaV1) CreateDedicatedHostGroupWithContext(ctx context.Contex
 	if createDedicatedHostGroupOptions.Family != nil {
 		body["family"] = createDedicatedHostGroupOptions.Family
 	}
+	if createDedicatedHostGroupOptions.Zone != nil {
+		body["zone"] = createDedicatedHostGroupOptions.Zone
+	}
 	if createDedicatedHostGroupOptions.Name != nil {
 		body["name"] = createDedicatedHostGroupOptions.Name
 	}
 	if createDedicatedHostGroupOptions.ResourceGroup != nil {
 		body["resource_group"] = createDedicatedHostGroupOptions.ResourceGroup
-	}
-	if createDedicatedHostGroupOptions.Zone != nil {
-		body["zone"] = createDedicatedHostGroupOptions.Zone
 	}
 	_, err = builder.SetBodyContentJSON(body)
 	if err != nil {
@@ -9373,6 +9500,10 @@ func (vpcbeta *VpcbetaV1) CreateBackupPolicy(createBackupPolicyOptions *CreateBa
 
 // CreateBackupPolicyWithContext is an alternate form of the CreateBackupPolicy method which supports a Context parameter
 func (vpcbeta *VpcbetaV1) CreateBackupPolicyWithContext(ctx context.Context, createBackupPolicyOptions *CreateBackupPolicyOptions) (result *BackupPolicy, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(createBackupPolicyOptions, "createBackupPolicyOptions cannot be nil")
+	if err != nil {
+		return
+	}
 	err = core.ValidateStruct(createBackupPolicyOptions, "createBackupPolicyOptions")
 	if err != nil {
 		return
@@ -9401,11 +9532,11 @@ func (vpcbeta *VpcbetaV1) CreateBackupPolicyWithContext(ctx context.Context, cre
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 
 	body := make(map[string]interface{})
-	if createBackupPolicyOptions.MatchResourceTypes != nil {
-		body["match_resource_types"] = createBackupPolicyOptions.MatchResourceTypes
-	}
 	if createBackupPolicyOptions.MatchUserTags != nil {
 		body["match_user_tags"] = createBackupPolicyOptions.MatchUserTags
+	}
+	if createBackupPolicyOptions.MatchResourceTypes != nil {
+		body["match_resource_types"] = createBackupPolicyOptions.MatchResourceTypes
 	}
 	if createBackupPolicyOptions.Name != nil {
 		body["name"] = createBackupPolicyOptions.Name
@@ -11532,8 +11663,8 @@ func (vpcbeta *VpcbetaV1) RemoveBareMetalServerNetworkInterfaceFloatingIPWithCon
 }
 
 // GetBareMetalServerNetworkInterfaceFloatingIP : Retrieve associated floating IP
-// This request retrieves a specified floating IP address if it is associated with the network interface and bare metal
-// server specified in the URL.
+// This request retrieves a specified floating IP if it is associated with the network interface and bare metal server
+// specified in the URL.
 func (vpcbeta *VpcbetaV1) GetBareMetalServerNetworkInterfaceFloatingIP(getBareMetalServerNetworkInterfaceFloatingIPOptions *GetBareMetalServerNetworkInterfaceFloatingIPOptions) (result *FloatingIP, response *core.DetailedResponse, err error) {
 	return vpcbeta.GetBareMetalServerNetworkInterfaceFloatingIPWithContext(context.Background(), getBareMetalServerNetworkInterfaceFloatingIPOptions)
 }
@@ -13525,6 +13656,10 @@ func (vpcbeta *VpcbetaV1) CreateShare(createShareOptions *CreateShareOptions) (r
 
 // CreateShareWithContext is an alternate form of the CreateShare method which supports a Context parameter
 func (vpcbeta *VpcbetaV1) CreateShareWithContext(ctx context.Context, createShareOptions *CreateShareOptions) (result *Share, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(createShareOptions, "createShareOptions cannot be nil")
+	if err != nil {
+		return
+	}
 	err = core.ValidateStruct(createShareOptions, "createShareOptions")
 	if err != nil {
 		return
@@ -13552,11 +13687,9 @@ func (vpcbeta *VpcbetaV1) CreateShareWithContext(ctx context.Context, createShar
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 
-	if createShareOptions.SharePrototype != nil {
-		_, err = builder.SetBodyContentJSON(createShareOptions.SharePrototype)
-		if err != nil {
-			return
-		}
+	_, err = builder.SetBodyContentJSON(createShareOptions.SharePrototype)
+	if err != nil {
+		return
 	}
 
 	request, err := builder.Build()
@@ -15310,6 +15443,10 @@ func (vpcbeta *VpcbetaV1) CreateNetworkACL(createNetworkACLOptions *CreateNetwor
 
 // CreateNetworkACLWithContext is an alternate form of the CreateNetworkACL method which supports a Context parameter
 func (vpcbeta *VpcbetaV1) CreateNetworkACLWithContext(ctx context.Context, createNetworkACLOptions *CreateNetworkACLOptions) (result *NetworkACL, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(createNetworkACLOptions, "createNetworkACLOptions cannot be nil")
+	if err != nil {
+		return
+	}
 	err = core.ValidateStruct(createNetworkACLOptions, "createNetworkACLOptions")
 	if err != nil {
 		return
@@ -15337,11 +15474,9 @@ func (vpcbeta *VpcbetaV1) CreateNetworkACLWithContext(ctx context.Context, creat
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 
-	if createNetworkACLOptions.NetworkACLPrototype != nil {
-		_, err = builder.SetBodyContentJSON(createNetworkACLOptions.NetworkACLPrototype)
-		if err != nil {
-			return
-		}
+	_, err = builder.SetBodyContentJSON(createNetworkACLOptions.NetworkACLPrototype)
+	if err != nil {
+		return
 	}
 
 	request, err := builder.Build()
@@ -16625,11 +16760,11 @@ func (vpcbeta *VpcbetaV1) ListSecurityGroupTargetsWithContext(ctx context.Contex
 // This request removes a target from a security group. For this request to succeed, the target must be attached to at
 // least one other security group.  The specified target identifier can be:
 //
-// - An instance network interface identifier
 // - A bare metal server network interface identifier
 // - A VPN server identifier
 // - An application load balancer identifier
 // - An endpoint gateway identifier
+// - An instance network interface identifier
 //
 // Security groups are stateful, so any changes to a target's security groups are applied to new connections. Existing
 // connections are not affected.
@@ -16751,11 +16886,11 @@ func (vpcbeta *VpcbetaV1) GetSecurityGroupTargetWithContext(ctx context.Context,
 // CreateSecurityGroupTargetBinding : Add a target to a security group
 // This request adds a resource to an existing security group. The specified target identifier can be:
 //
-// - An instance network interface identifier
 // - A bare metal server network interface identifier
 // - A VPN server identifier
 // - An application load balancer identifier
 // - An endpoint gateway identifier
+// - An instance network interface identifier
 //
 // When a target is added to a security group, the security group rules are applied to the target. A request body is not
 // required, and if provided, is ignored.
@@ -23084,7 +23219,7 @@ func (options *AddEndpointGatewayIPOptions) SetHeaders(param map[string]string) 
 
 // AddInstanceNetworkInterfaceFloatingIPOptions : The AddInstanceNetworkInterfaceFloatingIP options.
 type AddInstanceNetworkInterfaceFloatingIPOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	InstanceID *string `json:"instance_id" validate:"required,ne="`
 
 	// The network interface identifier.
@@ -24570,6 +24705,16 @@ type BareMetalServer struct {
 	// The unique identifier for this bare metal server.
 	ID *string `json:"id" validate:"required"`
 
+	// The reasons for the current `lifecycle_state` (if any).
+	//
+	// The enumerated reason code values for this property will expand in the future. When processing this property, check
+	// for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
+	// unexpected reason code was encountered.
+	LifecycleReasons []BareMetalServerLifecycleReason `json:"lifecycle_reasons" validate:"required"`
+
+	// The lifecycle state of the bare metal server.
+	LifecycleState *string `json:"lifecycle_state" validate:"required"`
+
 	// The amount of memory, truncated to whole gibibytes.
 	Memory *int64 `json:"memory" validate:"required"`
 
@@ -24610,6 +24755,18 @@ type BareMetalServer struct {
 	// The zone this bare metal server resides in.
 	Zone *ZoneReference `json:"zone" validate:"required"`
 }
+
+// Constants associated with the BareMetalServer.LifecycleState property.
+// The lifecycle state of the bare metal server.
+const (
+	BareMetalServerLifecycleStateDeletingConst  = "deleting"
+	BareMetalServerLifecycleStateFailedConst    = "failed"
+	BareMetalServerLifecycleStatePendingConst   = "pending"
+	BareMetalServerLifecycleStateStableConst    = "stable"
+	BareMetalServerLifecycleStateSuspendedConst = "suspended"
+	BareMetalServerLifecycleStateUpdatingConst  = "updating"
+	BareMetalServerLifecycleStateWaitingConst   = "waiting"
+)
 
 // Constants associated with the BareMetalServer.ResourceType property.
 // The resource type.
@@ -24667,6 +24824,14 @@ func UnmarshalBareMetalServer(m map[string]json.RawMessage, result interface{}) 
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "lifecycle_reasons", &obj.LifecycleReasons, UnmarshalBareMetalServerLifecycleReason)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "lifecycle_state", &obj.LifecycleState)
 	if err != nil {
 		return
 	}
@@ -25251,6 +25416,43 @@ func UnmarshalBareMetalServerInitializationUserAccount(m map[string]json.RawMess
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "username", &obj.Username)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// BareMetalServerLifecycleReason : BareMetalServerLifecycleReason struct
+type BareMetalServerLifecycleReason struct {
+	// A snake case string succinctly identifying the reason for this lifecycle state.
+	Code *string `json:"code" validate:"required"`
+
+	// An explanation of the reason for this lifecycle state.
+	Message *string `json:"message" validate:"required"`
+
+	// Link to documentation about the reason for this lifecycle state.
+	MoreInfo *string `json:"more_info,omitempty"`
+}
+
+// Constants associated with the BareMetalServerLifecycleReason.Code property.
+// A snake case string succinctly identifying the reason for this lifecycle state.
+const (
+	BareMetalServerLifecycleReasonCodeResourceSuspendedByProviderConst = "resource_suspended_by_provider"
+)
+
+// UnmarshalBareMetalServerLifecycleReason unmarshals an instance of BareMetalServerLifecycleReason from the specified map of raw messages.
+func UnmarshalBareMetalServerLifecycleReason(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(BareMetalServerLifecycleReason)
+	err = core.UnmarshalPrimitive(m, "code", &obj.Code)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "message", &obj.Message)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
 	if err != nil {
 		return
 	}
@@ -25866,6 +26068,9 @@ func UnmarshalBareMetalServerPrimaryNetworkInterfacePrototype(m map[string]json.
 type BareMetalServerProfile struct {
 	Bandwidth BareMetalServerProfileBandwidthIntf `json:"bandwidth" validate:"required"`
 
+	// The console type configuration for a bare metal server with this profile.
+	ConsoleTypes *BareMetalServerProfileConsoleTypes `json:"console_types" validate:"required"`
+
 	CpuArchitecture *BareMetalServerProfileCpuArchitecture `json:"cpu_architecture" validate:"required"`
 
 	CpuCoreCount BareMetalServerProfileCpuCoreCountIntf `json:"cpu_core_count" validate:"required"`
@@ -25886,6 +26091,8 @@ type BareMetalServerProfile struct {
 	// The name for this bare metal server profile.
 	Name *string `json:"name" validate:"required"`
 
+	NetworkInterfaceCount BareMetalServerProfileNetworkInterfaceCountIntf `json:"network_interface_count" validate:"required"`
+
 	OsArchitecture *BareMetalServerProfileOsArchitecture `json:"os_architecture" validate:"required"`
 
 	// The resource type.
@@ -25905,6 +26112,10 @@ const (
 func UnmarshalBareMetalServerProfile(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(BareMetalServerProfile)
 	err = core.UnmarshalModel(m, "bandwidth", &obj.Bandwidth, UnmarshalBareMetalServerProfileBandwidth)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "console_types", &obj.ConsoleTypes, UnmarshalBareMetalServerProfileConsoleTypes)
 	if err != nil {
 		return
 	}
@@ -25937,6 +26148,10 @@ func UnmarshalBareMetalServerProfile(m map[string]json.RawMessage, result interf
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "network_interface_count", &obj.NetworkInterfaceCount, UnmarshalBareMetalServerProfileNetworkInterfaceCount)
 	if err != nil {
 		return
 	}
@@ -26319,6 +26534,43 @@ func UnmarshalBareMetalServerProfileCollectionNext(m map[string]json.RawMessage,
 	return
 }
 
+// BareMetalServerProfileConsoleTypes : The console type configuration for a bare metal server with this profile.
+type BareMetalServerProfileConsoleTypes struct {
+	// The type for this profile field.
+	Type *string `json:"type" validate:"required"`
+
+	// The console types for a bare metal server with this profile.
+	Values []string `json:"values" validate:"required"`
+}
+
+// Constants associated with the BareMetalServerProfileConsoleTypes.Type property.
+// The type for this profile field.
+const (
+	BareMetalServerProfileConsoleTypesTypeEnumConst = "enum"
+)
+
+// Constants associated with the BareMetalServerProfileConsoleTypes.Values property.
+// A console type.
+const (
+	BareMetalServerProfileConsoleTypesValuesSerialConst = "serial"
+	BareMetalServerProfileConsoleTypesValuesVncConst    = "vnc"
+)
+
+// UnmarshalBareMetalServerProfileConsoleTypes unmarshals an instance of BareMetalServerProfileConsoleTypes from the specified map of raw messages.
+func UnmarshalBareMetalServerProfileConsoleTypes(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(BareMetalServerProfileConsoleTypes)
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "values", &obj.Values)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // BareMetalServerProfileDisk : Disks provided by this profile.
 type BareMetalServerProfileDisk struct {
 	Quantity BareMetalServerProfileDiskQuantityIntf `json:"quantity" validate:"required"`
@@ -26686,6 +26938,54 @@ func UnmarshalBareMetalServerProfileMemory(m map[string]json.RawMessage, result 
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "values", &obj.Values)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// BareMetalServerProfileNetworkInterfaceCount : BareMetalServerProfileNetworkInterfaceCount struct
+// Models which "extend" this model:
+// - BareMetalServerProfileNetworkInterfaceCountRange
+// - BareMetalServerProfileNetworkInterfaceCountDependent
+type BareMetalServerProfileNetworkInterfaceCount struct {
+	// The maximum value for this profile field.
+	Max *int64 `json:"max,omitempty"`
+
+	// The minimum value for this profile field.
+	Min *int64 `json:"min,omitempty"`
+
+	// The type for this profile field.
+	Type *string `json:"type,omitempty"`
+}
+
+// Constants associated with the BareMetalServerProfileNetworkInterfaceCount.Type property.
+// The type for this profile field.
+const (
+	BareMetalServerProfileNetworkInterfaceCountTypeRangeConst = "range"
+)
+
+func (*BareMetalServerProfileNetworkInterfaceCount) isaBareMetalServerProfileNetworkInterfaceCount() bool {
+	return true
+}
+
+type BareMetalServerProfileNetworkInterfaceCountIntf interface {
+	isaBareMetalServerProfileNetworkInterfaceCount() bool
+}
+
+// UnmarshalBareMetalServerProfileNetworkInterfaceCount unmarshals an instance of BareMetalServerProfileNetworkInterfaceCount from the specified map of raw messages.
+func UnmarshalBareMetalServerProfileNetworkInterfaceCount(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(BareMetalServerProfileNetworkInterfaceCount)
+	err = core.UnmarshalPrimitive(m, "max", &obj.Max)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "min", &obj.Min)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
 	if err != nil {
 		return
 	}
@@ -27294,13 +27594,13 @@ func UnmarshalCloudObjectStorageObjectReference(m map[string]json.RawMessage, re
 
 // CreateBackupPolicyOptions : The CreateBackupPolicy options.
 type CreateBackupPolicyOptions struct {
+	// The user tags this backup policy applies to. Resources that have both a matching user tag and a matching type will
+	// be subject to the backup policy.
+	MatchUserTags []string `json:"match_user_tags" validate:"required"`
+
 	// A resource type this backup policy applies to. Resources that have both a matching type and a matching user tag will
 	// be subject to the backup policy.
 	MatchResourceTypes []string `json:"match_resource_types,omitempty"`
-
-	// The user tags this backup policy applies to. Resources that have both a matching user tag and a matching type will
-	// be subject to the backup policy.
-	MatchUserTags []string `json:"match_user_tags,omitempty"`
 
 	// The name for this backup policy. The name must not be used by another backup policy in the region. If unspecified,
 	// the name will be a hyphenated list of randomly-selected words.
@@ -27324,19 +27624,21 @@ const (
 )
 
 // NewCreateBackupPolicyOptions : Instantiate CreateBackupPolicyOptions
-func (*VpcbetaV1) NewCreateBackupPolicyOptions() *CreateBackupPolicyOptions {
-	return &CreateBackupPolicyOptions{}
-}
-
-// SetMatchResourceTypes : Allow user to set MatchResourceTypes
-func (_options *CreateBackupPolicyOptions) SetMatchResourceTypes(matchResourceTypes []string) *CreateBackupPolicyOptions {
-	_options.MatchResourceTypes = matchResourceTypes
-	return _options
+func (*VpcbetaV1) NewCreateBackupPolicyOptions(matchUserTags []string) *CreateBackupPolicyOptions {
+	return &CreateBackupPolicyOptions{
+		MatchUserTags: matchUserTags,
+	}
 }
 
 // SetMatchUserTags : Allow user to set MatchUserTags
 func (_options *CreateBackupPolicyOptions) SetMatchUserTags(matchUserTags []string) *CreateBackupPolicyOptions {
 	_options.MatchUserTags = matchUserTags
+	return _options
+}
+
+// SetMatchResourceTypes : Allow user to set MatchResourceTypes
+func (_options *CreateBackupPolicyOptions) SetMatchResourceTypes(matchResourceTypes []string) *CreateBackupPolicyOptions {
+	_options.MatchResourceTypes = matchResourceTypes
 	return _options
 }
 
@@ -27678,10 +27980,13 @@ func (options *CreateBareMetalServerOptions) SetHeaders(param map[string]string)
 // CreateDedicatedHostGroupOptions : The CreateDedicatedHostGroup options.
 type CreateDedicatedHostGroupOptions struct {
 	// The dedicated host profile class for hosts in this group.
-	Class *string `json:"class,omitempty"`
+	Class *string `json:"class" validate:"required"`
 
 	// The dedicated host profile family for hosts in this group.
-	Family *string `json:"family,omitempty"`
+	Family *string `json:"family" validate:"required"`
+
+	// The zone this dedicated host group will reside in.
+	Zone ZoneIdentityIntf `json:"zone" validate:"required"`
 
 	// The name for this dedicated host group. The name must not be used by another dedicated host group in the region. If
 	// unspecified, the name will be a hyphenated list of randomly-selected words.
@@ -27690,9 +27995,6 @@ type CreateDedicatedHostGroupOptions struct {
 	// The resource group to use. If unspecified, the account's [default resource
 	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
-
-	// The zone this dedicated host group will reside in.
-	Zone ZoneIdentityIntf `json:"zone,omitempty"`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -27707,8 +28009,12 @@ const (
 )
 
 // NewCreateDedicatedHostGroupOptions : Instantiate CreateDedicatedHostGroupOptions
-func (*VpcbetaV1) NewCreateDedicatedHostGroupOptions() *CreateDedicatedHostGroupOptions {
-	return &CreateDedicatedHostGroupOptions{}
+func (*VpcbetaV1) NewCreateDedicatedHostGroupOptions(class string, family string, zone ZoneIdentityIntf) *CreateDedicatedHostGroupOptions {
+	return &CreateDedicatedHostGroupOptions{
+		Class:  core.StringPtr(class),
+		Family: core.StringPtr(family),
+		Zone:   zone,
+	}
 }
 
 // SetClass : Allow user to set Class
@@ -27723,6 +28029,12 @@ func (_options *CreateDedicatedHostGroupOptions) SetFamily(family string) *Creat
 	return _options
 }
 
+// SetZone : Allow user to set Zone
+func (_options *CreateDedicatedHostGroupOptions) SetZone(zone ZoneIdentityIntf) *CreateDedicatedHostGroupOptions {
+	_options.Zone = zone
+	return _options
+}
+
 // SetName : Allow user to set Name
 func (_options *CreateDedicatedHostGroupOptions) SetName(name string) *CreateDedicatedHostGroupOptions {
 	_options.Name = core.StringPtr(name)
@@ -27732,12 +28044,6 @@ func (_options *CreateDedicatedHostGroupOptions) SetName(name string) *CreateDed
 // SetResourceGroup : Allow user to set ResourceGroup
 func (_options *CreateDedicatedHostGroupOptions) SetResourceGroup(resourceGroup ResourceGroupIdentityIntf) *CreateDedicatedHostGroupOptions {
 	_options.ResourceGroup = resourceGroup
-	return _options
-}
-
-// SetZone : Allow user to set Zone
-func (_options *CreateDedicatedHostGroupOptions) SetZone(zone ZoneIdentityIntf) *CreateDedicatedHostGroupOptions {
-	_options.Zone = zone
 	return _options
 }
 
@@ -28168,7 +28474,7 @@ func (options *CreateImageOptions) SetHeaders(param map[string]string) *CreateIm
 
 // CreateInstanceActionOptions : The CreateInstanceAction options.
 type CreateInstanceActionOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	InstanceID *string `json:"instance_id" validate:"required,ne="`
 
 	// The type of action.
@@ -28223,7 +28529,7 @@ func (options *CreateInstanceActionOptions) SetHeaders(param map[string]string) 
 
 // CreateInstanceConsoleAccessTokenOptions : The CreateInstanceConsoleAccessToken options.
 type CreateInstanceConsoleAccessTokenOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	InstanceID *string `json:"instance_id" validate:"required,ne="`
 
 	// The instance console type for which this token may be used.
@@ -28517,7 +28823,7 @@ func (options *CreateInstanceGroupOptions) SetHeaders(param map[string]string) *
 
 // CreateInstanceNetworkInterfaceOptions : The CreateInstanceNetworkInterface options.
 type CreateInstanceNetworkInterfaceOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	InstanceID *string `json:"instance_id" validate:"required,ne="`
 
 	// The associated subnet.
@@ -28654,7 +28960,7 @@ func (options *CreateInstanceTemplateOptions) SetHeaders(param map[string]string
 
 // CreateInstanceVolumeAttachmentOptions : The CreateInstanceVolumeAttachment options.
 type CreateInstanceVolumeAttachmentOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	InstanceID *string `json:"instance_id" validate:"required,ne="`
 
 	// An existing volume to attach to the instance, or a prototype object for a new volume.
@@ -29349,6 +29655,11 @@ type CreateLoadBalancerOptions struct {
 	// The datapath logging configuration for this load balancer.
 	Datapath *LoadBalancerLoggingDatapathPrototype `json:"datapath,omitempty"`
 
+	// The DNS configuration for this load balancer.
+	//
+	// If unspecified, DNS `A` records for this load balancer's `hostname` property will be added
+	// to the public DNS zone `lb.appdomain.cloud`. Otherwise, those DNS `A` records will be
+	// added to the specified `zone`.
 	Dns *LoadBalancerDnsPrototype `json:"dns,omitempty"`
 
 	// The listeners of this load balancer.
@@ -29693,15 +30004,17 @@ func (options *CreateLoadBalancerPoolOptions) SetHeaders(param map[string]string
 // CreateNetworkACLOptions : The CreateNetworkACL options.
 type CreateNetworkACLOptions struct {
 	// The network ACL prototype object.
-	NetworkACLPrototype NetworkACLPrototypeIntf `json:"NetworkACLPrototype,omitempty"`
+	NetworkACLPrototype NetworkACLPrototypeIntf `json:"NetworkACLPrototype" validate:"required"`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
 }
 
 // NewCreateNetworkACLOptions : Instantiate CreateNetworkACLOptions
-func (*VpcbetaV1) NewCreateNetworkACLOptions() *CreateNetworkACLOptions {
-	return &CreateNetworkACLOptions{}
+func (*VpcbetaV1) NewCreateNetworkACLOptions(networkACLPrototype NetworkACLPrototypeIntf) *CreateNetworkACLOptions {
+	return &CreateNetworkACLOptions{
+		NetworkACLPrototype: networkACLPrototype,
+	}
 }
 
 // SetNetworkACLPrototype : Allow user to set NetworkACLPrototype
@@ -30072,15 +30385,17 @@ func (options *CreateShareMountTargetOptions) SetHeaders(param map[string]string
 // CreateShareOptions : The CreateShare options.
 type CreateShareOptions struct {
 	// The file share prototype object.
-	SharePrototype SharePrototypeIntf `json:"SharePrototype,omitempty"`
+	SharePrototype SharePrototypeIntf `json:"SharePrototype" validate:"required"`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
 }
 
 // NewCreateShareOptions : Instantiate CreateShareOptions
-func (*VpcbetaV1) NewCreateShareOptions() *CreateShareOptions {
-	return &CreateShareOptions{}
+func (*VpcbetaV1) NewCreateShareOptions(sharePrototype SharePrototypeIntf) *CreateShareOptions {
+	return &CreateShareOptions{
+		SharePrototype: sharePrototype,
+	}
 }
 
 // SetSharePrototype : Allow user to set SharePrototype
@@ -33889,7 +34204,7 @@ func (options *DeleteInstanceGroupOptions) SetHeaders(param map[string]string) *
 
 // DeleteInstanceNetworkInterfaceOptions : The DeleteInstanceNetworkInterface options.
 type DeleteInstanceNetworkInterfaceOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	InstanceID *string `json:"instance_id" validate:"required,ne="`
 
 	// The network interface identifier.
@@ -33927,7 +34242,7 @@ func (options *DeleteInstanceNetworkInterfaceOptions) SetHeaders(param map[strin
 
 // DeleteInstanceOptions : The DeleteInstance options.
 type DeleteInstanceOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	ID *string `json:"id" validate:"required,ne="`
 
 	// Allows users to set headers on API requests
@@ -33983,7 +34298,7 @@ func (options *DeleteInstanceTemplateOptions) SetHeaders(param map[string]string
 
 // DeleteInstanceVolumeAttachmentOptions : The DeleteInstanceVolumeAttachment options.
 type DeleteInstanceVolumeAttachmentOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	InstanceID *string `json:"instance_id" validate:"required,ne="`
 
 	// The volume attachment identifier.
@@ -35255,6 +35570,34 @@ func (options *DeleteVPNServerRouteOptions) SetHeaders(param map[string]string) 
 	return options
 }
 
+// DeprecateImageOptions : The DeprecateImage options.
+type DeprecateImageOptions struct {
+	// The image identifier.
+	ID *string `json:"id" validate:"required,ne="`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewDeprecateImageOptions : Instantiate DeprecateImageOptions
+func (*VpcbetaV1) NewDeprecateImageOptions(id string) *DeprecateImageOptions {
+	return &DeprecateImageOptions{
+		ID: core.StringPtr(id),
+	}
+}
+
+// SetID : Allow user to set ID
+func (_options *DeprecateImageOptions) SetID(id string) *DeprecateImageOptions {
+	_options.ID = core.StringPtr(id)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *DeprecateImageOptions) SetHeaders(param map[string]string) *DeprecateImageOptions {
+	options.Headers = param
+	return options
+}
+
 // DisconnectVPNClientOptions : The DisconnectVPNClient options.
 type DisconnectVPNClientOptions struct {
 	// The VPN server identifier.
@@ -35960,41 +36303,6 @@ func UnmarshalFloatingIP(m map[string]json.RawMessage, result interface{}) (err 
 	return
 }
 
-// FloatingIPByTargetNetworkInterfaceIdentity : The network interface this floating IP is to be bound to.
-// Models which "extend" this model:
-// - FloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByID
-// - FloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByHref
-type FloatingIPByTargetNetworkInterfaceIdentity struct {
-	// The unique identifier for this network interface.
-	ID *string `json:"id,omitempty"`
-
-	// The URL for this network interface.
-	Href *string `json:"href,omitempty"`
-}
-
-func (*FloatingIPByTargetNetworkInterfaceIdentity) isaFloatingIPByTargetNetworkInterfaceIdentity() bool {
-	return true
-}
-
-type FloatingIPByTargetNetworkInterfaceIdentityIntf interface {
-	isaFloatingIPByTargetNetworkInterfaceIdentity() bool
-}
-
-// UnmarshalFloatingIPByTargetNetworkInterfaceIdentity unmarshals an instance of FloatingIPByTargetNetworkInterfaceIdentity from the specified map of raw messages.
-func UnmarshalFloatingIPByTargetNetworkInterfaceIdentity(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(FloatingIPByTargetNetworkInterfaceIdentity)
-	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
-	if err != nil {
-		return
-	}
-	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
-	return
-}
-
 // FloatingIPCollection : FloatingIPCollection struct
 type FloatingIPCollection struct {
 	// A link to the first page of resources.
@@ -36092,8 +36400,14 @@ type FloatingIPPatch struct {
 	// The name for this floating IP. The name must not be used by another floating IP in the region.
 	Name *string `json:"name,omitempty"`
 
-	// The network interface to bind the floating IP to, replacing any existing binding.
+	// The target resource to bind this floating IP to, replacing any existing binding.
 	// The floating IP must not be required by another resource, such as a public gateway.
+	//
+	// The target resource must not already have a floating IP bound to it if the target
+	// resource is:
+	//
+	// - an instance network interface
+	// - a bare metal server network interface with `enable_infrastructure_nat` set to `true`.
 	Target FloatingIPTargetPatchIntf `json:"target,omitempty"`
 }
 
@@ -36138,8 +36452,14 @@ type FloatingIPPrototype struct {
 	// The zone this floating IP will reside in.
 	Zone ZoneIdentityIntf `json:"zone,omitempty"`
 
-	// The network interface this floating IP is to be bound to.
-	Target FloatingIPByTargetNetworkInterfaceIdentityIntf `json:"target,omitempty"`
+	// The target resource to bind this floating IP to.
+	//
+	// The target resource must not already have a floating IP bound to it if the target
+	// resource is:
+	//
+	// - an instance network interface
+	// - a bare metal server network interface with `enable_infrastructure_nat` set to `true`.
+	Target FloatingIPTargetPrototypeIntf `json:"target,omitempty"`
 }
 
 func (*FloatingIPPrototype) isaFloatingIPPrototype() bool {
@@ -36165,7 +36485,7 @@ func UnmarshalFloatingIPPrototype(m map[string]json.RawMessage, result interface
 	if err != nil {
 		return
 	}
-	err = core.UnmarshalModel(m, "target", &obj.Target, UnmarshalFloatingIPByTargetNetworkInterfaceIdentity)
+	err = core.UnmarshalModel(m, "target", &obj.Target, UnmarshalFloatingIPTargetPrototype)
 	if err != nil {
 		return
 	}
@@ -36320,11 +36640,15 @@ func UnmarshalFloatingIPTarget(m map[string]json.RawMessage, result interface{})
 	return
 }
 
-// FloatingIPTargetPatch : The network interface to bind the floating IP to, replacing any existing binding. The floating IP must not be
-// required by another resource, such as a public gateway.
+// FloatingIPTargetPatch : The target resource to bind this floating IP to, replacing any existing binding. The floating IP must not be required
+// by another resource, such as a public gateway.
+//
+// The target resource must not already have a floating IP bound to it if the target resource is:
+//
+// - an instance network interface
+// - a bare metal server network interface with `enable_infrastructure_nat` set to `true`.
 // Models which "extend" this model:
-// - FloatingIPTargetPatchNetworkInterfaceIdentityByID
-// - FloatingIPTargetPatchNetworkInterfaceIdentityByHref
+// - FloatingIPTargetPatchNetworkInterfaceIdentity
 type FloatingIPTargetPatch struct {
 	// The unique identifier for this network interface.
 	ID *string `json:"id,omitempty"`
@@ -36344,6 +36668,45 @@ type FloatingIPTargetPatchIntf interface {
 // UnmarshalFloatingIPTargetPatch unmarshals an instance of FloatingIPTargetPatch from the specified map of raw messages.
 func UnmarshalFloatingIPTargetPatch(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(FloatingIPTargetPatch)
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// FloatingIPTargetPrototype : The target resource to bind this floating IP to.
+//
+// The target resource must not already have a floating IP bound to it if the target resource is:
+//
+// - an instance network interface
+// - a bare metal server network interface with `enable_infrastructure_nat` set to `true`.
+// Models which "extend" this model:
+// - FloatingIPTargetPrototypeNetworkInterfaceIdentity
+type FloatingIPTargetPrototype struct {
+	// The unique identifier for this network interface.
+	ID *string `json:"id,omitempty"`
+
+	// The URL for this network interface.
+	Href *string `json:"href,omitempty"`
+}
+
+func (*FloatingIPTargetPrototype) isaFloatingIPTargetPrototype() bool {
+	return true
+}
+
+type FloatingIPTargetPrototypeIntf interface {
+	isaFloatingIPTargetPrototype() bool
+}
+
+// UnmarshalFloatingIPTargetPrototype unmarshals an instance of FloatingIPTargetPrototype from the specified map of raw messages.
+func UnmarshalFloatingIPTargetPrototype(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(FloatingIPTargetPrototype)
 	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
 	if err != nil {
 		return
@@ -37465,7 +37828,7 @@ func (options *GetImageOptions) SetHeaders(param map[string]string) *GetImageOpt
 
 // GetInstanceDiskOptions : The GetInstanceDisk options.
 type GetInstanceDiskOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	InstanceID *string `json:"instance_id" validate:"required,ne="`
 
 	// The instance disk identifier.
@@ -37731,7 +38094,7 @@ func (options *GetInstanceInitializationOptions) SetHeaders(param map[string]str
 
 // GetInstanceNetworkInterfaceFloatingIPOptions : The GetInstanceNetworkInterfaceFloatingIP options.
 type GetInstanceNetworkInterfaceFloatingIPOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	InstanceID *string `json:"instance_id" validate:"required,ne="`
 
 	// The network interface identifier.
@@ -37779,7 +38142,7 @@ func (options *GetInstanceNetworkInterfaceFloatingIPOptions) SetHeaders(param ma
 
 // GetInstanceNetworkInterfaceIPOptions : The GetInstanceNetworkInterfaceIP options.
 type GetInstanceNetworkInterfaceIPOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	InstanceID *string `json:"instance_id" validate:"required,ne="`
 
 	// The network interface identifier.
@@ -37827,7 +38190,7 @@ func (options *GetInstanceNetworkInterfaceIPOptions) SetHeaders(param map[string
 
 // GetInstanceNetworkInterfaceOptions : The GetInstanceNetworkInterface options.
 type GetInstanceNetworkInterfaceOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	InstanceID *string `json:"instance_id" validate:"required,ne="`
 
 	// The network interface identifier.
@@ -37865,7 +38228,7 @@ func (options *GetInstanceNetworkInterfaceOptions) SetHeaders(param map[string]s
 
 // GetInstanceOptions : The GetInstance options.
 type GetInstanceOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	ID *string `json:"id" validate:"required,ne="`
 
 	// Allows users to set headers on API requests
@@ -37949,7 +38312,7 @@ func (options *GetInstanceTemplateOptions) SetHeaders(param map[string]string) *
 
 // GetInstanceVolumeAttachmentOptions : The GetInstanceVolumeAttachment options.
 type GetInstanceVolumeAttachmentOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	InstanceID *string `json:"instance_id" validate:"required,ne="`
 
 	// The volume attachment identifier.
@@ -40450,6 +40813,11 @@ type Image struct {
 	// The CRN for this image.
 	CRN *string `json:"crn" validate:"required"`
 
+	// The deprecation date and time (UTC) for this image.
+	//
+	// If absent, no deprecation date and time has been set.
+	DeprecatedAt *strfmt.DateTime `json:"deprecated_at,omitempty"`
+
 	// The type of encryption used on the image.
 	Encryption *string `json:"encryption" validate:"required"`
 
@@ -40476,6 +40844,11 @@ type Image struct {
 	// The name for this image. The name is unique across all images in the region.
 	Name *string `json:"name" validate:"required"`
 
+	// The obsolescence date and time (UTC) for this image.
+	//
+	// If absent, no obsolescence date and time has been set.
+	ObsoletedAt *strfmt.DateTime `json:"obsoleted_at,omitempty"`
+
 	// The operating system included in this image.
 	OperatingSystem *OperatingSystem `json:"operating_system,omitempty"`
 
@@ -40491,8 +40864,9 @@ type Image struct {
 	// - available: image can be used (provisionable)
 	// - deleting: image is being deleted, and can no longer be used to provision new
 	//   resources
-	// - deprecated: image is administratively slated to be deleted
+	// - deprecated: image is administratively slated to become `obsolete`
 	// - failed: image is corrupt or did not pass validation
+	// - obsolete: image administratively set to not be used for new resources
 	// - pending: image is being imported and is not yet `available`
 	// - unusable: image cannot be used (see `status_reasons[]` for possible remediation)
 	//
@@ -40535,8 +40909,9 @@ const (
 //   - available: image can be used (provisionable)
 //   - deleting: image is being deleted, and can no longer be used to provision new
 //     resources
-//   - deprecated: image is administratively slated to be deleted
+//   - deprecated: image is administratively slated to become `obsolete`
 //   - failed: image is corrupt or did not pass validation
+//   - obsolete: image administratively set to not be used for new resources
 //   - pending: image is being imported and is not yet `available`
 //   - unusable: image cannot be used (see `status_reasons[]` for possible remediation)
 //
@@ -40548,6 +40923,7 @@ const (
 	ImageStatusDeletingConst   = "deleting"
 	ImageStatusDeprecatedConst = "deprecated"
 	ImageStatusFailedConst     = "failed"
+	ImageStatusObsoleteConst   = "obsolete"
 	ImageStatusPendingConst    = "pending"
 	ImageStatusUnusableConst   = "unusable"
 )
@@ -40571,6 +40947,10 @@ func UnmarshalImage(m map[string]json.RawMessage, result interface{}) (err error
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "deprecated_at", &obj.DeprecatedAt)
 	if err != nil {
 		return
 	}
@@ -40599,6 +40979,10 @@ func UnmarshalImage(m map[string]json.RawMessage, result interface{}) (err error
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "obsoleted_at", &obj.ObsoletedAt)
 	if err != nil {
 		return
 	}
@@ -40805,15 +41189,15 @@ type ImageExportJob struct {
 	// The Cloud Object Storage bucket of the exported image object.
 	StorageBucket *CloudObjectStorageBucketReference `json:"storage_bucket" validate:"required"`
 
-	// The Cloud Object Storage location of the exported image object. The object at this location may not exist until the
-	// job is started, and will be incomplete while the job is running.
-	//
-	// After the job completes, the exported image object is not managed by the IBM VPC service, and may be removed or
-	// replaced with a different object by any user or service with IAM authorization to the bucket.
+	// The Cloud Object Storage location of the exported image object. The object at this location will not exist until the
+	// job completes successfully. The exported image object is not managed by the IBM VPC service, and may be removed or
+	// replaced with a different object by any user or service with IAM authorization to the storage bucket.
 	StorageHref *string `json:"storage_href" validate:"required"`
 
-	// The Cloud Object Storage object for the exported image. This object may not exist until
-	// the job is started, and will not be complete until the job completes.
+	// The Cloud Object Storage object for the exported image. This object will not exist until
+	// the job completes successfully. The exported image object is not managed by the IBM VPC
+	// service, and may be removed or replaced with a different object by any user or service
+	// with IAM authorization to the storage bucket.
 	StorageObject *CloudObjectStorageObjectReference `json:"storage_object" validate:"required"`
 }
 
@@ -41115,15 +41499,56 @@ func UnmarshalImageIdentity(m map[string]json.RawMessage, result interface{}) (e
 
 // ImagePatch : ImagePatch struct
 type ImagePatch struct {
+	// The deprecation date and time to set for this image.
+	//
+	// This cannot be set if the image has a `status` of `failed` or `deleting`, or if
+	// `catalog_offering.managed` is `true`.
+	//
+	// The date and time must not be in the past, and must be earlier than `obsoleted_at`. Additionally, if the image
+	// status is currently `deprecated`, the value cannot be changed
+	// (but may be removed).
+	//
+	// Specify `null` to remove an existing deprecation date and time. If the image status is currently `deprecated`, it
+	// will become `available`.
+	//
+	// If the deprecation date and time is reached while the image has a status of `pending`, the image's status will
+	// transition to `deprecated` upon its successful creation (or
+	// `obsolete` if the obsolescence date and time was also reached).
+	DeprecatedAt *strfmt.DateTime `json:"deprecated_at,omitempty"`
+
 	// The name for this image. The name must not be used by another image in the region. Names starting with `ibm-` are
 	// reserved for system-provided images, and are not allowed.
 	Name *string `json:"name,omitempty"`
+
+	// The obsolescence date and time to set for this image.
+	//
+	// This cannot be set if the image has a `status` of `failed` or `deleting`, or if
+	// `catalog_offering.managed` is `true`.
+	//
+	// The date and time must not be in the past, and must be later than `deprecated_at`. Additionally, if the image status
+	// is currently `obsolete`, the value cannot be changed
+	// (but may be removed).
+	//
+	// Specify `null` to remove an existing obsolescence date and time. If the image status is currently `obsolete`, it
+	// will become `deprecated` if `deprecated_at` is in the past. Otherwise, it will become `available`.
+	//
+	// If the obsolescence date and time is reached while the image has a status of `pending`, the image's status will
+	// transition to `obsolete` upon its successful creation.
+	ObsoletedAt *strfmt.DateTime `json:"obsoleted_at,omitempty"`
 }
 
 // UnmarshalImagePatch unmarshals an instance of ImagePatch from the specified map of raw messages.
 func UnmarshalImagePatch(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ImagePatch)
+	err = core.UnmarshalPrimitive(m, "deprecated_at", &obj.DeprecatedAt)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "obsoleted_at", &obj.ObsoletedAt)
 	if err != nil {
 		return
 	}
@@ -41146,10 +41571,31 @@ func (imagePatch *ImagePatch) AsPatch() (_patch map[string]interface{}, err erro
 // - ImagePrototypeImageByFile
 // - ImagePrototypeImageBySourceVolume
 type ImagePrototype struct {
+	// The deprecation date and time to set for this image.
+	//
+	// The date and time must not be in the past, and must be earlier than `obsoleted_at`.
+	//
+	// If unspecified, no deprecation date and time will be set.
+	//
+	// If the deprecation date and time is reached while the image has a status of `pending`, the image's status will
+	// transition to `deprecated` upon its successful creation (or
+	// `obsolete` if the obsolescence date and time was also reached).
+	DeprecatedAt *strfmt.DateTime `json:"deprecated_at,omitempty"`
+
 	// The name for this image. The name must not be used by another image in the region. Names starting with `ibm-` are
 	// reserved for system-provided images, and are not allowed. If unspecified, the name will be a hyphenated list of
 	// randomly-selected words.
 	Name *string `json:"name,omitempty"`
+
+	// The obsolescence date and time to set for this image.
+	//
+	// The date and time must not be in the past, and must be later than `deprecated_at`.
+	//
+	// If unspecified, no obsolescence date and time will be set.
+	//
+	// If the obsolescence date and time is reached while the image has a status of `pending`, the image's status will
+	// transition to `obsolete` upon its successful creation.
+	ObsoletedAt *strfmt.DateTime `json:"obsoleted_at,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
 	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
@@ -41200,7 +41646,15 @@ type ImagePrototypeIntf interface {
 // UnmarshalImagePrototype unmarshals an instance of ImagePrototype from the specified map of raw messages.
 func UnmarshalImagePrototype(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ImagePrototype)
+	err = core.UnmarshalPrimitive(m, "deprecated_at", &obj.DeprecatedAt)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "obsoleted_at", &obj.ObsoletedAt)
 	if err != nil {
 		return
 	}
@@ -46275,9 +46729,9 @@ func UnmarshalInstanceStatusReason(m map[string]json.RawMessage, result interfac
 
 // InstanceTemplate : InstanceTemplate struct
 // Models which "extend" this model:
-// - InstanceTemplateInstanceByImage
-// - InstanceTemplateInstanceBySourceSnapshot
-// - InstanceTemplateInstanceByCatalogOffering
+// - InstanceTemplateInstanceByImageInstanceTemplateContext
+// - InstanceTemplateInstanceBySourceSnapshotInstanceTemplateContext
+// - InstanceTemplateInstanceByCatalogOfferingInstanceTemplateContext
 type InstanceTemplate struct {
 	// The availability policy to use for this virtual server instance.
 	AvailabilityPolicy *InstanceAvailabilityPolicyPrototype `json:"availability_policy,omitempty"`
@@ -46634,10 +47088,10 @@ func (instanceTemplatePatch *InstanceTemplatePatch) AsPatch() (_patch map[string
 
 // InstanceTemplatePrototype : InstanceTemplatePrototype struct
 // Models which "extend" this model:
-// - InstanceTemplatePrototypeInstanceByImage
+// - InstanceTemplatePrototypeInstanceByImageInstanceTemplateContext
 // - InstanceTemplatePrototypeInstanceBySourceTemplate
-// - InstanceTemplatePrototypeInstanceBySourceSnapshot
-// - InstanceTemplatePrototypeInstanceByCatalogOffering
+// - InstanceTemplatePrototypeInstanceBySourceSnapshotInstanceTemplateContext
+// - InstanceTemplatePrototypeInstanceByCatalogOfferingInstanceTemplateContext
 type InstanceTemplatePrototype struct {
 	// The availability policy to use for this virtual server instance.
 	AvailabilityPolicy *InstanceAvailabilityPolicyPrototype `json:"availability_policy,omitempty"`
@@ -48397,12 +48851,26 @@ type ListImagesOptions struct {
 	// Filters the collection to resources with the exact specified name.
 	Name *string `json:"name,omitempty"`
 
+	// Filters the collection to images with the comma-separated list of `status` values.
+	Status []string `json:"status,omitempty"`
+
 	// Filters the collection to images with the specified `visibility`.
 	Visibility *string `json:"visibility,omitempty"`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
 }
+
+// Constants associated with the ListImagesOptions.Status property.
+const (
+	ListImagesOptionsStatusAvailableConst  = "available"
+	ListImagesOptionsStatusDeletingConst   = "deleting"
+	ListImagesOptionsStatusDeprecatedConst = "deprecated"
+	ListImagesOptionsStatusFailedConst     = "failed"
+	ListImagesOptionsStatusObsoleteConst   = "obsolete"
+	ListImagesOptionsStatusPendingConst    = "pending"
+	ListImagesOptionsStatusUnusableConst   = "unusable"
+)
 
 // Constants associated with the ListImagesOptions.Visibility property.
 // Filters the collection to images with the specified `visibility`.
@@ -48440,6 +48908,12 @@ func (_options *ListImagesOptions) SetName(name string) *ListImagesOptions {
 	return _options
 }
 
+// SetStatus : Allow user to set Status
+func (_options *ListImagesOptions) SetStatus(status []string) *ListImagesOptions {
+	_options.Status = status
+	return _options
+}
+
 // SetVisibility : Allow user to set Visibility
 func (_options *ListImagesOptions) SetVisibility(visibility string) *ListImagesOptions {
 	_options.Visibility = core.StringPtr(visibility)
@@ -48454,7 +48928,7 @@ func (options *ListImagesOptions) SetHeaders(param map[string]string) *ListImage
 
 // ListInstanceDisksOptions : The ListInstanceDisks options.
 type ListInstanceDisksOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	InstanceID *string `json:"instance_id" validate:"required,ne="`
 
 	// Allows users to set headers on API requests
@@ -48721,7 +49195,7 @@ func (options *ListInstanceGroupsOptions) SetHeaders(param map[string]string) *L
 
 // ListInstanceNetworkInterfaceFloatingIpsOptions : The ListInstanceNetworkInterfaceFloatingIps options.
 type ListInstanceNetworkInterfaceFloatingIpsOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	InstanceID *string `json:"instance_id" validate:"required,ne="`
 
 	// The network interface identifier.
@@ -48759,7 +49233,7 @@ func (options *ListInstanceNetworkInterfaceFloatingIpsOptions) SetHeaders(param 
 
 // ListInstanceNetworkInterfaceIpsOptions : The ListInstanceNetworkInterfaceIps options.
 type ListInstanceNetworkInterfaceIpsOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	InstanceID *string `json:"instance_id" validate:"required,ne="`
 
 	// The network interface identifier.
@@ -48815,7 +49289,7 @@ func (options *ListInstanceNetworkInterfaceIpsOptions) SetHeaders(param map[stri
 
 // ListInstanceNetworkInterfacesOptions : The ListInstanceNetworkInterfaces options.
 type ListInstanceNetworkInterfacesOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	InstanceID *string `json:"instance_id" validate:"required,ne="`
 
 	// Allows users to set headers on API requests
@@ -48879,7 +49353,7 @@ func (options *ListInstanceTemplatesOptions) SetHeaders(param map[string]string)
 
 // ListInstanceVolumeAttachmentsOptions : The ListInstanceVolumeAttachments options.
 type ListInstanceVolumeAttachmentsOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	InstanceID *string `json:"instance_id" validate:"required,ne="`
 
 	// Allows users to set headers on API requests
@@ -51448,7 +51922,10 @@ func UnmarshalLoadBalancerDns(m map[string]json.RawMessage, result interface{}) 
 	return
 }
 
-// LoadBalancerDnsPatch : LoadBalancerDnsPatch struct
+// LoadBalancerDnsPatch : The DNS configuration for this load balancer.
+//
+// Specify `null` to remove the existing DNS configuration, which will remove all DNS `A` records for this load balancer
+// that had been added to `zone`, and add equivalent `A` records to the public DNS zone `lb.appdomain.cloud`.
 type LoadBalancerDnsPatch struct {
 	// The DNS instance to associate with this load balancer.
 	//
@@ -51477,7 +51954,10 @@ func UnmarshalLoadBalancerDnsPatch(m map[string]json.RawMessage, result interfac
 	return
 }
 
-// LoadBalancerDnsPrototype : LoadBalancerDnsPrototype struct
+// LoadBalancerDnsPrototype : The DNS configuration for this load balancer.
+//
+// If unspecified, DNS `A` records for this load balancer's `hostname` property will be added to the public DNS zone
+// `lb.appdomain.cloud`. Otherwise, those DNS `A` records will be added to the specified `zone`.
 type LoadBalancerDnsPrototype struct {
 	// The DNS instance to associate with this load balancer.
 	//
@@ -53191,6 +53671,11 @@ func UnmarshalLoadBalancerLoggingPrototype(m map[string]json.RawMessage, result 
 
 // LoadBalancerPatch : LoadBalancerPatch struct
 type LoadBalancerPatch struct {
+	// The DNS configuration for this load balancer.
+	//
+	// Specify `null` to remove the existing DNS configuration, which will remove all DNS `A`
+	// records for this load balancer that had been added to `zone`, and add equivalent `A`
+	// records to the public DNS zone `lb.appdomain.cloud`.
 	Dns *LoadBalancerDnsPatch `json:"dns,omitempty"`
 
 	// The logging configuration to use for this load balancer.
@@ -56695,6 +57180,34 @@ func UnmarshalNetworkInterfaceUnpaginatedCollection(m map[string]json.RawMessage
 	return
 }
 
+// ObsoleteImageOptions : The ObsoleteImage options.
+type ObsoleteImageOptions struct {
+	// The image identifier.
+	ID *string `json:"id" validate:"required,ne="`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewObsoleteImageOptions : Instantiate ObsoleteImageOptions
+func (*VpcbetaV1) NewObsoleteImageOptions(id string) *ObsoleteImageOptions {
+	return &ObsoleteImageOptions{
+		ID: core.StringPtr(id),
+	}
+}
+
+// SetID : Allow user to set ID
+func (_options *ObsoleteImageOptions) SetID(id string) *ObsoleteImageOptions {
+	_options.ID = core.StringPtr(id)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *ObsoleteImageOptions) SetHeaders(param map[string]string) *ObsoleteImageOptions {
+	options.Headers = param
+	return options
+}
+
 // OperatingSystem : OperatingSystem struct
 type OperatingSystem struct {
 	// The operating system architecture.
@@ -57761,7 +58274,7 @@ func (options *RemoveEndpointGatewayIPOptions) SetHeaders(param map[string]strin
 
 // RemoveInstanceNetworkInterfaceFloatingIPOptions : The RemoveInstanceNetworkInterfaceFloatingIP options.
 type RemoveInstanceNetworkInterfaceFloatingIPOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	InstanceID *string `json:"instance_id" validate:"required,ne="`
 
 	// The network interface identifier.
@@ -61745,7 +62258,7 @@ type SharePatch struct {
 	// by the share's size.
 	//
 	// For this property to be changed, the share `lifecycle_state` must be `stable` and the share must be in the `custom`
-	// profile family.
+	// or `defined_performance` profile family.
 	Iops *int64 `json:"iops,omitempty"`
 
 	// The name for this share. The name must not be used by another share in the region.
@@ -61755,10 +62268,15 @@ type SharePatch struct {
 	//
 	// The requested profile must be in the same `family`, with the following exceptions:
 	// - If the current profile family is `tiered`, the requested profile family may be
-	//   `custom`.
+	//   `custom` or `defined_performance`.
 	// - If the current profile family is `custom`, the requested profile family may be
-	//   `tiered`. Additionally, `iops` will be reset to a value based on the specified
-	//   profile and current share size, and will become immutable.
+	//   `tiered` or `defined_performance`. Additionally, if requested profile family is
+	//   `tiered`, then `iops` will be reset to a value based on the specified profile and
+	//   current share size, and will become immutable.
+	// - If the current profile family is `defined_performance`, the requested profile
+	//   family may be `tiered` or `custom`. Additionally, if requested profile family is
+	//   `tiered`, then `iops` will be reset to a value based on the specified profile and
+	//   current share size, and will become immutable.
 	Profile ShareProfileIdentityIntf `json:"profile,omitempty"`
 
 	// The size of the file share rounded up to the next gigabyte. The value must not be less than the share's current
@@ -61826,8 +62344,9 @@ type ShareProfile struct {
 // Constants associated with the ShareProfile.Family property.
 // The product family this share profile belongs to.
 const (
-	ShareProfileFamilyCustomConst = "custom"
-	ShareProfileFamilyTieredConst = "tiered"
+	ShareProfileFamilyCustomConst             = "custom"
+	ShareProfileFamilyDefinedPerformanceConst = "defined_performance"
+	ShareProfileFamilyTieredConst             = "tiered"
 )
 
 // Constants associated with the ShareProfile.ResourceType property.
@@ -62028,8 +62547,8 @@ func UnmarshalShareProfileReference(m map[string]json.RawMessage, result interfa
 // - SharePrototypeShareBySize
 // - SharePrototypeShareBySourceShare
 type SharePrototype struct {
-	// The maximum input/output operations per second (IOPS) for the file share. The share must be in the `custom` profile
-	// family, and the value must be in the range supported by the share's specified size.
+	// The maximum input/output operations per second (IOPS) for the file share. The share must be in the `custom` or
+	// `defined_performance` profile family, and the value must be in the range supported by the share's specified size.
 	//
 	// In addition, each host accessing the share will be restricted to 48000 IOPS.
 	Iops *int64 `json:"iops,omitempty"`
@@ -62158,8 +62677,8 @@ func UnmarshalSharePrototype(m map[string]json.RawMessage, result interface{}) (
 // subsequently added by creating a new file share with a
 // `source_share` referencing this file share.
 type SharePrototypeShareContext struct {
-	// The maximum input/output operations per second (IOPS) for the file share. The share must be in the `custom` profile
-	// family, and the value must be in the range supported by the share's specified size.
+	// The maximum input/output operations per second (IOPS) for the file share. The share must be in the `custom` or
+	// `defined_performance` profile family, and the value must be in the range supported by the share's specified size.
 	//
 	// In addition, each host accessing the share will be restricted to 48000 IOPS.
 	Iops *int64 `json:"iops,omitempty"`
@@ -64279,7 +64798,7 @@ func (options *UpdateImageOptions) SetHeaders(param map[string]string) *UpdateIm
 
 // UpdateInstanceDiskOptions : The UpdateInstanceDisk options.
 type UpdateInstanceDiskOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	InstanceID *string `json:"instance_id" validate:"required,ne="`
 
 	// The instance disk identifier.
@@ -64577,7 +65096,7 @@ func (options *UpdateInstanceGroupOptions) SetHeaders(param map[string]string) *
 
 // UpdateInstanceNetworkInterfaceOptions : The UpdateInstanceNetworkInterface options.
 type UpdateInstanceNetworkInterfaceOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	InstanceID *string `json:"instance_id" validate:"required,ne="`
 
 	// The network interface identifier.
@@ -64625,7 +65144,7 @@ func (options *UpdateInstanceNetworkInterfaceOptions) SetHeaders(param map[strin
 
 // UpdateInstanceOptions : The UpdateInstance options.
 type UpdateInstanceOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	ID *string `json:"id" validate:"required,ne="`
 
 	// The instance patch.
@@ -64701,7 +65220,7 @@ func (options *UpdateInstanceTemplateOptions) SetHeaders(param map[string]string
 
 // UpdateInstanceVolumeAttachmentOptions : The UpdateInstanceVolumeAttachment options.
 type UpdateInstanceVolumeAttachmentOptions struct {
-	// The instance identifier.
+	// The virtual server instance identifier.
 	InstanceID *string `json:"instance_id" validate:"required,ne="`
 
 	// The volume attachment identifier.
@@ -69781,8 +70300,8 @@ type VolumePatch struct {
 	Name *string `json:"name,omitempty"`
 
 	// The profile to use for this volume. The requested profile must be in the same
-	// `family` as the current profile. The volume must be attached as a data volume to a
-	// running virtual server instance, and must have a `capacity` within the range
+	// `family` as the current profile. The volume must be attached as a data volume to
+	// a running virtual server instance, and must have a `capacity` within the range
 	// supported by the specified profile.
 	Profile VolumeProfileIdentityIntf `json:"profile,omitempty"`
 
@@ -72600,6 +73119,77 @@ func UnmarshalBareMetalServerProfileMemoryRange(m map[string]json.RawMessage, re
 	return
 }
 
+// BareMetalServerProfileNetworkInterfaceCountDependent : The number of network interfaces supported on a bare metal server with this profile is dependent on its
+// configuration.
+// This model "extends" BareMetalServerProfileNetworkInterfaceCount
+type BareMetalServerProfileNetworkInterfaceCountDependent struct {
+	// The type for this profile field.
+	Type *string `json:"type" validate:"required"`
+}
+
+// Constants associated with the BareMetalServerProfileNetworkInterfaceCountDependent.Type property.
+// The type for this profile field.
+const (
+	BareMetalServerProfileNetworkInterfaceCountDependentTypeDependentConst = "dependent"
+)
+
+func (*BareMetalServerProfileNetworkInterfaceCountDependent) isaBareMetalServerProfileNetworkInterfaceCount() bool {
+	return true
+}
+
+// UnmarshalBareMetalServerProfileNetworkInterfaceCountDependent unmarshals an instance of BareMetalServerProfileNetworkInterfaceCountDependent from the specified map of raw messages.
+func UnmarshalBareMetalServerProfileNetworkInterfaceCountDependent(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(BareMetalServerProfileNetworkInterfaceCountDependent)
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// BareMetalServerProfileNetworkInterfaceCountRange : The number of network interfaces supported on a bare metal server with this profile.
+// This model "extends" BareMetalServerProfileNetworkInterfaceCount
+type BareMetalServerProfileNetworkInterfaceCountRange struct {
+	// The maximum value for this profile field.
+	Max *int64 `json:"max,omitempty"`
+
+	// The minimum value for this profile field.
+	Min *int64 `json:"min,omitempty"`
+
+	// The type for this profile field.
+	Type *string `json:"type" validate:"required"`
+}
+
+// Constants associated with the BareMetalServerProfileNetworkInterfaceCountRange.Type property.
+// The type for this profile field.
+const (
+	BareMetalServerProfileNetworkInterfaceCountRangeTypeRangeConst = "range"
+)
+
+func (*BareMetalServerProfileNetworkInterfaceCountRange) isaBareMetalServerProfileNetworkInterfaceCount() bool {
+	return true
+}
+
+// UnmarshalBareMetalServerProfileNetworkInterfaceCountRange unmarshals an instance of BareMetalServerProfileNetworkInterfaceCountRange from the specified map of raw messages.
+func UnmarshalBareMetalServerProfileNetworkInterfaceCountRange(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(BareMetalServerProfileNetworkInterfaceCountRange)
+	err = core.UnmarshalPrimitive(m, "max", &obj.Max)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "min", &obj.Min)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // CatalogOfferingIdentityCatalogOfferingByCRN : CatalogOfferingIdentityCatalogOfferingByCRN struct
 // This model "extends" CatalogOfferingIdentity
 type CatalogOfferingIdentityCatalogOfferingByCRN struct {
@@ -73879,68 +74469,6 @@ func UnmarshalEndpointGatewayTargetProviderInfrastructureServiceReference(m map[
 	return
 }
 
-// FloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByHref : FloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByHref struct
-// This model "extends" FloatingIPByTargetNetworkInterfaceIdentity
-type FloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByHref struct {
-	// The URL for this network interface.
-	Href *string `json:"href" validate:"required"`
-}
-
-// NewFloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByHref : Instantiate FloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByHref (Generic Model Constructor)
-func (*VpcbetaV1) NewFloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByHref(href string) (_model *FloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByHref, err error) {
-	_model = &FloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByHref{
-		Href: core.StringPtr(href),
-	}
-	err = core.ValidateStruct(_model, "required parameters")
-	return
-}
-
-func (*FloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByHref) isaFloatingIPByTargetNetworkInterfaceIdentity() bool {
-	return true
-}
-
-// UnmarshalFloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByHref unmarshals an instance of FloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByHref from the specified map of raw messages.
-func UnmarshalFloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByHref(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(FloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByHref)
-	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
-	if err != nil {
-		return
-	}
-	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
-	return
-}
-
-// FloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByID : FloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByID struct
-// This model "extends" FloatingIPByTargetNetworkInterfaceIdentity
-type FloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByID struct {
-	// The unique identifier for this network interface.
-	ID *string `json:"id" validate:"required"`
-}
-
-// NewFloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByID : Instantiate FloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByID (Generic Model Constructor)
-func (*VpcbetaV1) NewFloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByID(id string) (_model *FloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByID, err error) {
-	_model = &FloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByID{
-		ID: core.StringPtr(id),
-	}
-	err = core.ValidateStruct(_model, "required parameters")
-	return
-}
-
-func (*FloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByID) isaFloatingIPByTargetNetworkInterfaceIdentity() bool {
-	return true
-}
-
-// UnmarshalFloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByID unmarshals an instance of FloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByID from the specified map of raw messages.
-func UnmarshalFloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByID(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(FloatingIPByTargetNetworkInterfaceIdentityNetworkInterfaceIdentityByID)
-	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
-	if err != nil {
-		return
-	}
-	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
-	return
-}
-
 // FloatingIPPrototypeFloatingIPByTarget : FloatingIPPrototypeFloatingIPByTarget struct
 // This model "extends" FloatingIPPrototype
 type FloatingIPPrototypeFloatingIPByTarget struct {
@@ -73950,12 +74478,18 @@ type FloatingIPPrototypeFloatingIPByTarget struct {
 
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
-	// The network interface this floating IP is to be bound to.
-	Target FloatingIPByTargetNetworkInterfaceIdentityIntf `json:"target" validate:"required"`
+	// The target resource to bind this floating IP to.
+	//
+	// The target resource must not already have a floating IP bound to it if the target
+	// resource is:
+	//
+	// - an instance network interface
+	// - a bare metal server network interface with `enable_infrastructure_nat` set to `true`.
+	Target FloatingIPTargetPrototypeIntf `json:"target" validate:"required"`
 }
 
 // NewFloatingIPPrototypeFloatingIPByTarget : Instantiate FloatingIPPrototypeFloatingIPByTarget (Generic Model Constructor)
-func (*VpcbetaV1) NewFloatingIPPrototypeFloatingIPByTarget(target FloatingIPByTargetNetworkInterfaceIdentityIntf) (_model *FloatingIPPrototypeFloatingIPByTarget, err error) {
+func (*VpcbetaV1) NewFloatingIPPrototypeFloatingIPByTarget(target FloatingIPTargetPrototypeIntf) (_model *FloatingIPPrototypeFloatingIPByTarget, err error) {
 	_model = &FloatingIPPrototypeFloatingIPByTarget{
 		Target: target,
 	}
@@ -73978,7 +74512,7 @@ func UnmarshalFloatingIPPrototypeFloatingIPByTarget(m map[string]json.RawMessage
 	if err != nil {
 		return
 	}
-	err = core.UnmarshalModel(m, "target", &obj.Target, UnmarshalFloatingIPByTargetNetworkInterfaceIdentity)
+	err = core.UnmarshalModel(m, "target", &obj.Target, UnmarshalFloatingIPTargetPrototype)
 	if err != nil {
 		return
 	}
@@ -74031,29 +74565,39 @@ func UnmarshalFloatingIPPrototypeFloatingIPByZone(m map[string]json.RawMessage, 
 	return
 }
 
-// FloatingIPTargetPatchNetworkInterfaceIdentityByHref : FloatingIPTargetPatchNetworkInterfaceIdentityByHref struct
+// FloatingIPTargetPatchNetworkInterfaceIdentity : Identifies a network interface by a unique property.
+// Models which "extend" this model:
+// - FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByID
+// - FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByHref
 // This model "extends" FloatingIPTargetPatch
-type FloatingIPTargetPatchNetworkInterfaceIdentityByHref struct {
+type FloatingIPTargetPatchNetworkInterfaceIdentity struct {
+	// The unique identifier for this network interface.
+	ID *string `json:"id,omitempty"`
+
 	// The URL for this network interface.
-	Href *string `json:"href" validate:"required"`
+	Href *string `json:"href,omitempty"`
 }
 
-// NewFloatingIPTargetPatchNetworkInterfaceIdentityByHref : Instantiate FloatingIPTargetPatchNetworkInterfaceIdentityByHref (Generic Model Constructor)
-func (*VpcbetaV1) NewFloatingIPTargetPatchNetworkInterfaceIdentityByHref(href string) (_model *FloatingIPTargetPatchNetworkInterfaceIdentityByHref, err error) {
-	_model = &FloatingIPTargetPatchNetworkInterfaceIdentityByHref{
-		Href: core.StringPtr(href),
-	}
-	err = core.ValidateStruct(_model, "required parameters")
-	return
-}
-
-func (*FloatingIPTargetPatchNetworkInterfaceIdentityByHref) isaFloatingIPTargetPatch() bool {
+func (*FloatingIPTargetPatchNetworkInterfaceIdentity) isaFloatingIPTargetPatchNetworkInterfaceIdentity() bool {
 	return true
 }
 
-// UnmarshalFloatingIPTargetPatchNetworkInterfaceIdentityByHref unmarshals an instance of FloatingIPTargetPatchNetworkInterfaceIdentityByHref from the specified map of raw messages.
-func UnmarshalFloatingIPTargetPatchNetworkInterfaceIdentityByHref(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(FloatingIPTargetPatchNetworkInterfaceIdentityByHref)
+type FloatingIPTargetPatchNetworkInterfaceIdentityIntf interface {
+	FloatingIPTargetPatchIntf
+	isaFloatingIPTargetPatchNetworkInterfaceIdentity() bool
+}
+
+func (*FloatingIPTargetPatchNetworkInterfaceIdentity) isaFloatingIPTargetPatch() bool {
+	return true
+}
+
+// UnmarshalFloatingIPTargetPatchNetworkInterfaceIdentity unmarshals an instance of FloatingIPTargetPatchNetworkInterfaceIdentity from the specified map of raw messages.
+func UnmarshalFloatingIPTargetPatchNetworkInterfaceIdentity(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(FloatingIPTargetPatchNetworkInterfaceIdentity)
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
 	if err != nil {
 		return
@@ -74062,30 +74606,40 @@ func UnmarshalFloatingIPTargetPatchNetworkInterfaceIdentityByHref(m map[string]j
 	return
 }
 
-// FloatingIPTargetPatchNetworkInterfaceIdentityByID : FloatingIPTargetPatchNetworkInterfaceIdentityByID struct
-// This model "extends" FloatingIPTargetPatch
-type FloatingIPTargetPatchNetworkInterfaceIdentityByID struct {
+// FloatingIPTargetPrototypeNetworkInterfaceIdentity : Identifies a network interface by a unique property.
+// Models which "extend" this model:
+// - FloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID
+// - FloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref
+// This model "extends" FloatingIPTargetPrototype
+type FloatingIPTargetPrototypeNetworkInterfaceIdentity struct {
 	// The unique identifier for this network interface.
-	ID *string `json:"id" validate:"required"`
+	ID *string `json:"id,omitempty"`
+
+	// The URL for this network interface.
+	Href *string `json:"href,omitempty"`
 }
 
-// NewFloatingIPTargetPatchNetworkInterfaceIdentityByID : Instantiate FloatingIPTargetPatchNetworkInterfaceIdentityByID (Generic Model Constructor)
-func (*VpcbetaV1) NewFloatingIPTargetPatchNetworkInterfaceIdentityByID(id string) (_model *FloatingIPTargetPatchNetworkInterfaceIdentityByID, err error) {
-	_model = &FloatingIPTargetPatchNetworkInterfaceIdentityByID{
-		ID: core.StringPtr(id),
-	}
-	err = core.ValidateStruct(_model, "required parameters")
-	return
-}
-
-func (*FloatingIPTargetPatchNetworkInterfaceIdentityByID) isaFloatingIPTargetPatch() bool {
+func (*FloatingIPTargetPrototypeNetworkInterfaceIdentity) isaFloatingIPTargetPrototypeNetworkInterfaceIdentity() bool {
 	return true
 }
 
-// UnmarshalFloatingIPTargetPatchNetworkInterfaceIdentityByID unmarshals an instance of FloatingIPTargetPatchNetworkInterfaceIdentityByID from the specified map of raw messages.
-func UnmarshalFloatingIPTargetPatchNetworkInterfaceIdentityByID(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(FloatingIPTargetPatchNetworkInterfaceIdentityByID)
+type FloatingIPTargetPrototypeNetworkInterfaceIdentityIntf interface {
+	FloatingIPTargetPrototypeIntf
+	isaFloatingIPTargetPrototypeNetworkInterfaceIdentity() bool
+}
+
+func (*FloatingIPTargetPrototypeNetworkInterfaceIdentity) isaFloatingIPTargetPrototype() bool {
+	return true
+}
+
+// UnmarshalFloatingIPTargetPrototypeNetworkInterfaceIdentity unmarshals an instance of FloatingIPTargetPrototypeNetworkInterfaceIdentity from the specified map of raw messages.
+func UnmarshalFloatingIPTargetPrototypeNetworkInterfaceIdentity(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(FloatingIPTargetPrototypeNetworkInterfaceIdentity)
 	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
 	if err != nil {
 		return
 	}
@@ -74271,8 +74825,8 @@ func UnmarshalFlowLogCollectorTargetPrototypeInstanceIdentity(m map[string]json.
 
 // FlowLogCollectorTargetPrototypeNetworkInterfaceIdentity : Identifies a network interface by a unique property.
 // Models which "extend" this model:
-// - FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByID
-// - FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByHref
+// - FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID
+// - FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref
 // This model "extends" FlowLogCollectorTargetPrototype
 type FlowLogCollectorTargetPrototypeNetworkInterfaceIdentity struct {
 	// The unique identifier for this network interface.
@@ -74740,10 +75294,31 @@ func UnmarshalImageIdentityByID(m map[string]json.RawMessage, result interface{}
 // ImagePrototypeImageByFile : ImagePrototypeImageByFile struct
 // This model "extends" ImagePrototype
 type ImagePrototypeImageByFile struct {
+	// The deprecation date and time to set for this image.
+	//
+	// The date and time must not be in the past, and must be earlier than `obsoleted_at`.
+	//
+	// If unspecified, no deprecation date and time will be set.
+	//
+	// If the deprecation date and time is reached while the image has a status of `pending`, the image's status will
+	// transition to `deprecated` upon its successful creation (or
+	// `obsolete` if the obsolescence date and time was also reached).
+	DeprecatedAt *strfmt.DateTime `json:"deprecated_at,omitempty"`
+
 	// The name for this image. The name must not be used by another image in the region. Names starting with `ibm-` are
 	// reserved for system-provided images, and are not allowed. If unspecified, the name will be a hyphenated list of
 	// randomly-selected words.
 	Name *string `json:"name,omitempty"`
+
+	// The obsolescence date and time to set for this image.
+	//
+	// The date and time must not be in the past, and must be later than `deprecated_at`.
+	//
+	// If unspecified, no obsolescence date and time will be set.
+	//
+	// If the obsolescence date and time is reached while the image has a status of `pending`, the image's status will
+	// transition to `obsolete` upon its successful creation.
+	ObsoletedAt *strfmt.DateTime `json:"obsoleted_at,omitempty"`
 
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
@@ -74790,7 +75365,15 @@ func (*ImagePrototypeImageByFile) isaImagePrototype() bool {
 // UnmarshalImagePrototypeImageByFile unmarshals an instance of ImagePrototypeImageByFile from the specified map of raw messages.
 func UnmarshalImagePrototypeImageByFile(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ImagePrototypeImageByFile)
+	err = core.UnmarshalPrimitive(m, "deprecated_at", &obj.DeprecatedAt)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "obsoleted_at", &obj.ObsoletedAt)
 	if err != nil {
 		return
 	}
@@ -74821,10 +75404,31 @@ func UnmarshalImagePrototypeImageByFile(m map[string]json.RawMessage, result int
 // ImagePrototypeImageBySourceVolume : ImagePrototypeImageBySourceVolume struct
 // This model "extends" ImagePrototype
 type ImagePrototypeImageBySourceVolume struct {
+	// The deprecation date and time to set for this image.
+	//
+	// The date and time must not be in the past, and must be earlier than `obsoleted_at`.
+	//
+	// If unspecified, no deprecation date and time will be set.
+	//
+	// If the deprecation date and time is reached while the image has a status of `pending`, the image's status will
+	// transition to `deprecated` upon its successful creation (or
+	// `obsolete` if the obsolescence date and time was also reached).
+	DeprecatedAt *strfmt.DateTime `json:"deprecated_at,omitempty"`
+
 	// The name for this image. The name must not be used by another image in the region. Names starting with `ibm-` are
 	// reserved for system-provided images, and are not allowed. If unspecified, the name will be a hyphenated list of
 	// randomly-selected words.
 	Name *string `json:"name,omitempty"`
+
+	// The obsolescence date and time to set for this image.
+	//
+	// The date and time must not be in the past, and must be later than `deprecated_at`.
+	//
+	// If unspecified, no obsolescence date and time will be set.
+	//
+	// If the obsolescence date and time is reached while the image has a status of `pending`, the image's status will
+	// transition to `obsolete` upon its successful creation.
+	ObsoletedAt *strfmt.DateTime `json:"obsoleted_at,omitempty"`
 
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
@@ -74858,7 +75462,15 @@ func (*ImagePrototypeImageBySourceVolume) isaImagePrototype() bool {
 // UnmarshalImagePrototypeImageBySourceVolume unmarshals an instance of ImagePrototypeImageBySourceVolume from the specified map of raw messages.
 func UnmarshalImagePrototypeImageBySourceVolume(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ImagePrototypeImageBySourceVolume)
+	err = core.UnmarshalPrimitive(m, "deprecated_at", &obj.DeprecatedAt)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "obsoleted_at", &obj.ObsoletedAt)
 	if err != nil {
 		return
 	}
@@ -78677,9 +79289,9 @@ func UnmarshalInstanceTemplateIdentityByID(m map[string]json.RawMessage, result 
 	return
 }
 
-// InstanceTemplatePrototypeInstanceByCatalogOffering : InstanceTemplatePrototypeInstanceByCatalogOffering struct
+// InstanceTemplatePrototypeInstanceByCatalogOfferingInstanceTemplateContext : InstanceTemplatePrototypeInstanceByCatalogOfferingInstanceTemplateContext struct
 // This model "extends" InstanceTemplatePrototype
-type InstanceTemplatePrototypeInstanceByCatalogOffering struct {
+type InstanceTemplatePrototypeInstanceByCatalogOfferingInstanceTemplateContext struct {
 	// The availability policy to use for this virtual server instance.
 	AvailabilityPolicy *InstanceAvailabilityPolicyPrototype `json:"availability_policy,omitempty"`
 
@@ -78750,30 +79362,29 @@ type InstanceTemplatePrototypeInstanceByCatalogOffering struct {
 	CatalogOffering InstanceCatalogOfferingPrototypeIntf `json:"catalog_offering" validate:"required"`
 
 	// Primary network interface.
-	PrimaryNetworkInterface *NetworkInterfacePrototype `json:"primary_network_interface" validate:"required"`
+	PrimaryNetworkInterface *NetworkInterfacePrototype `json:"primary_network_interface,omitempty"`
 
 	// The zone this virtual server instance will reside in.
 	Zone ZoneIdentityIntf `json:"zone" validate:"required"`
 }
 
-// NewInstanceTemplatePrototypeInstanceByCatalogOffering : Instantiate InstanceTemplatePrototypeInstanceByCatalogOffering (Generic Model Constructor)
-func (*VpcbetaV1) NewInstanceTemplatePrototypeInstanceByCatalogOffering(catalogOffering InstanceCatalogOfferingPrototypeIntf, primaryNetworkInterface *NetworkInterfacePrototype, zone ZoneIdentityIntf) (_model *InstanceTemplatePrototypeInstanceByCatalogOffering, err error) {
-	_model = &InstanceTemplatePrototypeInstanceByCatalogOffering{
-		CatalogOffering:         catalogOffering,
-		PrimaryNetworkInterface: primaryNetworkInterface,
-		Zone:                    zone,
+// NewInstanceTemplatePrototypeInstanceByCatalogOfferingInstanceTemplateContext : Instantiate InstanceTemplatePrototypeInstanceByCatalogOfferingInstanceTemplateContext (Generic Model Constructor)
+func (*VpcbetaV1) NewInstanceTemplatePrototypeInstanceByCatalogOfferingInstanceTemplateContext(catalogOffering InstanceCatalogOfferingPrototypeIntf, zone ZoneIdentityIntf) (_model *InstanceTemplatePrototypeInstanceByCatalogOfferingInstanceTemplateContext, err error) {
+	_model = &InstanceTemplatePrototypeInstanceByCatalogOfferingInstanceTemplateContext{
+		CatalogOffering: catalogOffering,
+		Zone:            zone,
 	}
 	err = core.ValidateStruct(_model, "required parameters")
 	return
 }
 
-func (*InstanceTemplatePrototypeInstanceByCatalogOffering) isaInstanceTemplatePrototype() bool {
+func (*InstanceTemplatePrototypeInstanceByCatalogOfferingInstanceTemplateContext) isaInstanceTemplatePrototype() bool {
 	return true
 }
 
-// UnmarshalInstanceTemplatePrototypeInstanceByCatalogOffering unmarshals an instance of InstanceTemplatePrototypeInstanceByCatalogOffering from the specified map of raw messages.
-func UnmarshalInstanceTemplatePrototypeInstanceByCatalogOffering(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(InstanceTemplatePrototypeInstanceByCatalogOffering)
+// UnmarshalInstanceTemplatePrototypeInstanceByCatalogOfferingInstanceTemplateContext unmarshals an instance of InstanceTemplatePrototypeInstanceByCatalogOfferingInstanceTemplateContext from the specified map of raw messages.
+func UnmarshalInstanceTemplatePrototypeInstanceByCatalogOfferingInstanceTemplateContext(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(InstanceTemplatePrototypeInstanceByCatalogOfferingInstanceTemplateContext)
 	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPolicyPrototype)
 	if err != nil {
 		return
@@ -78846,9 +79457,9 @@ func UnmarshalInstanceTemplatePrototypeInstanceByCatalogOffering(m map[string]js
 	return
 }
 
-// InstanceTemplatePrototypeInstanceByImage : InstanceTemplatePrototypeInstanceByImage struct
+// InstanceTemplatePrototypeInstanceByImageInstanceTemplateContext : InstanceTemplatePrototypeInstanceByImageInstanceTemplateContext struct
 // This model "extends" InstanceTemplatePrototype
-type InstanceTemplatePrototypeInstanceByImage struct {
+type InstanceTemplatePrototypeInstanceByImageInstanceTemplateContext struct {
 	// The availability policy to use for this virtual server instance.
 	AvailabilityPolicy *InstanceAvailabilityPolicyPrototype `json:"availability_policy,omitempty"`
 
@@ -78912,30 +79523,29 @@ type InstanceTemplatePrototypeInstanceByImage struct {
 	Image ImageIdentityIntf `json:"image" validate:"required"`
 
 	// Primary network interface.
-	PrimaryNetworkInterface *NetworkInterfacePrototype `json:"primary_network_interface" validate:"required"`
+	PrimaryNetworkInterface *NetworkInterfacePrototype `json:"primary_network_interface,omitempty"`
 
 	// The zone this virtual server instance will reside in.
 	Zone ZoneIdentityIntf `json:"zone" validate:"required"`
 }
 
-// NewInstanceTemplatePrototypeInstanceByImage : Instantiate InstanceTemplatePrototypeInstanceByImage (Generic Model Constructor)
-func (*VpcbetaV1) NewInstanceTemplatePrototypeInstanceByImage(image ImageIdentityIntf, primaryNetworkInterface *NetworkInterfacePrototype, zone ZoneIdentityIntf) (_model *InstanceTemplatePrototypeInstanceByImage, err error) {
-	_model = &InstanceTemplatePrototypeInstanceByImage{
-		Image:                   image,
-		PrimaryNetworkInterface: primaryNetworkInterface,
-		Zone:                    zone,
+// NewInstanceTemplatePrototypeInstanceByImageInstanceTemplateContext : Instantiate InstanceTemplatePrototypeInstanceByImageInstanceTemplateContext (Generic Model Constructor)
+func (*VpcbetaV1) NewInstanceTemplatePrototypeInstanceByImageInstanceTemplateContext(image ImageIdentityIntf, zone ZoneIdentityIntf) (_model *InstanceTemplatePrototypeInstanceByImageInstanceTemplateContext, err error) {
+	_model = &InstanceTemplatePrototypeInstanceByImageInstanceTemplateContext{
+		Image: image,
+		Zone:  zone,
 	}
 	err = core.ValidateStruct(_model, "required parameters")
 	return
 }
 
-func (*InstanceTemplatePrototypeInstanceByImage) isaInstanceTemplatePrototype() bool {
+func (*InstanceTemplatePrototypeInstanceByImageInstanceTemplateContext) isaInstanceTemplatePrototype() bool {
 	return true
 }
 
-// UnmarshalInstanceTemplatePrototypeInstanceByImage unmarshals an instance of InstanceTemplatePrototypeInstanceByImage from the specified map of raw messages.
-func UnmarshalInstanceTemplatePrototypeInstanceByImage(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(InstanceTemplatePrototypeInstanceByImage)
+// UnmarshalInstanceTemplatePrototypeInstanceByImageInstanceTemplateContext unmarshals an instance of InstanceTemplatePrototypeInstanceByImageInstanceTemplateContext from the specified map of raw messages.
+func UnmarshalInstanceTemplatePrototypeInstanceByImageInstanceTemplateContext(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(InstanceTemplatePrototypeInstanceByImageInstanceTemplateContext)
 	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPolicyPrototype)
 	if err != nil {
 		return
@@ -79008,9 +79618,9 @@ func UnmarshalInstanceTemplatePrototypeInstanceByImage(m map[string]json.RawMess
 	return
 }
 
-// InstanceTemplatePrototypeInstanceBySourceSnapshot : InstanceTemplatePrototypeInstanceBySourceSnapshot struct
+// InstanceTemplatePrototypeInstanceBySourceSnapshotInstanceTemplateContext : InstanceTemplatePrototypeInstanceBySourceSnapshotInstanceTemplateContext struct
 // This model "extends" InstanceTemplatePrototype
-type InstanceTemplatePrototypeInstanceBySourceSnapshot struct {
+type InstanceTemplatePrototypeInstanceBySourceSnapshotInstanceTemplateContext struct {
 	// The availability policy to use for this virtual server instance.
 	AvailabilityPolicy *InstanceAvailabilityPolicyPrototype `json:"availability_policy,omitempty"`
 
@@ -79071,30 +79681,29 @@ type InstanceTemplatePrototypeInstanceBySourceSnapshot struct {
 	BootVolumeAttachment *VolumeAttachmentPrototypeInstanceBySourceSnapshotContext `json:"boot_volume_attachment" validate:"required"`
 
 	// Primary network interface.
-	PrimaryNetworkInterface *NetworkInterfacePrototype `json:"primary_network_interface" validate:"required"`
+	PrimaryNetworkInterface *NetworkInterfacePrototype `json:"primary_network_interface,omitempty"`
 
 	// The zone this virtual server instance will reside in.
 	Zone ZoneIdentityIntf `json:"zone" validate:"required"`
 }
 
-// NewInstanceTemplatePrototypeInstanceBySourceSnapshot : Instantiate InstanceTemplatePrototypeInstanceBySourceSnapshot (Generic Model Constructor)
-func (*VpcbetaV1) NewInstanceTemplatePrototypeInstanceBySourceSnapshot(bootVolumeAttachment *VolumeAttachmentPrototypeInstanceBySourceSnapshotContext, primaryNetworkInterface *NetworkInterfacePrototype, zone ZoneIdentityIntf) (_model *InstanceTemplatePrototypeInstanceBySourceSnapshot, err error) {
-	_model = &InstanceTemplatePrototypeInstanceBySourceSnapshot{
-		BootVolumeAttachment:    bootVolumeAttachment,
-		PrimaryNetworkInterface: primaryNetworkInterface,
-		Zone:                    zone,
+// NewInstanceTemplatePrototypeInstanceBySourceSnapshotInstanceTemplateContext : Instantiate InstanceTemplatePrototypeInstanceBySourceSnapshotInstanceTemplateContext (Generic Model Constructor)
+func (*VpcbetaV1) NewInstanceTemplatePrototypeInstanceBySourceSnapshotInstanceTemplateContext(bootVolumeAttachment *VolumeAttachmentPrototypeInstanceBySourceSnapshotContext, zone ZoneIdentityIntf) (_model *InstanceTemplatePrototypeInstanceBySourceSnapshotInstanceTemplateContext, err error) {
+	_model = &InstanceTemplatePrototypeInstanceBySourceSnapshotInstanceTemplateContext{
+		BootVolumeAttachment: bootVolumeAttachment,
+		Zone:                 zone,
 	}
 	err = core.ValidateStruct(_model, "required parameters")
 	return
 }
 
-func (*InstanceTemplatePrototypeInstanceBySourceSnapshot) isaInstanceTemplatePrototype() bool {
+func (*InstanceTemplatePrototypeInstanceBySourceSnapshotInstanceTemplateContext) isaInstanceTemplatePrototype() bool {
 	return true
 }
 
-// UnmarshalInstanceTemplatePrototypeInstanceBySourceSnapshot unmarshals an instance of InstanceTemplatePrototypeInstanceBySourceSnapshot from the specified map of raw messages.
-func UnmarshalInstanceTemplatePrototypeInstanceBySourceSnapshot(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(InstanceTemplatePrototypeInstanceBySourceSnapshot)
+// UnmarshalInstanceTemplatePrototypeInstanceBySourceSnapshotInstanceTemplateContext unmarshals an instance of InstanceTemplatePrototypeInstanceBySourceSnapshotInstanceTemplateContext from the specified map of raw messages.
+func UnmarshalInstanceTemplatePrototypeInstanceBySourceSnapshotInstanceTemplateContext(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(InstanceTemplatePrototypeInstanceBySourceSnapshotInstanceTemplateContext)
 	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPolicyPrototype)
 	if err != nil {
 		return
@@ -79345,9 +79954,9 @@ func UnmarshalInstanceTemplatePrototypeInstanceBySourceTemplate(m map[string]jso
 	return
 }
 
-// InstanceTemplateInstanceByCatalogOffering : InstanceTemplateInstanceByCatalogOffering struct
+// InstanceTemplateInstanceByCatalogOfferingInstanceTemplateContext : InstanceTemplateInstanceByCatalogOfferingInstanceTemplateContext struct
 // This model "extends" InstanceTemplate
-type InstanceTemplateInstanceByCatalogOffering struct {
+type InstanceTemplateInstanceByCatalogOfferingInstanceTemplateContext struct {
 	// The availability policy to use for this virtual server instance.
 	AvailabilityPolicy *InstanceAvailabilityPolicyPrototype `json:"availability_policy,omitempty"`
 
@@ -79430,19 +80039,19 @@ type InstanceTemplateInstanceByCatalogOffering struct {
 	CatalogOffering InstanceCatalogOfferingPrototypeIntf `json:"catalog_offering" validate:"required"`
 
 	// Primary network interface.
-	PrimaryNetworkInterface *NetworkInterfacePrototype `json:"primary_network_interface" validate:"required"`
+	PrimaryNetworkInterface *NetworkInterfacePrototype `json:"primary_network_interface,omitempty"`
 
 	// The zone this virtual server instance will reside in.
 	Zone ZoneIdentityIntf `json:"zone" validate:"required"`
 }
 
-func (*InstanceTemplateInstanceByCatalogOffering) isaInstanceTemplate() bool {
+func (*InstanceTemplateInstanceByCatalogOfferingInstanceTemplateContext) isaInstanceTemplate() bool {
 	return true
 }
 
-// UnmarshalInstanceTemplateInstanceByCatalogOffering unmarshals an instance of InstanceTemplateInstanceByCatalogOffering from the specified map of raw messages.
-func UnmarshalInstanceTemplateInstanceByCatalogOffering(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(InstanceTemplateInstanceByCatalogOffering)
+// UnmarshalInstanceTemplateInstanceByCatalogOfferingInstanceTemplateContext unmarshals an instance of InstanceTemplateInstanceByCatalogOfferingInstanceTemplateContext from the specified map of raw messages.
+func UnmarshalInstanceTemplateInstanceByCatalogOfferingInstanceTemplateContext(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(InstanceTemplateInstanceByCatalogOfferingInstanceTemplateContext)
 	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPolicyPrototype)
 	if err != nil {
 		return
@@ -79531,9 +80140,9 @@ func UnmarshalInstanceTemplateInstanceByCatalogOffering(m map[string]json.RawMes
 	return
 }
 
-// InstanceTemplateInstanceByImage : InstanceTemplateInstanceByImage struct
+// InstanceTemplateInstanceByImageInstanceTemplateContext : InstanceTemplateInstanceByImageInstanceTemplateContext struct
 // This model "extends" InstanceTemplate
-type InstanceTemplateInstanceByImage struct {
+type InstanceTemplateInstanceByImageInstanceTemplateContext struct {
 	// The availability policy to use for this virtual server instance.
 	AvailabilityPolicy *InstanceAvailabilityPolicyPrototype `json:"availability_policy,omitempty"`
 
@@ -79609,19 +80218,19 @@ type InstanceTemplateInstanceByImage struct {
 	Image ImageIdentityIntf `json:"image" validate:"required"`
 
 	// Primary network interface.
-	PrimaryNetworkInterface *NetworkInterfacePrototype `json:"primary_network_interface" validate:"required"`
+	PrimaryNetworkInterface *NetworkInterfacePrototype `json:"primary_network_interface,omitempty"`
 
 	// The zone this virtual server instance will reside in.
 	Zone ZoneIdentityIntf `json:"zone" validate:"required"`
 }
 
-func (*InstanceTemplateInstanceByImage) isaInstanceTemplate() bool {
+func (*InstanceTemplateInstanceByImageInstanceTemplateContext) isaInstanceTemplate() bool {
 	return true
 }
 
-// UnmarshalInstanceTemplateInstanceByImage unmarshals an instance of InstanceTemplateInstanceByImage from the specified map of raw messages.
-func UnmarshalInstanceTemplateInstanceByImage(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(InstanceTemplateInstanceByImage)
+// UnmarshalInstanceTemplateInstanceByImageInstanceTemplateContext unmarshals an instance of InstanceTemplateInstanceByImageInstanceTemplateContext from the specified map of raw messages.
+func UnmarshalInstanceTemplateInstanceByImageInstanceTemplateContext(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(InstanceTemplateInstanceByImageInstanceTemplateContext)
 	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPolicyPrototype)
 	if err != nil {
 		return
@@ -79710,9 +80319,9 @@ func UnmarshalInstanceTemplateInstanceByImage(m map[string]json.RawMessage, resu
 	return
 }
 
-// InstanceTemplateInstanceBySourceSnapshot : InstanceTemplateInstanceBySourceSnapshot struct
+// InstanceTemplateInstanceBySourceSnapshotInstanceTemplateContext : InstanceTemplateInstanceBySourceSnapshotInstanceTemplateContext struct
 // This model "extends" InstanceTemplate
-type InstanceTemplateInstanceBySourceSnapshot struct {
+type InstanceTemplateInstanceBySourceSnapshotInstanceTemplateContext struct {
 	// The availability policy to use for this virtual server instance.
 	AvailabilityPolicy *InstanceAvailabilityPolicyPrototype `json:"availability_policy,omitempty"`
 
@@ -79785,19 +80394,19 @@ type InstanceTemplateInstanceBySourceSnapshot struct {
 	BootVolumeAttachment *VolumeAttachmentPrototypeInstanceBySourceSnapshotContext `json:"boot_volume_attachment" validate:"required"`
 
 	// Primary network interface.
-	PrimaryNetworkInterface *NetworkInterfacePrototype `json:"primary_network_interface" validate:"required"`
+	PrimaryNetworkInterface *NetworkInterfacePrototype `json:"primary_network_interface,omitempty"`
 
 	// The zone this virtual server instance will reside in.
 	Zone ZoneIdentityIntf `json:"zone" validate:"required"`
 }
 
-func (*InstanceTemplateInstanceBySourceSnapshot) isaInstanceTemplate() bool {
+func (*InstanceTemplateInstanceBySourceSnapshotInstanceTemplateContext) isaInstanceTemplate() bool {
 	return true
 }
 
-// UnmarshalInstanceTemplateInstanceBySourceSnapshot unmarshals an instance of InstanceTemplateInstanceBySourceSnapshot from the specified map of raw messages.
-func UnmarshalInstanceTemplateInstanceBySourceSnapshot(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(InstanceTemplateInstanceBySourceSnapshot)
+// UnmarshalInstanceTemplateInstanceBySourceSnapshotInstanceTemplateContext unmarshals an instance of InstanceTemplateInstanceBySourceSnapshotInstanceTemplateContext from the specified map of raw messages.
+func UnmarshalInstanceTemplateInstanceBySourceSnapshotInstanceTemplateContext(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(InstanceTemplateInstanceBySourceSnapshotInstanceTemplateContext)
 	err = core.UnmarshalModel(m, "availability_policy", &obj.AvailabilityPolicy, UnmarshalInstanceAvailabilityPolicyPrototype)
 	if err != nil {
 		return
@@ -85446,8 +86055,8 @@ func UnmarshalShareProfileIdentityByName(m map[string]json.RawMessage, result in
 // SharePrototypeShareBySize : Create a file share by size.
 // This model "extends" SharePrototype
 type SharePrototypeShareBySize struct {
-	// The maximum input/output operations per second (IOPS) for the file share. The share must be in the `custom` profile
-	// family, and the value must be in the range supported by the share's specified size.
+	// The maximum input/output operations per second (IOPS) for the file share. The share must be in the `custom` or
+	// `defined_performance` profile family, and the value must be in the range supported by the share's specified size.
 	//
 	// In addition, each host accessing the share will be restricted to 48000 IOPS.
 	Iops *int64 `json:"iops,omitempty"`
@@ -85563,8 +86172,8 @@ func UnmarshalSharePrototypeShareBySize(m map[string]json.RawMessage, result int
 // `initial_owner`, `resource_group`, and `size` will be inherited from `source_share`.
 // This model "extends" SharePrototype
 type SharePrototypeShareBySourceShare struct {
-	// The maximum input/output operations per second (IOPS) for the file share. The share must be in the `custom` profile
-	// family, and the value must be in the range supported by the share's specified size.
+	// The maximum input/output operations per second (IOPS) for the file share. The share must be in the `custom` or
+	// `defined_performance` profile family, and the value must be in the range supported by the share's specified size.
 	//
 	// In addition, each host accessing the share will be restricted to 48000 IOPS.
 	Iops *int64 `json:"iops,omitempty"`
@@ -88463,6 +89072,146 @@ func UnmarshalEndpointGatewayTargetPrototypeProviderInfrastructureServiceIdentit
 	return
 }
 
+// FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByHref : FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByHref struct
+// This model "extends" FloatingIPTargetPatchNetworkInterfaceIdentity
+type FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByHref struct {
+	// The URL for this network interface.
+	Href *string `json:"href" validate:"required"`
+}
+
+// NewFloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByHref : Instantiate FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByHref (Generic Model Constructor)
+func (*VpcbetaV1) NewFloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByHref(href string) (_model *FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByHref, err error) {
+	_model = &FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByHref{
+		Href: core.StringPtr(href),
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+func (*FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByHref) isaFloatingIPTargetPatchNetworkInterfaceIdentity() bool {
+	return true
+}
+
+func (*FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByHref) isaFloatingIPTargetPatch() bool {
+	return true
+}
+
+// UnmarshalFloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByHref unmarshals an instance of FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByHref from the specified map of raw messages.
+func UnmarshalFloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByHref(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByHref)
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByID : FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByID struct
+// This model "extends" FloatingIPTargetPatchNetworkInterfaceIdentity
+type FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByID struct {
+	// The unique identifier for this network interface.
+	ID *string `json:"id" validate:"required"`
+}
+
+// NewFloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByID : Instantiate FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByID (Generic Model Constructor)
+func (*VpcbetaV1) NewFloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByID(id string) (_model *FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByID, err error) {
+	_model = &FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByID{
+		ID: core.StringPtr(id),
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+func (*FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByID) isaFloatingIPTargetPatchNetworkInterfaceIdentity() bool {
+	return true
+}
+
+func (*FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByID) isaFloatingIPTargetPatch() bool {
+	return true
+}
+
+// UnmarshalFloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByID unmarshals an instance of FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByID from the specified map of raw messages.
+func UnmarshalFloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByID(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByID)
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// FloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref : FloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref struct
+// This model "extends" FloatingIPTargetPrototypeNetworkInterfaceIdentity
+type FloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref struct {
+	// The URL for this network interface.
+	Href *string `json:"href" validate:"required"`
+}
+
+// NewFloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref : Instantiate FloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref (Generic Model Constructor)
+func (*VpcbetaV1) NewFloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref(href string) (_model *FloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref, err error) {
+	_model = &FloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref{
+		Href: core.StringPtr(href),
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+func (*FloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref) isaFloatingIPTargetPrototypeNetworkInterfaceIdentity() bool {
+	return true
+}
+
+func (*FloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref) isaFloatingIPTargetPrototype() bool {
+	return true
+}
+
+// UnmarshalFloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref unmarshals an instance of FloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref from the specified map of raw messages.
+func UnmarshalFloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(FloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref)
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// FloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID : FloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID struct
+// This model "extends" FloatingIPTargetPrototypeNetworkInterfaceIdentity
+type FloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID struct {
+	// The unique identifier for this network interface.
+	ID *string `json:"id" validate:"required"`
+}
+
+// NewFloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID : Instantiate FloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID (Generic Model Constructor)
+func (*VpcbetaV1) NewFloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID(id string) (_model *FloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID, err error) {
+	_model = &FloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID{
+		ID: core.StringPtr(id),
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+func (*FloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID) isaFloatingIPTargetPrototypeNetworkInterfaceIdentity() bool {
+	return true
+}
+
+func (*FloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID) isaFloatingIPTargetPrototype() bool {
+	return true
+}
+
+// UnmarshalFloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID unmarshals an instance of FloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID from the specified map of raw messages.
+func UnmarshalFloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(FloatingIPTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID)
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // FlowLogCollectorTargetPrototypeInstanceIdentityInstanceIdentityByCRN : FlowLogCollectorTargetPrototypeInstanceIdentityInstanceIdentityByCRN struct
 // This model "extends" FlowLogCollectorTargetPrototypeInstanceIdentity
 type FlowLogCollectorTargetPrototypeInstanceIdentityInstanceIdentityByCRN struct {
@@ -88568,33 +89317,33 @@ func UnmarshalFlowLogCollectorTargetPrototypeInstanceIdentityInstanceIdentityByI
 	return
 }
 
-// FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByHref : FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByHref struct
+// FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref : FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref struct
 // This model "extends" FlowLogCollectorTargetPrototypeNetworkInterfaceIdentity
-type FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByHref struct {
+type FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref struct {
 	// The URL for this network interface.
 	Href *string `json:"href" validate:"required"`
 }
 
-// NewFlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByHref : Instantiate FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByHref (Generic Model Constructor)
-func (*VpcbetaV1) NewFlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByHref(href string) (_model *FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByHref, err error) {
-	_model = &FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByHref{
+// NewFlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref : Instantiate FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref (Generic Model Constructor)
+func (*VpcbetaV1) NewFlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref(href string) (_model *FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref, err error) {
+	_model = &FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref{
 		Href: core.StringPtr(href),
 	}
 	err = core.ValidateStruct(_model, "required parameters")
 	return
 }
 
-func (*FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByHref) isaFlowLogCollectorTargetPrototypeNetworkInterfaceIdentity() bool {
+func (*FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref) isaFlowLogCollectorTargetPrototypeNetworkInterfaceIdentity() bool {
 	return true
 }
 
-func (*FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByHref) isaFlowLogCollectorTargetPrototype() bool {
+func (*FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref) isaFlowLogCollectorTargetPrototype() bool {
 	return true
 }
 
-// UnmarshalFlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByHref unmarshals an instance of FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByHref from the specified map of raw messages.
-func UnmarshalFlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByHref(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByHref)
+// UnmarshalFlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref unmarshals an instance of FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref from the specified map of raw messages.
+func UnmarshalFlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByHref)
 	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
 	if err != nil {
 		return
@@ -88603,33 +89352,33 @@ func UnmarshalFlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInte
 	return
 }
 
-// FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByID : FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByID struct
+// FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID : FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID struct
 // This model "extends" FlowLogCollectorTargetPrototypeNetworkInterfaceIdentity
-type FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByID struct {
+type FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID struct {
 	// The unique identifier for this network interface.
 	ID *string `json:"id" validate:"required"`
 }
 
-// NewFlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByID : Instantiate FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByID (Generic Model Constructor)
-func (*VpcbetaV1) NewFlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByID(id string) (_model *FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByID, err error) {
-	_model = &FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByID{
+// NewFlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID : Instantiate FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID (Generic Model Constructor)
+func (*VpcbetaV1) NewFlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID(id string) (_model *FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID, err error) {
+	_model = &FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID{
 		ID: core.StringPtr(id),
 	}
 	err = core.ValidateStruct(_model, "required parameters")
 	return
 }
 
-func (*FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByID) isaFlowLogCollectorTargetPrototypeNetworkInterfaceIdentity() bool {
+func (*FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID) isaFlowLogCollectorTargetPrototypeNetworkInterfaceIdentity() bool {
 	return true
 }
 
-func (*FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByID) isaFlowLogCollectorTargetPrototype() bool {
+func (*FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID) isaFlowLogCollectorTargetPrototype() bool {
 	return true
 }
 
-// UnmarshalFlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByID unmarshals an instance of FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByID from the specified map of raw messages.
-func UnmarshalFlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByID(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityNetworkInterfaceIdentityByID)
+// UnmarshalFlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID unmarshals an instance of FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID from the specified map of raw messages.
+func UnmarshalFlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(FlowLogCollectorTargetPrototypeNetworkInterfaceIdentityNetworkInterfaceIdentityByID)
 	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
 	if err != nil {
 		return
