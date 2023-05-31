@@ -1496,7 +1496,7 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 				Image: &vpcbetav1.ImageIdentity{
 					ID: &imageID,
 				},
-				Profile: &vpcbetav1.InstanceProfileIdentity{
+				Profile: &vpcbetav1.InstanceTemplatePrototypeProfile{
 					Name: &instanceProfile,
 				},
 				Zone: &vpcbetav1.ZoneIdentity{
@@ -1593,7 +1593,7 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 			keyIDentityModel := &vpcbetav1.KeyIdentityByID{
 				ID: &keyID,
 			}
-			instanceProfileIdentityModel := &vpcbetav1.InstanceProfileIdentityByName{
+			instanceProfileIdentityModel := &vpcbetav1.InstancePrototypeProfile{
 				Name: &[]string{"bx2d-2x8"}[0],
 			}
 			encryptionKeyIdentityModel := &vpcbetav1.EncryptionKeyIdentityByCRN{
@@ -2895,7 +2895,7 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 				Name:                core.StringPtr("my-replica-share"),
 				Profile:             shareProfileIdentityModel,
 				ReplicationCronSpec: core.StringPtr("0 */5 * * *"),
-				Targets:             []vpcbetav1.ShareMountTargetPrototype{*shareTargetPrototypeModel},
+				MountTargets:        []vpcbetav1.ShareMountTargetPrototype{*shareTargetPrototypeModel},
 				UserTags:            []string{"my-share-tag"},
 				Zone:                zoneIdentityModel,
 			}
@@ -2930,7 +2930,7 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 				Name:                core.StringPtr("my-replica-share-1"),
 				Profile:             shareProfileIdentityModel,
 				ReplicationCronSpec: core.StringPtr("0 */5 * * *"),
-				Targets:             []vpcbetav1.ShareMountTargetPrototype{*shareTargetPrototypeModel1},
+				MountTargets:        []vpcbetav1.ShareMountTargetPrototype{*shareTargetPrototypeModel1},
 				UserTags:            []string{"my-share-tag-1"},
 				Zone:                zoneIdentityModel,
 			}
