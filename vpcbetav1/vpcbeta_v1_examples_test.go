@@ -65,6 +65,7 @@ var (
 	instanceGroupManagerActionID      string
 	instanceGroupMembershipID         string
 	dedicatedHostGroupID              string
+	virtualNetworkInterfaceId         string
 	dedicatedHostID                   string
 	publicGatewayID                   string
 	diskID                            string
@@ -1496,7 +1497,7 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 				Image: &vpcbetav1.ImageIdentity{
 					ID: &imageID,
 				},
-				Profile: &vpcbetav1.InstanceTemplatePrototypeProfile{
+				Profile: &vpcbetav1.InstanceProfileIdentity{
 					Name: &instanceProfile,
 				},
 				Zone: &vpcbetav1.ZoneIdentity{
@@ -1593,7 +1594,7 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 			keyIDentityModel := &vpcbetav1.KeyIdentityByID{
 				ID: &keyID,
 			}
-			instanceProfileIdentityModel := &vpcbetav1.InstancePrototypeProfile{
+			instanceProfileIdentityModel := &vpcbetav1.InstanceProfileIdentity{
 				Name: &[]string{"bx2d-2x8"}[0],
 			}
 			encryptionKeyIdentityModel := &vpcbetav1.EncryptionKeyIdentityByCRN{
@@ -2884,7 +2885,7 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 				Name: core.StringPtr("tier-3iops"),
 			}
 			zoneIdentityModel := &vpcbetav1.ZoneIdentityByName{
-				Name: core.StringPtr("us-south-1"),
+				Name: core.StringPtr("us-east-1"),
 			}
 			shareTargetPrototypeModel := &vpcbetav1.ShareMountTargetPrototype{
 				Name: core.StringPtr("my-share-target"),
@@ -2895,16 +2896,17 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 				Name:                core.StringPtr("my-replica-share"),
 				Profile:             shareProfileIdentityModel,
 				ReplicationCronSpec: core.StringPtr("0 */5 * * *"),
-				MountTargets:        []vpcbetav1.ShareMountTargetPrototype{*shareTargetPrototypeModel},
+				MountTargets:        []vpcbetav1.ShareMountTargetPrototypeIntf{shareTargetPrototypeModel},
 				UserTags:            []string{"my-share-tag"},
 				Zone:                zoneIdentityModel,
 			}
 			sharePrototype := &vpcbetav1.SharePrototype{
-				Name:         core.StringPtr("my-share"),
-				Size:         core.Int64Ptr(int64(600)),
-				Profile:      shareProfileIdentityModel,
-				ReplicaShare: sharePrototypeShareContextModel,
-				Zone:         zoneIdentityModel,
+				AccessControlMode: &[]string{"security_group"}[0],
+				Name:              core.StringPtr("my-share"),
+				Size:              core.Int64Ptr(int64(600)),
+				Profile:           shareProfileIdentityModel,
+				ReplicaShare:      sharePrototypeShareContextModel,
+				Zone:              zoneIdentityModel,
 			}
 			createShareOptions := vpcService.NewCreateShareOptions(sharePrototype)
 
@@ -2930,7 +2932,7 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 				Name:                core.StringPtr("my-replica-share-1"),
 				Profile:             shareProfileIdentityModel,
 				ReplicationCronSpec: core.StringPtr("0 */5 * * *"),
-				MountTargets:        []vpcbetav1.ShareMountTargetPrototype{*shareTargetPrototypeModel1},
+				MountTargets:        []vpcbetav1.ShareMountTargetPrototypeIntf{shareTargetPrototypeModel1},
 				UserTags:            []string{"my-share-tag-1"},
 				Zone:                zoneIdentityModel,
 			}
@@ -3035,123 +3037,203 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 			Expect(share).ToNot(BeNil())
 
 		})
-		It(`ListShareTargets request example`, func() {
-			fmt.Println("\nListShareTargets() result:")
-			// begin-list_share_targets
+		It(`ListShareMountTargets request example`, func() {
+			fmt.Println("\nListShareMountTargets() result:")
 
-			listShareTargetsOptions := vpcService.NewListShareMountTargetsOptions(
-				createdShareID,
-			)
+			// begin-list_share_mount_targets
 
-			shareTargetCollection, response, err := vpcService.ListShareMountTargets(listShareTargetsOptions)
+			listShareMountTargetsOptions := &vpcbetav1.ListShareMountTargetsOptions{
+				ShareID: &createdShareID,
+			}
+
+			shareMountTargetCollection, response, err := vpcService.ListShareMountTargets(listShareMountTargetsOptions)
 			if err != nil {
 				panic(err)
 			}
 
-			// end-list_share_targets
+			// end-list_share_mount_targets
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
-			Expect(shareTargetCollection).ToNot(BeNil())
-
+			Expect(shareMountTargetCollection).ToNot(BeNil())
 		})
-		It(`CreateShareTarget request example`, func() {
-			fmt.Println("\nCreateShareTarget() result:")
-			// begin-create_share_target
+		It(`CreateShareMountTarget request example`, func() {
+			fmt.Println("\nCreateShareMountTarget() result:")
 
-			vpcIdentityModel := &vpcbetav1.VPCIdentityByID{
-				ID: &vpcID,
+			// begin-create_share_mount_target
+			virtualNetworkInterfacePrimaryIPPrototype := &vpcbetav1.VirtualNetworkInterfacePrimaryIPPrototype{
+				Address:    &[]string{"10.0.1.3"}[0],
+				AutoDelete: &[]bool{true}[0],
+				Name:       &[]string{"my-reserved-ip"}[0],
 			}
 
-			createShareTargetOptions := vpcService.NewCreateShareMountTargetOptions(
-				createdShareID,
-				vpcIdentityModel,
-			)
-			createShareTargetOptions.SetName("my-share-target-updated")
+			subnetIdentityModel := &vpcbetav1.SubnetIdentityByID{
+				ID: &subnetID,
+			}
 
-			shareTarget, response, err := vpcService.CreateShareMountTarget(createShareTargetOptions)
+			shareMountTargetVirtualNetworkInterfacePrototype := &vpcbetav1.ShareMountTargetVirtualNetworkInterfacePrototype{
+				Name:      &[]string{"my-virtual-network-interface"}[0],
+				PrimaryIP: virtualNetworkInterfacePrimaryIPPrototype,
+				Subnet:    subnetIdentityModel,
+			}
+
+			shareMountTargetPrototypeModel := &vpcbetav1.ShareMountTargetPrototypeShareMountTargetByAccessControlModeSecurityGroup{
+				Name:                    &[]string{"my-share-mount-target"}[0],
+				TransitEncryption:       &[]string{"user_managed"}[0],
+				VirtualNetworkInterface: shareMountTargetVirtualNetworkInterfacePrototype,
+			}
+
+			createShareMountTargetOptions := &vpcbetav1.CreateShareMountTargetOptions{
+				ShareID:                   &createdReplicaShare1ID,
+				ShareMountTargetPrototype: shareMountTargetPrototypeModel,
+			}
+
+			shareMountTarget, response, err := vpcService.CreateShareMountTarget(createShareMountTargetOptions)
 			if err != nil {
 				panic(err)
 			}
 
-			// end-create_share_target
+			// end-create_share_mount_target
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(201))
-			Expect(shareTarget).ToNot(BeNil())
-			createdShareTargetID = *shareTarget.ID
+			Expect(shareMountTarget).ToNot(BeNil())
+			createdShareTargetID = *shareMountTarget.ID
+
 		})
-		It(`GetShareTarget request example`, func() {
-			fmt.Println("\nGetShareTarget() result:")
-			// begin-get_share_target
+		It(`GetShareMountTarget request example`, func() {
+			fmt.Println("\nGetShareMountTarget() result:")
 
-			getShareTargetOptions := vpcService.NewGetShareMountTargetOptions(
-				createdShareID,
-				createdShareTargetID,
-			)
+			shareMountTargetId := createdShareTargetID
+			// begin-get_share_mount_target
 
-			shareTarget, response, err := vpcService.GetShareMountTarget(getShareTargetOptions)
+			getShareMountTargetOptions := &vpcbetav1.GetShareMountTargetOptions{
+				ShareID: &createdReplicaShare1ID,
+				ID:      &shareMountTargetId,
+			}
+
+			shareMountTarget, response, err := vpcService.GetShareMountTarget(getShareMountTargetOptions)
 			if err != nil {
 				panic(err)
 			}
-
-			// end-get_share_target
+			// end-get_share_mount_target
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
-			Expect(shareTarget).ToNot(BeNil())
-
+			Expect(shareMountTarget).ToNot(BeNil())
 		})
-		It(`UpdateShareTarget request example`, func() {
-			fmt.Println("\nUpdateShareTarget() result:")
-			// begin-update_share_target
+		It(`UpdateShareMountTarget request example`, func() {
+			fmt.Println("\nUpdateShareMountTarget() result:")
 
-			shareTargetPatchModel := &vpcbetav1.ShareMountTargetPatch{
-				Name: core.StringPtr("my-share-target-updated"),
+			shareMountTargetId := createdShareTargetID
+			// begin-update_share_mount_target
+
+			shareMountTargetPatchModel := &vpcbetav1.ShareMountTargetPatch{
+				Name: &[]string{"my-share-mount-target-updated"}[0],
 			}
-			shareTargetPatchModelAsPatch, asPatchErr := shareTargetPatchModel.AsPatch()
+			shareMountTargetPatchModelAsPatch, asPatchErr := shareMountTargetPatchModel.AsPatch()
 			Expect(asPatchErr).To(BeNil())
 
-			updateShareTargetOptions := vpcService.NewUpdateShareMountTargetOptions(
-				createdShareID,
-				createdShareTargetID,
-				shareTargetPatchModelAsPatch,
-			)
+			updateShareMountTargetOptions := &vpcbetav1.UpdateShareMountTargetOptions{
+				ShareID:               &createdReplicaShare1ID,
+				ID:                    &shareMountTargetId,
+				ShareMountTargetPatch: shareMountTargetPatchModelAsPatch,
+			}
 
-			shareTarget, response, err := vpcService.UpdateShareMountTarget(updateShareTargetOptions)
+			shareMountTarget, response, err := vpcService.UpdateShareMountTarget(updateShareMountTargetOptions)
 			if err != nil {
 				panic(err)
 			}
 
-			// end-update_share_target
+			// end-update_share_mount_target
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
-			Expect(shareTarget).ToNot(BeNil())
-
+			Expect(shareMountTarget).ToNot(BeNil())
 		})
 
-		It(`DeleteShareTarget request example`, func() {
-			fmt.Println("\nDeleteShareTarget() result:")
-			// begin-delete_share_target
+		It(`ListVirtualNetworkInterfaces request example`, func() {
+			fmt.Println("\nListVirtualNetworkInterfaces() result:")
+			// begin-list_virtual_network_interfaces
+			listVirtualNetworkInterfacesOptions := &vpcbetav1.ListVirtualNetworkInterfacesOptions{}
 
-			deleteShareTargetOptions := vpcService.NewDeleteShareMountTargetOptions(
-				createdShareID,
-				createdShareTargetID,
-			)
+			virtualNetworkInterfaceCollection, response, err := vpcService.ListVirtualNetworkInterfaces(listVirtualNetworkInterfacesOptions)
 
-			shareTarget, response, err := vpcService.DeleteShareMountTarget(deleteShareTargetOptions)
+			// end-list_virtual_network_interfaces
+			virtualNetworkInterfaceId = *virtualNetworkInterfaceCollection.VirtualNetworkInterfaces[0].ID
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(virtualNetworkInterfaceCollection).ToNot(BeNil())
+		})
+		It(`GetVirtualNetworkInterface request example`, func() {
+			fmt.Println("\nGetVirtualNetworkInterface() result:")
+			// begin-get_virtual_network_interface
+
+			getVirtualNetworkInterfaceOptions := &vpcbetav1.GetVirtualNetworkInterfaceOptions{
+				ID: &virtualNetworkInterfaceId,
+			}
+
+			virtualNetworkInterface, response, err := vpcService.GetVirtualNetworkInterface(getVirtualNetworkInterfaceOptions)
 			if err != nil {
 				panic(err)
 			}
 
-			// end-delete_share_target
+			// end-get_virtual_network_interface
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(virtualNetworkInterface).ToNot(BeNil())
+		})
+		It(`UpdateVirtualNetworkInterface request example`, func() {
+			fmt.Println("\nUpdateVirtualNetworkInterface() result:")
+			// begin-update_virtual_network_interface
+
+			virtualNetworkInterfacePatchModel := &vpcbetav1.VirtualNetworkInterfacePatch{
+				Name: &[]string{"my-virtual-network-interface-updated"}[0],
+			}
+			virtualNetworkInterfacePatchModelAsPatch, asPatchErr := virtualNetworkInterfacePatchModel.AsPatch()
+			Expect(asPatchErr).To(BeNil())
+
+			updateVirtualNetworkInterfaceOptions := &vpcbetav1.UpdateVirtualNetworkInterfaceOptions{
+				ID:                           &virtualNetworkInterfaceId,
+				VirtualNetworkInterfacePatch: virtualNetworkInterfacePatchModelAsPatch,
+			}
+
+			virtualNetworkInterface, response, err := vpcService.UpdateVirtualNetworkInterface(updateVirtualNetworkInterfaceOptions)
+			if err != nil {
+				panic(err)
+			}
+
+			// end-update_virtual_network_interface
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(virtualNetworkInterface).ToNot(BeNil())
+		})
+
+		It(`DeleteShareMountTarget request example`, func() {
+			fmt.Println("\nDeleteShareMountTarget() result:")
+
+			shareMountTargetId := createdShareTargetID
+			// begin-delete_share_mount_target
+
+			deleteShareMountTargetOptions := &vpcbetav1.DeleteShareMountTargetOptions{
+				ShareID: &createdReplicaShare1ID,
+				ID:      &shareMountTargetId,
+			}
+
+			shareMountTarget, response, err := vpcService.DeleteShareMountTarget(deleteShareMountTargetOptions)
+			if err != nil {
+				panic(err)
+			}
+
+			// end-delete_share_mount_target
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(202))
-			Expect(shareTarget).ToNot(BeNil())
-
+			Expect(shareMountTarget).ToNot(BeNil())
 		})
+
 		It(`DeleteShareSource request example`, func() {
 			// begin-delete_share_source
 
