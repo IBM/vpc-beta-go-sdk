@@ -15,7 +15,7 @@
  */
 
 /*
- * IBM OpenAPI SDK Code Generator Version: 3.76.0-ad3e6f96-20230724-172814
+ * IBM OpenAPI SDK Code Generator Version: 3.80.0-29334a73-20230925-151553
  */
 
 // Package vpcbetav1 : Operations and models for the VpcbetaV1 service
@@ -47,7 +47,7 @@ type VpcbetaV1 struct {
 	generation *int64
 
 	// The API version, in format `YYYY-MM-DD`. For the API behavior documented here, specify any date between `2023-10-10`
-	// and `2023-11-08`.
+	// and `2023-11-23`.
 	Version *string
 }
 
@@ -64,7 +64,7 @@ type VpcbetaV1Options struct {
 	Authenticator core.Authenticator
 
 	// The API version, in format `YYYY-MM-DD`. For the API behavior documented here, specify any date between `2023-10-10`
-	// and `2023-11-08`.
+	// and `2023-11-23`.
 	Version *string
 }
 
@@ -122,7 +122,7 @@ func NewVpcbetaV1(options *VpcbetaV1Options) (service *VpcbetaV1, err error) {
 	}
 
 	if options.Version == nil {
-		options.Version = core.StringPtr("2023-11-07")
+		options.Version = core.StringPtr("2023-11-22")
 	}
 
 	service = &VpcbetaV1{
@@ -291,7 +291,6 @@ func (vpcbeta *VpcbetaV1) CreateVPCWithContext(ctx context.Context, createVPCOpt
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createVPCOptions.AddressPrefixManagement != nil {
 		body["address_prefix_management"] = createVPCOptions.AddressPrefixManagement
@@ -386,7 +385,6 @@ func (vpcbeta *VpcbetaV1) DeleteVPCWithContext(ctx context.Context, deleteVPCOpt
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -439,7 +437,6 @@ func (vpcbeta *VpcbetaV1) GetVPCWithContext(ctx context.Context, getVPCOptions *
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -508,7 +505,6 @@ func (vpcbeta *VpcbetaV1) UpdateVPCWithContext(ctx context.Context, updateVPCOpt
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateVPCOptions.VPCPatch)
 	if err != nil {
 		return
@@ -578,7 +574,6 @@ func (vpcbeta *VpcbetaV1) GetVPCDefaultNetworkACLWithContext(ctx context.Context
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -644,7 +639,6 @@ func (vpcbeta *VpcbetaV1) GetVPCDefaultRoutingTableWithContext(ctx context.Conte
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -709,7 +703,6 @@ func (vpcbeta *VpcbetaV1) GetVPCDefaultSecurityGroupWithContext(ctx context.Cont
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -845,7 +838,6 @@ func (vpcbeta *VpcbetaV1) CreateVPCAddressPrefixWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createVPCAddressPrefixOptions.CIDR != nil {
 		body["cidr"] = createVPCAddressPrefixOptions.CIDR
@@ -928,7 +920,6 @@ func (vpcbeta *VpcbetaV1) DeleteVPCAddressPrefixWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -982,7 +973,6 @@ func (vpcbeta *VpcbetaV1) GetVPCAddressPrefixWithContext(ctx context.Context, ge
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -1049,7 +1039,6 @@ func (vpcbeta *VpcbetaV1) UpdateVPCAddressPrefixWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateVPCAddressPrefixOptions.AddressPrefixPatch)
 	if err != nil {
 		return
@@ -1226,7 +1215,6 @@ func (vpcbeta *VpcbetaV1) CreateVPCDnsResolutionBindingWithContext(ctx context.C
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createVPCDnsResolutionBindingOptions.VPC != nil {
 		body["vpc"] = createVPCDnsResolutionBindingOptions.VPC
@@ -1263,13 +1251,14 @@ func (vpcbeta *VpcbetaV1) CreateVPCDnsResolutionBindingWithContext(ctx context.C
 // DeleteVPCDnsResolutionBinding : Delete a DNS resolution binding
 // This request deletes a DNS resolution binding. This operation cannot be reversed.
 //
-// A DNS resolution binding for a VPC with `dns.enable_hub` set to `true` cannot be deleted.
-func (vpcbeta *VpcbetaV1) DeleteVPCDnsResolutionBinding(deleteVPCDnsResolutionBindingOptions *DeleteVPCDnsResolutionBindingOptions) (response *core.DetailedResponse, err error) {
+// For this request to succeed, the VPC specified by the identifier in the URL must not have
+// `dns.resolver.type` set to `delegated`.
+func (vpcbeta *VpcbetaV1) DeleteVPCDnsResolutionBinding(deleteVPCDnsResolutionBindingOptions *DeleteVPCDnsResolutionBindingOptions) (result *VpcdnsResolutionBinding, response *core.DetailedResponse, err error) {
 	return vpcbeta.DeleteVPCDnsResolutionBindingWithContext(context.Background(), deleteVPCDnsResolutionBindingOptions)
 }
 
 // DeleteVPCDnsResolutionBindingWithContext is an alternate form of the DeleteVPCDnsResolutionBinding method which supports a Context parameter
-func (vpcbeta *VpcbetaV1) DeleteVPCDnsResolutionBindingWithContext(ctx context.Context, deleteVPCDnsResolutionBindingOptions *DeleteVPCDnsResolutionBindingOptions) (response *core.DetailedResponse, err error) {
+func (vpcbeta *VpcbetaV1) DeleteVPCDnsResolutionBindingWithContext(ctx context.Context, deleteVPCDnsResolutionBindingOptions *DeleteVPCDnsResolutionBindingOptions) (result *VpcdnsResolutionBinding, response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(deleteVPCDnsResolutionBindingOptions, "deleteVPCDnsResolutionBindingOptions cannot be nil")
 	if err != nil {
 		return
@@ -1300,17 +1289,28 @@ func (vpcbeta *VpcbetaV1) DeleteVPCDnsResolutionBindingWithContext(ctx context.C
 	for headerName, headerValue := range sdkHeaders {
 		builder.AddHeader(headerName, headerValue)
 	}
+	builder.AddHeader("Accept", "application/json")
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
 	}
 
-	response, err = vpcbeta.Service.Request(request, nil)
+	var rawResponse map[string]json.RawMessage
+	response, err = vpcbeta.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalVpcdnsResolutionBinding)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
 
 	return
 }
@@ -1358,7 +1358,6 @@ func (vpcbeta *VpcbetaV1) GetVPCDnsResolutionBindingWithContext(ctx context.Cont
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -1426,7 +1425,6 @@ func (vpcbeta *VpcbetaV1) UpdateVPCDnsResolutionBindingWithContext(ctx context.C
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateVPCDnsResolutionBindingOptions.VpcdnsResolutionBindingPatch)
 	if err != nil {
 		return
@@ -1579,7 +1577,6 @@ func (vpcbeta *VpcbetaV1) CreateVPCRouteWithContext(ctx context.Context, createV
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createVPCRouteOptions.Destination != nil {
 		body["destination"] = createVPCRouteOptions.Destination
@@ -1670,7 +1667,6 @@ func (vpcbeta *VpcbetaV1) DeleteVPCRouteWithContext(ctx context.Context, deleteV
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -1727,7 +1723,6 @@ func (vpcbeta *VpcbetaV1) GetVPCRouteWithContext(ctx context.Context, getVPCRout
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -1797,7 +1792,6 @@ func (vpcbeta *VpcbetaV1) UpdateVPCRouteWithContext(ctx context.Context, updateV
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateVPCRouteOptions.RoutePatch)
 	if err != nil {
 		return
@@ -1944,7 +1938,6 @@ func (vpcbeta *VpcbetaV1) CreateVPCRoutingTableWithContext(ctx context.Context, 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createVPCRoutingTableOptions.AcceptRoutesFrom != nil {
 		body["accept_routes_from"] = createVPCRoutingTableOptions.AcceptRoutesFrom
@@ -2039,7 +2032,6 @@ func (vpcbeta *VpcbetaV1) DeleteVPCRoutingTableWithContext(ctx context.Context, 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -2093,7 +2085,6 @@ func (vpcbeta *VpcbetaV1) GetVPCRoutingTableWithContext(ctx context.Context, get
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -2163,7 +2154,6 @@ func (vpcbeta *VpcbetaV1) UpdateVPCRoutingTableWithContext(ctx context.Context, 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateVPCRoutingTableOptions.RoutingTablePatch)
 	if err != nil {
 		return
@@ -2310,7 +2300,6 @@ func (vpcbeta *VpcbetaV1) CreateVPCRoutingTableRouteWithContext(ctx context.Cont
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createVPCRoutingTableRouteOptions.Destination != nil {
 		body["destination"] = createVPCRoutingTableRouteOptions.Destination
@@ -2400,7 +2389,6 @@ func (vpcbeta *VpcbetaV1) DeleteVPCRoutingTableRouteWithContext(ctx context.Cont
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -2455,7 +2443,6 @@ func (vpcbeta *VpcbetaV1) GetVPCRoutingTableRouteWithContext(ctx context.Context
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -2524,7 +2511,6 @@ func (vpcbeta *VpcbetaV1) UpdateVPCRoutingTableRouteWithContext(ctx context.Cont
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateVPCRoutingTableRouteOptions.RoutePatch)
 	if err != nil {
 		return
@@ -2676,7 +2662,6 @@ func (vpcbeta *VpcbetaV1) CreateSubnetWithContext(ctx context.Context, createSub
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(createSubnetOptions.SubnetPrototype)
 	if err != nil {
 		return
@@ -2748,7 +2733,6 @@ func (vpcbeta *VpcbetaV1) DeleteSubnetWithContext(ctx context.Context, deleteSub
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -2801,7 +2785,6 @@ func (vpcbeta *VpcbetaV1) GetSubnetWithContext(ctx context.Context, getSubnetOpt
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -2867,7 +2850,6 @@ func (vpcbeta *VpcbetaV1) UpdateSubnetWithContext(ctx context.Context, updateSub
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateSubnetOptions.SubnetPatch)
 	if err != nil {
 		return
@@ -2936,7 +2918,6 @@ func (vpcbeta *VpcbetaV1) GetSubnetNetworkACLWithContext(ctx context.Context, ge
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -3001,7 +2982,6 @@ func (vpcbeta *VpcbetaV1) ReplaceSubnetNetworkACLWithContext(ctx context.Context
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(replaceSubnetNetworkACLOptions.NetworkACLIdentity)
 	if err != nil {
 		return
@@ -3069,7 +3049,6 @@ func (vpcbeta *VpcbetaV1) UnsetSubnetPublicGatewayWithContext(ctx context.Contex
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -3122,7 +3101,6 @@ func (vpcbeta *VpcbetaV1) GetSubnetPublicGatewayWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -3188,7 +3166,6 @@ func (vpcbeta *VpcbetaV1) SetSubnetPublicGatewayWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(setSubnetPublicGatewayOptions.PublicGatewayIdentity)
 	if err != nil {
 		return
@@ -3257,7 +3234,6 @@ func (vpcbeta *VpcbetaV1) GetSubnetRoutingTableWithContext(ctx context.Context, 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -3325,7 +3301,6 @@ func (vpcbeta *VpcbetaV1) ReplaceSubnetRoutingTableWithContext(ctx context.Conte
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(replaceSubnetRoutingTableOptions.RoutingTableIdentity)
 	if err != nil {
 		return
@@ -3470,7 +3445,6 @@ func (vpcbeta *VpcbetaV1) CreateSubnetReservedIPWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createSubnetReservedIPOptions.Address != nil {
 		body["address"] = createSubnetReservedIPOptions.Address
@@ -3556,7 +3530,6 @@ func (vpcbeta *VpcbetaV1) DeleteSubnetReservedIPWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -3610,7 +3583,6 @@ func (vpcbeta *VpcbetaV1) GetSubnetReservedIPWithContext(ctx context.Context, ge
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -3679,7 +3651,6 @@ func (vpcbeta *VpcbetaV1) UpdateSubnetReservedIPWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateSubnetReservedIPOptions.ReservedIPPatch)
 	if err != nil {
 		return
@@ -3823,7 +3794,6 @@ func (vpcbeta *VpcbetaV1) CreateImageWithContext(ctx context.Context, createImag
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(createImageOptions.ImagePrototype)
 	if err != nil {
 		return
@@ -3895,7 +3865,6 @@ func (vpcbeta *VpcbetaV1) DeleteImageWithContext(ctx context.Context, deleteImag
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -3948,7 +3917,6 @@ func (vpcbeta *VpcbetaV1) GetImageWithContext(ctx context.Context, getImageOptio
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -4015,7 +3983,6 @@ func (vpcbeta *VpcbetaV1) UpdateImageWithContext(ctx context.Context, updateImag
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateImageOptions.ImagePatch)
 	if err != nil {
 		return
@@ -4094,7 +4061,6 @@ func (vpcbeta *VpcbetaV1) DeprecateImageWithContext(ctx context.Context, depreca
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -4155,7 +4121,6 @@ func (vpcbeta *VpcbetaV1) ObsoleteImageWithContext(ctx context.Context, obsolete
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -4284,7 +4249,6 @@ func (vpcbeta *VpcbetaV1) CreateImageExportJobWithContext(ctx context.Context, c
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createImageExportJobOptions.StorageBucket != nil {
 		body["storage_bucket"] = createImageExportJobOptions.StorageBucket
@@ -4365,7 +4329,6 @@ func (vpcbeta *VpcbetaV1) DeleteImageExportJobWithContext(ctx context.Context, d
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -4419,7 +4382,6 @@ func (vpcbeta *VpcbetaV1) GetImageExportJobWithContext(ctx context.Context, getI
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -4487,7 +4449,6 @@ func (vpcbeta *VpcbetaV1) UpdateImageExportJobWithContext(ctx context.Context, u
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateImageExportJobOptions.ImageExportJobPatch)
 	if err != nil {
 		return
@@ -4618,7 +4579,6 @@ func (vpcbeta *VpcbetaV1) GetOperatingSystemWithContext(ctx context.Context, get
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -4744,7 +4704,6 @@ func (vpcbeta *VpcbetaV1) CreateKeyWithContext(ctx context.Context, createKeyOpt
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createKeyOptions.PublicKey != nil {
 		body["public_key"] = createKeyOptions.PublicKey
@@ -4825,7 +4784,6 @@ func (vpcbeta *VpcbetaV1) DeleteKeyWithContext(ctx context.Context, deleteKeyOpt
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -4878,7 +4836,6 @@ func (vpcbeta *VpcbetaV1) GetKeyWithContext(ctx context.Context, getKeyOptions *
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -4943,7 +4900,6 @@ func (vpcbeta *VpcbetaV1) UpdateKeyWithContext(ctx context.Context, updateKeyOpt
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateKeyOptions.KeyPatch)
 	if err != nil {
 		return
@@ -5005,7 +4961,6 @@ func (vpcbeta *VpcbetaV1) ListInstanceProfilesWithContext(ctx context.Context, l
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -5069,7 +5024,6 @@ func (vpcbeta *VpcbetaV1) GetInstanceProfileWithContext(ctx context.Context, get
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -5125,7 +5079,6 @@ func (vpcbeta *VpcbetaV1) ListInstanceTemplatesWithContext(ctx context.Context, 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -5190,7 +5143,6 @@ func (vpcbeta *VpcbetaV1) CreateInstanceTemplateWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(createInstanceTemplateOptions.InstanceTemplatePrototype)
 	if err != nil {
 		return
@@ -5258,7 +5210,6 @@ func (vpcbeta *VpcbetaV1) DeleteInstanceTemplateWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -5311,7 +5262,6 @@ func (vpcbeta *VpcbetaV1) GetInstanceTemplateWithContext(ctx context.Context, ge
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -5378,7 +5328,6 @@ func (vpcbeta *VpcbetaV1) UpdateInstanceTemplateWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateInstanceTemplateOptions.InstanceTemplatePatch)
 	if err != nil {
 		return
@@ -5541,7 +5490,6 @@ func (vpcbeta *VpcbetaV1) CreateInstanceWithContext(ctx context.Context, createI
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(createInstanceOptions.InstancePrototype)
 	if err != nil {
 		return
@@ -5611,7 +5559,6 @@ func (vpcbeta *VpcbetaV1) DeleteInstanceWithContext(ctx context.Context, deleteI
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -5664,7 +5611,6 @@ func (vpcbeta *VpcbetaV1) GetInstanceWithContext(ctx context.Context, getInstanc
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -5730,7 +5676,6 @@ func (vpcbeta *VpcbetaV1) UpdateInstanceWithContext(ctx context.Context, updateI
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateInstanceOptions.InstancePatch)
 	if err != nil {
 		return
@@ -5800,7 +5745,6 @@ func (vpcbeta *VpcbetaV1) GetInstanceInitializationWithContext(ctx context.Conte
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -5866,7 +5810,6 @@ func (vpcbeta *VpcbetaV1) CreateInstanceActionWithContext(ctx context.Context, c
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createInstanceActionOptions.Type != nil {
 		body["type"] = createInstanceActionOptions.Type
@@ -5946,7 +5889,6 @@ func (vpcbeta *VpcbetaV1) CreateInstanceConsoleAccessTokenWithContext(ctx contex
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createInstanceConsoleAccessTokenOptions.ConsoleType != nil {
 		body["console_type"] = createInstanceConsoleAccessTokenOptions.ConsoleType
@@ -6024,7 +5966,6 @@ func (vpcbeta *VpcbetaV1) ListInstanceDisksWithContext(ctx context.Context, list
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -6089,7 +6030,6 @@ func (vpcbeta *VpcbetaV1) GetInstanceDiskWithContext(ctx context.Context, getIns
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -6155,7 +6095,6 @@ func (vpcbeta *VpcbetaV1) UpdateInstanceDiskWithContext(ctx context.Context, upd
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateInstanceDiskOptions.InstanceDiskPatch)
 	if err != nil {
 		return
@@ -6227,7 +6166,6 @@ func (vpcbeta *VpcbetaV1) ListInstanceNetworkInterfacesWithContext(ctx context.C
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -6295,7 +6233,6 @@ func (vpcbeta *VpcbetaV1) CreateInstanceNetworkInterfaceWithContext(ctx context.
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createInstanceNetworkInterfaceOptions.Subnet != nil {
 		body["subnet"] = createInstanceNetworkInterfaceOptions.Subnet
@@ -6383,7 +6320,6 @@ func (vpcbeta *VpcbetaV1) DeleteInstanceNetworkInterfaceWithContext(ctx context.
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -6437,7 +6373,6 @@ func (vpcbeta *VpcbetaV1) GetInstanceNetworkInterfaceWithContext(ctx context.Con
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -6505,7 +6440,6 @@ func (vpcbeta *VpcbetaV1) UpdateInstanceNetworkInterfaceWithContext(ctx context.
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateInstanceNetworkInterfaceOptions.NetworkInterfacePatch)
 	if err != nil {
 		return
@@ -6575,7 +6509,6 @@ func (vpcbeta *VpcbetaV1) ListInstanceNetworkInterfaceFloatingIpsWithContext(ctx
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -6640,7 +6573,6 @@ func (vpcbeta *VpcbetaV1) RemoveInstanceNetworkInterfaceFloatingIPWithContext(ct
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -6696,7 +6628,6 @@ func (vpcbeta *VpcbetaV1) GetInstanceNetworkInterfaceFloatingIPWithContext(ctx c
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -6764,7 +6695,6 @@ func (vpcbeta *VpcbetaV1) AddInstanceNetworkInterfaceFloatingIPWithContext(ctx c
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -6901,7 +6831,6 @@ func (vpcbeta *VpcbetaV1) GetInstanceNetworkInterfaceIPWithContext(ctx context.C
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -6967,7 +6896,6 @@ func (vpcbeta *VpcbetaV1) ListInstanceVolumeAttachmentsWithContext(ctx context.C
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -7035,7 +6963,6 @@ func (vpcbeta *VpcbetaV1) CreateInstanceVolumeAttachmentWithContext(ctx context.
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createInstanceVolumeAttachmentOptions.Volume != nil {
 		body["volume"] = createInstanceVolumeAttachmentOptions.Volume
@@ -7115,7 +7042,6 @@ func (vpcbeta *VpcbetaV1) DeleteInstanceVolumeAttachmentWithContext(ctx context.
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -7169,7 +7095,6 @@ func (vpcbeta *VpcbetaV1) GetInstanceVolumeAttachmentWithContext(ctx context.Con
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -7237,7 +7162,6 @@ func (vpcbeta *VpcbetaV1) UpdateInstanceVolumeAttachmentWithContext(ctx context.
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateInstanceVolumeAttachmentOptions.VolumeAttachmentPatch)
 	if err != nil {
 		return
@@ -7365,7 +7289,6 @@ func (vpcbeta *VpcbetaV1) CreateInstanceGroupWithContext(ctx context.Context, cr
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createInstanceGroupOptions.InstanceTemplate != nil {
 		body["instance_template"] = createInstanceGroupOptions.InstanceTemplate
@@ -7459,7 +7382,6 @@ func (vpcbeta *VpcbetaV1) DeleteInstanceGroupWithContext(ctx context.Context, de
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -7512,7 +7434,6 @@ func (vpcbeta *VpcbetaV1) GetInstanceGroupWithContext(ctx context.Context, getIn
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -7578,7 +7499,6 @@ func (vpcbeta *VpcbetaV1) UpdateInstanceGroupWithContext(ctx context.Context, up
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateInstanceGroupOptions.InstanceGroupPatch)
 	if err != nil {
 		return
@@ -7646,7 +7566,6 @@ func (vpcbeta *VpcbetaV1) DeleteInstanceGroupLoadBalancerWithContext(ctx context
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -7770,7 +7689,6 @@ func (vpcbeta *VpcbetaV1) CreateInstanceGroupManagerWithContext(ctx context.Cont
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(createInstanceGroupManagerOptions.InstanceGroupManagerPrototype)
 	if err != nil {
 		return
@@ -7839,7 +7757,6 @@ func (vpcbeta *VpcbetaV1) DeleteInstanceGroupManagerWithContext(ctx context.Cont
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -7893,7 +7810,6 @@ func (vpcbeta *VpcbetaV1) GetInstanceGroupManagerWithContext(ctx context.Context
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -7959,7 +7875,6 @@ func (vpcbeta *VpcbetaV1) UpdateInstanceGroupManagerWithContext(ctx context.Cont
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateInstanceGroupManagerOptions.InstanceGroupManagerPatch)
 	if err != nil {
 		return
@@ -8101,7 +8016,6 @@ func (vpcbeta *VpcbetaV1) CreateInstanceGroupManagerActionWithContext(ctx contex
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(createInstanceGroupManagerActionOptions.InstanceGroupManagerActionPrototype)
 	if err != nil {
 		return
@@ -8171,7 +8085,6 @@ func (vpcbeta *VpcbetaV1) DeleteInstanceGroupManagerActionWithContext(ctx contex
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -8226,7 +8139,6 @@ func (vpcbeta *VpcbetaV1) GetInstanceGroupManagerActionWithContext(ctx context.C
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -8293,7 +8205,6 @@ func (vpcbeta *VpcbetaV1) UpdateInstanceGroupManagerActionWithContext(ctx contex
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateInstanceGroupManagerActionOptions.InstanceGroupManagerActionPatch)
 	if err != nil {
 		return
@@ -8435,7 +8346,6 @@ func (vpcbeta *VpcbetaV1) CreateInstanceGroupManagerPolicyWithContext(ctx contex
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(createInstanceGroupManagerPolicyOptions.InstanceGroupManagerPolicyPrototype)
 	if err != nil {
 		return
@@ -8505,7 +8415,6 @@ func (vpcbeta *VpcbetaV1) DeleteInstanceGroupManagerPolicyWithContext(ctx contex
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -8560,7 +8469,6 @@ func (vpcbeta *VpcbetaV1) GetInstanceGroupManagerPolicyWithContext(ctx context.C
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -8627,7 +8535,6 @@ func (vpcbeta *VpcbetaV1) UpdateInstanceGroupManagerPolicyWithContext(ctx contex
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateInstanceGroupManagerPolicyOptions.InstanceGroupManagerPolicyPatch)
 	if err != nil {
 		return
@@ -8696,7 +8603,6 @@ func (vpcbeta *VpcbetaV1) DeleteInstanceGroupMembershipsWithContext(ctx context.
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -8820,7 +8726,6 @@ func (vpcbeta *VpcbetaV1) DeleteInstanceGroupMembershipWithContext(ctx context.C
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -8874,7 +8779,6 @@ func (vpcbeta *VpcbetaV1) GetInstanceGroupMembershipWithContext(ctx context.Cont
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -8940,7 +8844,6 @@ func (vpcbeta *VpcbetaV1) UpdateInstanceGroupMembershipWithContext(ctx context.C
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateInstanceGroupMembershipOptions.InstanceGroupMembershipPatch)
 	if err != nil {
 		return
@@ -9078,7 +8981,6 @@ func (vpcbeta *VpcbetaV1) CreateDedicatedHostGroupWithContext(ctx context.Contex
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createDedicatedHostGroupOptions.Class != nil {
 		body["class"] = createDedicatedHostGroupOptions.Class
@@ -9162,7 +9064,6 @@ func (vpcbeta *VpcbetaV1) DeleteDedicatedHostGroupWithContext(ctx context.Contex
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -9215,7 +9116,6 @@ func (vpcbeta *VpcbetaV1) GetDedicatedHostGroupWithContext(ctx context.Context, 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -9282,7 +9182,6 @@ func (vpcbeta *VpcbetaV1) UpdateDedicatedHostGroupWithContext(ctx context.Contex
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateDedicatedHostGroupOptions.DedicatedHostGroupPatch)
 	if err != nil {
 		return
@@ -9414,7 +9313,6 @@ func (vpcbeta *VpcbetaV1) GetDedicatedHostProfileWithContext(ctx context.Context
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -9549,7 +9447,6 @@ func (vpcbeta *VpcbetaV1) CreateDedicatedHostWithContext(ctx context.Context, cr
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(createDedicatedHostOptions.DedicatedHostPrototype)
 	if err != nil {
 		return
@@ -9620,7 +9517,6 @@ func (vpcbeta *VpcbetaV1) ListDedicatedHostDisksWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -9685,7 +9581,6 @@ func (vpcbeta *VpcbetaV1) GetDedicatedHostDiskWithContext(ctx context.Context, g
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -9751,7 +9646,6 @@ func (vpcbeta *VpcbetaV1) UpdateDedicatedHostDiskWithContext(ctx context.Context
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateDedicatedHostDiskOptions.DedicatedHostDiskPatch)
 	if err != nil {
 		return
@@ -9819,7 +9713,6 @@ func (vpcbeta *VpcbetaV1) DeleteDedicatedHostWithContext(ctx context.Context, de
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -9872,7 +9765,6 @@ func (vpcbeta *VpcbetaV1) GetDedicatedHostWithContext(ctx context.Context, getDe
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -9939,7 +9831,6 @@ func (vpcbeta *VpcbetaV1) UpdateDedicatedHostWithContext(ctx context.Context, up
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateDedicatedHostOptions.DedicatedHostPatch)
 	if err != nil {
 		return
@@ -10078,7 +9969,6 @@ func (vpcbeta *VpcbetaV1) CreateBackupPolicyWithContext(ctx context.Context, cre
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createBackupPolicyOptions.MatchUserTags != nil {
 		body["match_user_tags"] = createBackupPolicyOptions.MatchUserTags
@@ -10256,7 +10146,6 @@ func (vpcbeta *VpcbetaV1) GetBackupPolicyJobWithContext(ctx context.Context, get
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -10395,7 +10284,6 @@ func (vpcbeta *VpcbetaV1) CreateBackupPolicyPlanWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createBackupPolicyPlanOptions.CronSpec != nil {
 		body["cron_spec"] = createBackupPolicyPlanOptions.CronSpec
@@ -10498,7 +10386,6 @@ func (vpcbeta *VpcbetaV1) DeleteBackupPolicyPlanWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -10563,7 +10450,6 @@ func (vpcbeta *VpcbetaV1) GetBackupPolicyPlanWithContext(ctx context.Context, ge
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -10633,7 +10519,6 @@ func (vpcbeta *VpcbetaV1) UpdateBackupPolicyPlanWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateBackupPolicyPlanOptions.BackupPolicyPlanPatch)
 	if err != nil {
 		return
@@ -10708,7 +10593,6 @@ func (vpcbeta *VpcbetaV1) DeleteBackupPolicyWithContext(ctx context.Context, del
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -10772,7 +10656,6 @@ func (vpcbeta *VpcbetaV1) GetBackupPolicyWithContext(ctx context.Context, getBac
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -10841,7 +10724,6 @@ func (vpcbeta *VpcbetaV1) UpdateBackupPolicyWithContext(ctx context.Context, upd
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateBackupPolicyOptions.BackupPolicyPatch)
 	if err != nil {
 		return
@@ -10969,7 +10851,6 @@ func (vpcbeta *VpcbetaV1) CreatePlacementGroupWithContext(ctx context.Context, c
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createPlacementGroupOptions.Strategy != nil {
 		body["strategy"] = createPlacementGroupOptions.Strategy
@@ -11048,7 +10929,6 @@ func (vpcbeta *VpcbetaV1) DeletePlacementGroupWithContext(ctx context.Context, d
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -11101,7 +10981,6 @@ func (vpcbeta *VpcbetaV1) GetPlacementGroupWithContext(ctx context.Context, getP
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -11167,7 +11046,6 @@ func (vpcbeta *VpcbetaV1) UpdatePlacementGroupWithContext(ctx context.Context, u
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updatePlacementGroupOptions.PlacementGroupPatch)
 	if err != nil {
 		return
@@ -11300,7 +11178,6 @@ func (vpcbeta *VpcbetaV1) GetBareMetalServerProfileWithContext(ctx context.Conte
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -11440,7 +11317,6 @@ func (vpcbeta *VpcbetaV1) CreateBareMetalServerWithContext(ctx context.Context, 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createBareMetalServerOptions.Initialization != nil {
 		body["initialization"] = createBareMetalServerOptions.Initialization
@@ -11544,7 +11420,6 @@ func (vpcbeta *VpcbetaV1) CreateBareMetalServerConsoleAccessTokenWithContext(ctx
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createBareMetalServerConsoleAccessTokenOptions.ConsoleType != nil {
 		body["console_type"] = createBareMetalServerConsoleAccessTokenOptions.ConsoleType
@@ -11622,7 +11497,6 @@ func (vpcbeta *VpcbetaV1) ListBareMetalServerDisksWithContext(ctx context.Contex
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -11687,7 +11561,6 @@ func (vpcbeta *VpcbetaV1) GetBareMetalServerDiskWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -11753,7 +11626,6 @@ func (vpcbeta *VpcbetaV1) UpdateBareMetalServerDiskWithContext(ctx context.Conte
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateBareMetalServerDiskOptions.BareMetalServerDiskPatch)
 	if err != nil {
 		return
@@ -11900,7 +11772,6 @@ func (vpcbeta *VpcbetaV1) CreateBareMetalServerNetworkInterfaceWithContext(ctx c
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(createBareMetalServerNetworkInterfaceOptions.BareMetalServerNetworkInterfacePrototype)
 	if err != nil {
 		return
@@ -11971,7 +11842,6 @@ func (vpcbeta *VpcbetaV1) DeleteBareMetalServerNetworkInterfaceWithContext(ctx c
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -12025,7 +11895,6 @@ func (vpcbeta *VpcbetaV1) GetBareMetalServerNetworkInterfaceWithContext(ctx cont
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -12093,7 +11962,6 @@ func (vpcbeta *VpcbetaV1) UpdateBareMetalServerNetworkInterfaceWithContext(ctx c
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateBareMetalServerNetworkInterfaceOptions.BareMetalServerNetworkInterfacePatch)
 	if err != nil {
 		return
@@ -12163,7 +12031,6 @@ func (vpcbeta *VpcbetaV1) ListBareMetalServerNetworkInterfaceFloatingIpsWithCont
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -12228,7 +12095,6 @@ func (vpcbeta *VpcbetaV1) RemoveBareMetalServerNetworkInterfaceFloatingIPWithCon
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -12284,7 +12150,6 @@ func (vpcbeta *VpcbetaV1) GetBareMetalServerNetworkInterfaceFloatingIPWithContex
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -12353,7 +12218,6 @@ func (vpcbeta *VpcbetaV1) AddBareMetalServerNetworkInterfaceFloatingIPWithContex
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -12418,7 +12282,6 @@ func (vpcbeta *VpcbetaV1) ListBareMetalServerNetworkInterfaceIpsWithContext(ctx 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -12484,7 +12347,6 @@ func (vpcbeta *VpcbetaV1) GetBareMetalServerNetworkInterfaceIPWithContext(ctx co
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -12548,7 +12410,6 @@ func (vpcbeta *VpcbetaV1) DeleteBareMetalServerWithContext(ctx context.Context, 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -12601,7 +12462,6 @@ func (vpcbeta *VpcbetaV1) GetBareMetalServerWithContext(ctx context.Context, get
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -12667,7 +12527,6 @@ func (vpcbeta *VpcbetaV1) UpdateBareMetalServerWithContext(ctx context.Context, 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateBareMetalServerOptions.BareMetalServerPatch)
 	if err != nil {
 		return
@@ -12738,7 +12597,6 @@ func (vpcbeta *VpcbetaV1) GetBareMetalServerInitializationWithContext(ctx contex
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -12801,7 +12659,6 @@ func (vpcbeta *VpcbetaV1) RestartBareMetalServerWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -12853,7 +12710,6 @@ func (vpcbeta *VpcbetaV1) StartBareMetalServerWithContext(ctx context.Context, s
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -12907,7 +12763,6 @@ func (vpcbeta *VpcbetaV1) StopBareMetalServerWithContext(ctx context.Context, st
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if stopBareMetalServerOptions.Type != nil {
 		body["type"] = stopBareMetalServerOptions.Type
@@ -13032,7 +12887,6 @@ func (vpcbeta *VpcbetaV1) GetVolumeProfileWithContext(ctx context.Context, getVo
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -13175,7 +13029,6 @@ func (vpcbeta *VpcbetaV1) CreateVolumeWithContext(ctx context.Context, createVol
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(createVolumeOptions.VolumePrototype)
 	if err != nil {
 		return
@@ -13185,7 +13038,7 @@ func (vpcbeta *VpcbetaV1) CreateVolumeWithContext(ctx context.Context, createVol
 	if err != nil {
 		return
 	}
-
+	fmt.Println(request)
 	var rawResponse map[string]json.RawMessage
 	response, err = vpcbeta.Service.Request(request, &rawResponse)
 	if err != nil {
@@ -13247,7 +13100,6 @@ func (vpcbeta *VpcbetaV1) DeleteVolumeWithContext(ctx context.Context, deleteVol
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -13300,7 +13152,6 @@ func (vpcbeta *VpcbetaV1) GetVolumeWithContext(ctx context.Context, getVolumeOpt
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -13369,7 +13220,6 @@ func (vpcbeta *VpcbetaV1) UpdateVolumeWithContext(ctx context.Context, updateVol
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateVolumeOptions.VolumePatch)
 	if err != nil {
 		return
@@ -13602,7 +13452,6 @@ func (vpcbeta *VpcbetaV1) CreateSnapshotWithContext(ctx context.Context, createS
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(createSnapshotOptions.SnapshotPrototype)
 	if err != nil {
 		return
@@ -13673,7 +13522,6 @@ func (vpcbeta *VpcbetaV1) DeleteSnapshotWithContext(ctx context.Context, deleteS
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -13726,7 +13574,6 @@ func (vpcbeta *VpcbetaV1) GetSnapshotWithContext(ctx context.Context, getSnapsho
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -13795,7 +13642,6 @@ func (vpcbeta *VpcbetaV1) UpdateSnapshotWithContext(ctx context.Context, updateS
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateSnapshotOptions.SnapshotPatch)
 	if err != nil {
 		return
@@ -13864,7 +13710,6 @@ func (vpcbeta *VpcbetaV1) ListSnapshotClonesWithContext(ctx context.Context, lis
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -13929,7 +13774,6 @@ func (vpcbeta *VpcbetaV1) DeleteSnapshotCloneWithContext(ctx context.Context, de
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -13983,7 +13827,6 @@ func (vpcbeta *VpcbetaV1) GetSnapshotCloneWithContext(ctx context.Context, getSn
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -14049,7 +13892,6 @@ func (vpcbeta *VpcbetaV1) CreateSnapshotCloneWithContext(ctx context.Context, cr
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -14180,7 +14022,6 @@ func (vpcbeta *VpcbetaV1) GetShareProfileWithContext(ctx context.Context, getSha
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -14319,7 +14160,6 @@ func (vpcbeta *VpcbetaV1) CreateShareWithContext(ctx context.Context, createShar
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(createShareOptions.SharePrototype)
 	if err != nil {
 		return
@@ -14397,7 +14237,6 @@ func (vpcbeta *VpcbetaV1) DeleteShareWithContext(ctx context.Context, deleteShar
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -14461,7 +14300,6 @@ func (vpcbeta *VpcbetaV1) GetShareWithContext(ctx context.Context, getShareOptio
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -14530,7 +14368,6 @@ func (vpcbeta *VpcbetaV1) UpdateShareWithContext(ctx context.Context, updateShar
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateShareOptions.SharePatch)
 	if err != nil {
 		return
@@ -14604,7 +14441,6 @@ func (vpcbeta *VpcbetaV1) FailoverShareWithContext(ctx context.Context, failover
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if failoverShareOptions.FallbackPolicy != nil {
 		body["fallback_policy"] = failoverShareOptions.FallbackPolicy
@@ -14750,7 +14586,6 @@ func (vpcbeta *VpcbetaV1) CreateShareMountTargetWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(createShareMountTargetOptions.ShareMountTargetPrototype)
 	if err != nil {
 		return
@@ -14823,7 +14658,6 @@ func (vpcbeta *VpcbetaV1) DeleteShareMountTargetWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -14888,7 +14722,6 @@ func (vpcbeta *VpcbetaV1) GetShareMountTargetWithContext(ctx context.Context, ge
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -14956,7 +14789,6 @@ func (vpcbeta *VpcbetaV1) UpdateShareMountTargetWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateShareMountTargetOptions.ShareMountTargetPatch)
 	if err != nil {
 		return
@@ -15028,7 +14860,6 @@ func (vpcbeta *VpcbetaV1) DeleteShareSourceWithContext(ctx context.Context, dele
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -15082,7 +14913,6 @@ func (vpcbeta *VpcbetaV1) GetShareSourceWithContext(ctx context.Context, getShar
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -15142,7 +14972,6 @@ func (vpcbeta *VpcbetaV1) ListRegionsWithContext(ctx context.Context, listRegion
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -15206,7 +15035,6 @@ func (vpcbeta *VpcbetaV1) GetRegionWithContext(ctx context.Context, getRegionOpt
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -15271,7 +15099,6 @@ func (vpcbeta *VpcbetaV1) ListRegionZonesWithContext(ctx context.Context, listRe
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -15336,7 +15163,6 @@ func (vpcbeta *VpcbetaV1) GetRegionZoneWithContext(ctx context.Context, getRegio
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -15470,7 +15296,6 @@ func (vpcbeta *VpcbetaV1) GetVirtualNetworkInterfaceWithContext(ctx context.Cont
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -15537,7 +15362,6 @@ func (vpcbeta *VpcbetaV1) UpdateVirtualNetworkInterfaceWithContext(ctx context.C
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateVirtualNetworkInterfaceOptions.VirtualNetworkInterfacePatch)
 	if err != nil {
 		return
@@ -15675,7 +15499,6 @@ func (vpcbeta *VpcbetaV1) CreatePublicGatewayWithContext(ctx context.Context, cr
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createPublicGatewayOptions.VPC != nil {
 		body["vpc"] = createPublicGatewayOptions.VPC
@@ -15761,7 +15584,6 @@ func (vpcbeta *VpcbetaV1) DeletePublicGatewayWithContext(ctx context.Context, de
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -15814,7 +15636,6 @@ func (vpcbeta *VpcbetaV1) GetPublicGatewayWithContext(ctx context.Context, getPu
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -15879,7 +15700,6 @@ func (vpcbeta *VpcbetaV1) UpdatePublicGatewayWithContext(ctx context.Context, up
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updatePublicGatewayOptions.PublicGatewayPatch)
 	if err != nil {
 		return
@@ -16014,7 +15834,6 @@ func (vpcbeta *VpcbetaV1) CreateFloatingIPWithContext(ctx context.Context, creat
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(createFloatingIPOptions.FloatingIPPrototype)
 	if err != nil {
 		return
@@ -16083,7 +15902,6 @@ func (vpcbeta *VpcbetaV1) DeleteFloatingIPWithContext(ctx context.Context, delet
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -16136,7 +15954,6 @@ func (vpcbeta *VpcbetaV1) GetFloatingIPWithContext(ctx context.Context, getFloat
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -16201,7 +16018,6 @@ func (vpcbeta *VpcbetaV1) UpdateFloatingIPWithContext(ctx context.Context, updat
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateFloatingIPOptions.FloatingIPPatch)
 	if err != nil {
 		return
@@ -16336,7 +16152,6 @@ func (vpcbeta *VpcbetaV1) CreateNetworkACLWithContext(ctx context.Context, creat
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(createNetworkACLOptions.NetworkACLPrototype)
 	if err != nil {
 		return
@@ -16405,7 +16220,6 @@ func (vpcbeta *VpcbetaV1) DeleteNetworkACLWithContext(ctx context.Context, delet
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -16458,7 +16272,6 @@ func (vpcbeta *VpcbetaV1) GetNetworkACLWithContext(ctx context.Context, getNetwo
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -16523,7 +16336,6 @@ func (vpcbeta *VpcbetaV1) UpdateNetworkACLWithContext(ctx context.Context, updat
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateNetworkACLOptions.NetworkACLPatch)
 	if err != nil {
 		return
@@ -16668,7 +16480,6 @@ func (vpcbeta *VpcbetaV1) CreateNetworkACLRuleWithContext(ctx context.Context, c
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(createNetworkACLRuleOptions.NetworkACLRulePrototype)
 	if err != nil {
 		return
@@ -16737,7 +16548,6 @@ func (vpcbeta *VpcbetaV1) DeleteNetworkACLRuleWithContext(ctx context.Context, d
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -16791,7 +16601,6 @@ func (vpcbeta *VpcbetaV1) GetNetworkACLRuleWithContext(ctx context.Context, getN
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -16858,7 +16667,6 @@ func (vpcbeta *VpcbetaV1) UpdateNetworkACLRuleWithContext(ctx context.Context, u
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateNetworkACLRuleOptions.NetworkACLRulePatch)
 	if err != nil {
 		return
@@ -17004,7 +16812,6 @@ func (vpcbeta *VpcbetaV1) CreateSecurityGroupWithContext(ctx context.Context, cr
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createSecurityGroupOptions.VPC != nil {
 		body["vpc"] = createSecurityGroupOptions.VPC
@@ -17086,7 +16893,6 @@ func (vpcbeta *VpcbetaV1) DeleteSecurityGroupWithContext(ctx context.Context, de
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -17139,7 +16945,6 @@ func (vpcbeta *VpcbetaV1) GetSecurityGroupWithContext(ctx context.Context, getSe
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -17206,7 +17011,6 @@ func (vpcbeta *VpcbetaV1) UpdateSecurityGroupWithContext(ctx context.Context, up
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateSecurityGroupOptions.SecurityGroupPatch)
 	if err != nil {
 		return
@@ -17277,7 +17081,6 @@ func (vpcbeta *VpcbetaV1) ListSecurityGroupRulesWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -17347,7 +17150,6 @@ func (vpcbeta *VpcbetaV1) CreateSecurityGroupRuleWithContext(ctx context.Context
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(createSecurityGroupRuleOptions.SecurityGroupRulePrototype)
 	if err != nil {
 		return
@@ -17417,7 +17219,6 @@ func (vpcbeta *VpcbetaV1) DeleteSecurityGroupRuleWithContext(ctx context.Context
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -17471,7 +17272,6 @@ func (vpcbeta *VpcbetaV1) GetSecurityGroupRuleWithContext(ctx context.Context, g
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -17539,7 +17339,6 @@ func (vpcbeta *VpcbetaV1) UpdateSecurityGroupRuleWithContext(ctx context.Context
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateSecurityGroupRuleOptions.SecurityGroupRulePatch)
 	if err != nil {
 		return
@@ -17690,7 +17489,6 @@ func (vpcbeta *VpcbetaV1) DeleteSecurityGroupTargetBindingWithContext(ctx contex
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -17745,7 +17543,6 @@ func (vpcbeta *VpcbetaV1) GetSecurityGroupTargetWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -17820,7 +17617,6 @@ func (vpcbeta *VpcbetaV1) CreateSecurityGroupTargetBindingWithContext(ctx contex
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -17943,7 +17739,6 @@ func (vpcbeta *VpcbetaV1) CreateIkePolicyWithContext(ctx context.Context, create
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createIkePolicyOptions.AuthenticationAlgorithm != nil {
 		body["authentication_algorithm"] = createIkePolicyOptions.AuthenticationAlgorithm
@@ -18034,7 +17829,6 @@ func (vpcbeta *VpcbetaV1) DeleteIkePolicyWithContext(ctx context.Context, delete
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -18087,7 +17881,6 @@ func (vpcbeta *VpcbetaV1) GetIkePolicyWithContext(ctx context.Context, getIkePol
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -18152,7 +17945,6 @@ func (vpcbeta *VpcbetaV1) UpdateIkePolicyWithContext(ctx context.Context, update
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateIkePolicyOptions.IkePolicyPatch)
 	if err != nil {
 		return
@@ -18221,7 +18013,6 @@ func (vpcbeta *VpcbetaV1) ListIkePolicyConnectionsWithContext(ctx context.Contex
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -18344,7 +18135,6 @@ func (vpcbeta *VpcbetaV1) CreateIpsecPolicyWithContext(ctx context.Context, crea
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createIpsecPolicyOptions.AuthenticationAlgorithm != nil {
 		body["authentication_algorithm"] = createIpsecPolicyOptions.AuthenticationAlgorithm
@@ -18432,7 +18222,6 @@ func (vpcbeta *VpcbetaV1) DeleteIpsecPolicyWithContext(ctx context.Context, dele
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -18485,7 +18274,6 @@ func (vpcbeta *VpcbetaV1) GetIpsecPolicyWithContext(ctx context.Context, getIpse
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -18550,7 +18338,6 @@ func (vpcbeta *VpcbetaV1) UpdateIpsecPolicyWithContext(ctx context.Context, upda
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateIpsecPolicyOptions.IPsecPolicyPatch)
 	if err != nil {
 		return
@@ -18619,7 +18406,6 @@ func (vpcbeta *VpcbetaV1) ListIpsecPolicyConnectionsWithContext(ctx context.Cont
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -18751,7 +18537,6 @@ func (vpcbeta *VpcbetaV1) CreateVPNGatewayWithContext(ctx context.Context, creat
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(createVPNGatewayOptions.VPNGatewayPrototype)
 	if err != nil {
 		return
@@ -18821,7 +18606,6 @@ func (vpcbeta *VpcbetaV1) DeleteVPNGatewayWithContext(ctx context.Context, delet
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -18874,7 +18658,6 @@ func (vpcbeta *VpcbetaV1) GetVPNGatewayWithContext(ctx context.Context, getVPNGa
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -18939,7 +18722,6 @@ func (vpcbeta *VpcbetaV1) UpdateVPNGatewayWithContext(ctx context.Context, updat
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateVPNGatewayOptions.VPNGatewayPatch)
 	if err != nil {
 		return
@@ -19076,7 +18858,6 @@ func (vpcbeta *VpcbetaV1) CreateVPNGatewayConnectionWithContext(ctx context.Cont
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(createVPNGatewayConnectionOptions.VPNGatewayConnectionPrototype)
 	if err != nil {
 		return
@@ -19146,7 +18927,6 @@ func (vpcbeta *VpcbetaV1) DeleteVPNGatewayConnectionWithContext(ctx context.Cont
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -19200,7 +18980,6 @@ func (vpcbeta *VpcbetaV1) GetVPNGatewayConnectionWithContext(ctx context.Context
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -19266,7 +19045,6 @@ func (vpcbeta *VpcbetaV1) UpdateVPNGatewayConnectionWithContext(ctx context.Cont
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateVPNGatewayConnectionOptions.VPNGatewayConnectionPatch)
 	if err != nil {
 		return
@@ -19338,7 +19116,6 @@ func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionLocalCIDRsWithContext(ctx cont
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -19406,7 +19183,6 @@ func (vpcbeta *VpcbetaV1) RemoveVPNGatewayConnectionLocalCIDRWithContext(ctx con
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -19463,7 +19239,6 @@ func (vpcbeta *VpcbetaV1) CheckVPNGatewayConnectionLocalCIDRWithContext(ctx cont
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -19521,7 +19296,6 @@ func (vpcbeta *VpcbetaV1) AddVPNGatewayConnectionLocalCIDRWithContext(ctx contex
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -19577,7 +19351,6 @@ func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionPeerCIDRsWithContext(ctx conte
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -19645,7 +19418,6 @@ func (vpcbeta *VpcbetaV1) RemoveVPNGatewayConnectionPeerCIDRWithContext(ctx cont
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -19702,7 +19474,6 @@ func (vpcbeta *VpcbetaV1) CheckVPNGatewayConnectionPeerCIDRWithContext(ctx conte
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -19760,7 +19531,6 @@ func (vpcbeta *VpcbetaV1) AddVPNGatewayConnectionPeerCIDRWithContext(ctx context
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -19881,7 +19651,6 @@ func (vpcbeta *VpcbetaV1) CreateVPNServerWithContext(ctx context.Context, create
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createVPNServerOptions.Certificate != nil {
 		body["certificate"] = createVPNServerOptions.Certificate
@@ -19989,7 +19758,6 @@ func (vpcbeta *VpcbetaV1) DeleteVPNServerWithContext(ctx context.Context, delete
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -20042,7 +19810,6 @@ func (vpcbeta *VpcbetaV1) GetVPNServerWithContext(ctx context.Context, getVPNSer
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -20111,7 +19878,6 @@ func (vpcbeta *VpcbetaV1) UpdateVPNServerWithContext(ctx context.Context, update
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateVPNServerOptions.VPNServerPatch)
 	if err != nil {
 		return
@@ -20181,7 +19947,6 @@ func (vpcbeta *VpcbetaV1) GetVPNServerClientConfigurationWithContext(ctx context
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -20310,7 +20075,6 @@ func (vpcbeta *VpcbetaV1) DeleteVPNServerClientWithContext(ctx context.Context, 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -20364,7 +20128,6 @@ func (vpcbeta *VpcbetaV1) GetVPNServerClientWithContext(ctx context.Context, get
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -20430,7 +20193,6 @@ func (vpcbeta *VpcbetaV1) DisconnectVPNClientWithContext(ctx context.Context, di
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -20562,7 +20324,6 @@ func (vpcbeta *VpcbetaV1) CreateVPNServerRouteWithContext(ctx context.Context, c
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createVPNServerRouteOptions.Destination != nil {
 		body["destination"] = createVPNServerRouteOptions.Destination
@@ -20641,7 +20402,6 @@ func (vpcbeta *VpcbetaV1) DeleteVPNServerRouteWithContext(ctx context.Context, d
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -20695,7 +20455,6 @@ func (vpcbeta *VpcbetaV1) GetVPNServerRouteWithContext(ctx context.Context, getV
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -20762,7 +20521,6 @@ func (vpcbeta *VpcbetaV1) UpdateVPNServerRouteWithContext(ctx context.Context, u
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateVPNServerRouteOptions.VPNServerRoutePatch)
 	if err != nil {
 		return
@@ -20894,7 +20652,6 @@ func (vpcbeta *VpcbetaV1) GetLoadBalancerProfileWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -21017,7 +20774,6 @@ func (vpcbeta *VpcbetaV1) CreateLoadBalancerWithContext(ctx context.Context, cre
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createLoadBalancerOptions.IsPublic != nil {
 		body["is_public"] = createLoadBalancerOptions.IsPublic
@@ -21126,7 +20882,6 @@ func (vpcbeta *VpcbetaV1) DeleteLoadBalancerWithContext(ctx context.Context, del
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -21179,7 +20934,6 @@ func (vpcbeta *VpcbetaV1) GetLoadBalancerWithContext(ctx context.Context, getLoa
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -21249,7 +21003,6 @@ func (vpcbeta *VpcbetaV1) UpdateLoadBalancerWithContext(ctx context.Context, upd
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateLoadBalancerOptions.LoadBalancerPatch)
 	if err != nil {
 		return
@@ -21318,7 +21071,6 @@ func (vpcbeta *VpcbetaV1) GetLoadBalancerStatisticsWithContext(ctx context.Conte
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -21382,7 +21134,6 @@ func (vpcbeta *VpcbetaV1) ListLoadBalancerListenersWithContext(ctx context.Conte
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -21447,7 +21198,6 @@ func (vpcbeta *VpcbetaV1) CreateLoadBalancerListenerWithContext(ctx context.Cont
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createLoadBalancerListenerOptions.Protocol != nil {
 		body["protocol"] = createLoadBalancerListenerOptions.Protocol
@@ -21551,7 +21301,6 @@ func (vpcbeta *VpcbetaV1) DeleteLoadBalancerListenerWithContext(ctx context.Cont
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -21605,7 +21354,6 @@ func (vpcbeta *VpcbetaV1) GetLoadBalancerListenerWithContext(ctx context.Context
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -21671,7 +21419,6 @@ func (vpcbeta *VpcbetaV1) UpdateLoadBalancerListenerWithContext(ctx context.Cont
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateLoadBalancerListenerOptions.LoadBalancerListenerPatch)
 	if err != nil {
 		return
@@ -21741,7 +21488,6 @@ func (vpcbeta *VpcbetaV1) ListLoadBalancerListenerPoliciesWithContext(ctx contex
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -21807,7 +21553,6 @@ func (vpcbeta *VpcbetaV1) CreateLoadBalancerListenerPolicyWithContext(ctx contex
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createLoadBalancerListenerPolicyOptions.Action != nil {
 		body["action"] = createLoadBalancerListenerPolicyOptions.Action
@@ -21893,7 +21638,6 @@ func (vpcbeta *VpcbetaV1) DeleteLoadBalancerListenerPolicyWithContext(ctx contex
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -21948,7 +21692,6 @@ func (vpcbeta *VpcbetaV1) GetLoadBalancerListenerPolicyWithContext(ctx context.C
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -22015,7 +21758,6 @@ func (vpcbeta *VpcbetaV1) UpdateLoadBalancerListenerPolicyWithContext(ctx contex
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateLoadBalancerListenerPolicyOptions.LoadBalancerListenerPolicyPatch)
 	if err != nil {
 		return
@@ -22086,7 +21828,6 @@ func (vpcbeta *VpcbetaV1) ListLoadBalancerListenerPolicyRulesWithContext(ctx con
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -22153,7 +21894,6 @@ func (vpcbeta *VpcbetaV1) CreateLoadBalancerListenerPolicyRuleWithContext(ctx co
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createLoadBalancerListenerPolicyRuleOptions.Condition != nil {
 		body["condition"] = createLoadBalancerListenerPolicyRuleOptions.Condition
@@ -22237,7 +21977,6 @@ func (vpcbeta *VpcbetaV1) DeleteLoadBalancerListenerPolicyRuleWithContext(ctx co
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -22293,7 +22032,6 @@ func (vpcbeta *VpcbetaV1) GetLoadBalancerListenerPolicyRuleWithContext(ctx conte
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -22361,7 +22099,6 @@ func (vpcbeta *VpcbetaV1) UpdateLoadBalancerListenerPolicyRuleWithContext(ctx co
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateLoadBalancerListenerPolicyRuleOptions.LoadBalancerListenerPolicyRulePatch)
 	if err != nil {
 		return
@@ -22430,7 +22167,6 @@ func (vpcbeta *VpcbetaV1) ListLoadBalancerPoolsWithContext(ctx context.Context, 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -22495,7 +22231,6 @@ func (vpcbeta *VpcbetaV1) CreateLoadBalancerPoolWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createLoadBalancerPoolOptions.Algorithm != nil {
 		body["algorithm"] = createLoadBalancerPoolOptions.Algorithm
@@ -22587,7 +22322,6 @@ func (vpcbeta *VpcbetaV1) DeleteLoadBalancerPoolWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -22641,7 +22375,6 @@ func (vpcbeta *VpcbetaV1) GetLoadBalancerPoolWithContext(ctx context.Context, ge
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -22707,7 +22440,6 @@ func (vpcbeta *VpcbetaV1) UpdateLoadBalancerPoolWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateLoadBalancerPoolOptions.LoadBalancerPoolPatch)
 	if err != nil {
 		return
@@ -22777,7 +22509,6 @@ func (vpcbeta *VpcbetaV1) ListLoadBalancerPoolMembersWithContext(ctx context.Con
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -22843,7 +22574,6 @@ func (vpcbeta *VpcbetaV1) CreateLoadBalancerPoolMemberWithContext(ctx context.Co
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createLoadBalancerPoolMemberOptions.Port != nil {
 		body["port"] = createLoadBalancerPoolMemberOptions.Port
@@ -22925,7 +22655,6 @@ func (vpcbeta *VpcbetaV1) ReplaceLoadBalancerPoolMembersWithContext(ctx context.
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if replaceLoadBalancerPoolMembersOptions.Members != nil {
 		body["members"] = replaceLoadBalancerPoolMembersOptions.Members
@@ -22999,7 +22728,6 @@ func (vpcbeta *VpcbetaV1) DeleteLoadBalancerPoolMemberWithContext(ctx context.Co
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -23054,7 +22782,6 @@ func (vpcbeta *VpcbetaV1) GetLoadBalancerPoolMemberWithContext(ctx context.Conte
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -23121,7 +22848,6 @@ func (vpcbeta *VpcbetaV1) UpdateLoadBalancerPoolMemberWithContext(ctx context.Co
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateLoadBalancerPoolMemberOptions.LoadBalancerPoolMemberPatch)
 	if err != nil {
 		return
@@ -23269,7 +22995,6 @@ func (vpcbeta *VpcbetaV1) CreateEndpointGatewayWithContext(ctx context.Context, 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createEndpointGatewayOptions.Target != nil {
 		body["target"] = createEndpointGatewayOptions.Target
@@ -23434,7 +23159,6 @@ func (vpcbeta *VpcbetaV1) RemoveEndpointGatewayIPWithContext(ctx context.Context
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -23488,7 +23212,6 @@ func (vpcbeta *VpcbetaV1) GetEndpointGatewayIPWithContext(ctx context.Context, g
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -23556,7 +23279,6 @@ func (vpcbeta *VpcbetaV1) AddEndpointGatewayIPWithContext(ctx context.Context, a
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -23622,7 +23344,6 @@ func (vpcbeta *VpcbetaV1) DeleteEndpointGatewayWithContext(ctx context.Context, 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -23675,7 +23396,6 @@ func (vpcbeta *VpcbetaV1) GetEndpointGatewayWithContext(ctx context.Context, get
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -23740,7 +23460,6 @@ func (vpcbeta *VpcbetaV1) UpdateEndpointGatewayWithContext(ctx context.Context, 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateEndpointGatewayOptions.EndpointGatewayPatch)
 	if err != nil {
 		return
@@ -23892,7 +23611,6 @@ func (vpcbeta *VpcbetaV1) CreateFlowLogCollectorWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	body := make(map[string]interface{})
 	if createFlowLogCollectorOptions.StorageBucket != nil {
 		body["storage_bucket"] = createFlowLogCollectorOptions.StorageBucket
@@ -23978,7 +23696,6 @@ func (vpcbeta *VpcbetaV1) DeleteFlowLogCollectorWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -24031,7 +23748,6 @@ func (vpcbeta *VpcbetaV1) GetFlowLogCollectorWithContext(ctx context.Context, ge
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -24098,7 +23814,6 @@ func (vpcbeta *VpcbetaV1) UpdateFlowLogCollectorWithContext(ctx context.Context,
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
 	builder.AddQuery("maturity", "beta")
-
 	_, err = builder.SetBodyContentJSON(updateFlowLogCollectorOptions.FlowLogCollectorPatch)
 	if err != nil {
 		return
@@ -26826,10 +26541,10 @@ type BareMetalServerNetworkInterface struct {
 	//   server is stopped
 	//   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 	//     to use the PCI interface
-	//   - Cannot directly use an IEEE 802.1q VLAN tag.
+	//   - Cannot directly use an IEEE 802.1Q tag.
 	// - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its
 	//   array of `allowed_vlans`.
-	//   - Must use an IEEE 802.1q tag.
+	//   - Must use an IEEE 802.1Q tag.
 	//   - Has its own security groups and does not inherit those of the PCI device through
 	//     which traffic flows.
 	//
@@ -26865,15 +26580,22 @@ type BareMetalServerNetworkInterface struct {
 	// The bare metal server network interface type.
 	Type *string `json:"type" validate:"required"`
 
-	// Indicates what VLAN IDs (for VLAN type only) can use this physical (PCI type) interface.
+	// The VLAN IDs allowed for `vlan` interfaces using this PCI interface.
 	AllowedVlans []int64 `json:"allowed_vlans,omitempty"`
 
-	// Indicates if the interface can float to any other server within the same
-	// `resource_group`. The interface will float automatically if the network detects a GARP or RARP on another bare metal
-	// server in the resource group.  Applies only to `vlan` type interfaces.
+	// Indicates if the data path for the network interface can float to another bare metal server. Can only be `true` for
+	// network interfaces with an `interface_type` of `vlan`.
+	//
+	// If `true`, and the network detects traffic for this data path on another bare metal server in the resource group,
+	// the network interface will be automatically deleted from this bare metal server and a new network interface with the
+	// same `id`, `name` and `vlan` will be created on the other bare metal server.
+	//
+	// For the data path to float, the other bare metal server must be in the same
+	// `resource_group`, and must have a network interface with `interface_type` of `pci` with `allowed_vlans` including
+	// this network interface's `vlan`.
 	AllowInterfaceToFloat *bool `json:"allow_interface_to_float,omitempty"`
 
-	// Indicates the 802.1Q VLAN ID tag that must be used for all traffic on this interface.
+	// The VLAN ID used in the IEEE 802.1Q tag present in all traffic on this interface.
 	Vlan *int64 `json:"vlan,omitempty"`
 }
 
@@ -26885,10 +26607,10 @@ type BareMetalServerNetworkInterface struct {
 //     server is stopped
 //   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 //     to use the PCI interface
-//   - Cannot directly use an IEEE 802.1q VLAN tag.
+//   - Cannot directly use an IEEE 802.1Q tag.
 //   - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its
 //     array of `allowed_vlans`.
-//   - Must use an IEEE 802.1q tag.
+//   - Must use an IEEE 802.1Q tag.
 //   - Has its own security groups and does not inherit those of the PCI device through
 //     which traffic flows.
 //
@@ -27053,7 +26775,8 @@ type BareMetalServerNetworkInterfacePatch struct {
 	// Indicates whether source IP spoofing is allowed on this bare metal server network interface.
 	AllowIPSpoofing *bool `json:"allow_ip_spoofing,omitempty"`
 
-	// Indicates what VLAN IDs (for VLAN type only) can use this physical (PCI type) interface.
+	// The VLAN IDs to allow for `vlan` interfaces using this PCI interface, replacing any existing VLAN IDs. The specified
+	// values must include IDs for all `vlan` interfaces currently using this PCI interface.
 	AllowedVlans []int64 `json:"allowed_vlans,omitempty"`
 
 	// If `true`:
@@ -27133,11 +26856,11 @@ type BareMetalServerNetworkInterfacePrototype struct {
 	//   server is stopped
 	//   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 	//     to use the PCI interface
-	//   - Cannot directly use an IEEE 802.1q VLAN tag.
+	//   - Cannot directly use an IEEE 802.1Q tag.
 	//   - Not supported on bare metal servers with a `cpu.architecture` of `s390x`
 	// - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its
 	//   array of `allowed_vlans`.
-	//   - Must use an IEEE 802.1q tag.
+	//   - Must use an IEEE 802.1Q tag.
 	//   - Has its own security groups and does not inherit those of the PCI device through
 	//     which traffic flows.
 	//   - Not supported on bare metal servers with a `cpu.architecture` of `s390x`.
@@ -27162,15 +26885,22 @@ type BareMetalServerNetworkInterfacePrototype struct {
 	// The associated subnet.
 	Subnet SubnetIdentityIntf `json:"subnet" validate:"required"`
 
-	// Indicates what VLAN IDs (for VLAN type only) can use this physical (PCI type) interface.
+	// The VLAN IDs to allow for `vlan` interfaces using this PCI interface.
 	AllowedVlans []int64 `json:"allowed_vlans,omitempty"`
 
-	// Indicates if the interface can float to any other server within the same
-	// `resource_group`. The interface will float automatically if the network detects a GARP or RARP on another bare metal
-	// server in the resource group.  Applies only to `vlan` type interfaces.
+	// Indicates if the data path for the network interface can float to another bare metal server. Can only be `true` for
+	// network interfaces with an `interface_type` of `vlan`.
+	//
+	// If `true`, and the network detects traffic for this data path on another bare metal server in the resource group,
+	// the network interface will be automatically deleted from this bare metal server and a new network interface with the
+	// same `id`, `name` and `vlan` will be created on the other bare metal server.
+	//
+	// For the data path to float, the other bare metal server must be in the same
+	// `resource_group`, and must have a network interface with `interface_type` of `pci` with `allowed_vlans` including
+	// this network interface's `vlan`.
 	AllowInterfaceToFloat *bool `json:"allow_interface_to_float,omitempty"`
 
-	// Indicates the 802.1Q VLAN ID tag that must be used for all traffic on this interface.
+	// The VLAN ID used in the IEEE 802.1Q tag present in all traffic on this interface.
 	Vlan *int64 `json:"vlan,omitempty"`
 }
 
@@ -27183,11 +26913,11 @@ type BareMetalServerNetworkInterfacePrototype struct {
 //     server is stopped
 //   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 //     to use the PCI interface
-//   - Cannot directly use an IEEE 802.1q VLAN tag.
+//   - Cannot directly use an IEEE 802.1Q tag.
 //   - Not supported on bare metal servers with a `cpu.architecture` of `s390x`
 //   - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its
 //     array of `allowed_vlans`.
-//   - Must use an IEEE 802.1q tag.
+//   - Must use an IEEE 802.1Q tag.
 //   - Has its own security groups and does not inherit those of the PCI device through
 //     which traffic flows.
 //   - Not supported on bare metal servers with a `cpu.architecture` of `s390x`.
@@ -27316,7 +27046,7 @@ type BareMetalServerPrimaryNetworkInterfacePrototype struct {
 	// Indicates whether source IP spoofing is allowed on this bare metal server network interface.
 	AllowIPSpoofing *bool `json:"allow_ip_spoofing,omitempty"`
 
-	// Indicates what VLAN IDs (for VLAN type only) can use this physical (PCI type) interface.
+	// The VLAN IDs allowed for `vlan` interfaces using this PCI interface.
 	AllowedVlans []int64 `json:"allowed_vlans,omitempty"`
 
 	// If `true`:
@@ -27338,7 +27068,7 @@ type BareMetalServerPrimaryNetworkInterfacePrototype struct {
 	//   server is stopped
 	//   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 	//     to use the PCI interface
-	//   - Cannot directly use an IEEE 802.1q VLAN tag.
+	//   - Cannot directly use an IEEE 802.1Q tag.
 	//   - Not supported on bare metal servers with a `cpu.architecture` of `s390x`.
 	InterfaceType *string `json:"interface_type,omitempty"`
 
@@ -27371,7 +27101,7 @@ type BareMetalServerPrimaryNetworkInterfacePrototype struct {
 //     server is stopped
 //   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 //     to use the PCI interface
-//   - Cannot directly use an IEEE 802.1q VLAN tag.
+//   - Cannot directly use an IEEE 802.1Q tag.
 //   - Not supported on bare metal servers with a `cpu.architecture` of `s390x`.
 const (
 	BareMetalServerPrimaryNetworkInterfacePrototypeInterfaceTypeHipersocketConst = "hipersocket"
@@ -28472,52 +28202,6 @@ func UnmarshalBareMetalServerProfileSupportedTrustedPlatformModuleModes(m map[st
 	return
 }
 
-// BareMetalServerPrototypeVPC : The VPC this bare metal server will reside in.
-//
-// If specified, it must match the VPC for the subnets that the network interfaces of the bare metal server are attached
-// to.
-// Models which "extend" this model:
-// - BareMetalServerPrototypeVPCVPCIdentityByID
-// - BareMetalServerPrototypeVPCVPCIdentityByCRN
-// - BareMetalServerPrototypeVPCVPCIdentityByHref
-type BareMetalServerPrototypeVPC struct {
-	// The unique identifier for this VPC.
-	ID *string `json:"id,omitempty"`
-
-	// The CRN for this VPC.
-	CRN *string `json:"crn,omitempty"`
-
-	// The URL for this VPC.
-	Href *string `json:"href,omitempty"`
-}
-
-func (*BareMetalServerPrototypeVPC) isaBareMetalServerPrototypeVPC() bool {
-	return true
-}
-
-type BareMetalServerPrototypeVPCIntf interface {
-	isaBareMetalServerPrototypeVPC() bool
-}
-
-// UnmarshalBareMetalServerPrototypeVPC unmarshals an instance of BareMetalServerPrototypeVPC from the specified map of raw messages.
-func UnmarshalBareMetalServerPrototypeVPC(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(BareMetalServerPrototypeVPC)
-	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
-	if err != nil {
-		return
-	}
-	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
-	return
-}
-
 // BareMetalServerStatusReason : BareMetalServerStatusReason struct
 type BareMetalServerStatusReason struct {
 	// The status reason code:
@@ -29323,7 +29007,7 @@ type CreateBareMetalServerOptions struct {
 	//
 	// If specified, it must match the VPC for the subnets that the network interfaces of
 	// the bare metal server are attached to.
-	VPC BareMetalServerPrototypeVPCIntf `json:"vpc,omitempty"`
+	VPC VPCIdentityIntf `json:"vpc,omitempty"`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -29394,7 +29078,7 @@ func (_options *CreateBareMetalServerOptions) SetTrustedPlatformModule(trustedPl
 }
 
 // SetVPC : Allow user to set VPC
-func (_options *CreateBareMetalServerOptions) SetVPC(vpc BareMetalServerPrototypeVPCIntf) *CreateBareMetalServerOptions {
+func (_options *CreateBareMetalServerOptions) SetVPC(vpc VPCIdentityIntf) *CreateBareMetalServerOptions {
 	_options.VPC = vpc
 	return _options
 }
@@ -30263,7 +29947,7 @@ type CreateInstanceNetworkInterfaceOptions struct {
 	// The associated subnet.
 	Subnet SubnetIdentityIntf `json:"subnet" validate:"required"`
 
-	// Indicates whether source IP spoofing is allowed on this instance interface.
+	// Indicates whether source IP spoofing is allowed on this instance network interface.
 	AllowIPSpoofing *bool `json:"allow_ip_spoofing,omitempty"`
 
 	// The name for the instance network interface. The name must not be used by another network interface on the virtual
@@ -37549,6 +37233,10 @@ type EndpointGateway struct {
 	// The reserved IPs bound to this endpoint gateway.
 	Ips []ReservedIPReference `json:"ips" validate:"required"`
 
+	// The reasons for the current `lifecycle_state` (if any):
+	// - `dns_resolution_binding_pending`: the DNS resolution binding is being set up.
+	LifecycleReasons []EndpointGatewayLifecycleReason `json:"lifecycle_reasons" validate:"required"`
+
 	// The lifecycle state of the endpoint gateway.
 	LifecycleState *string `json:"lifecycle_state" validate:"required"`
 
@@ -37639,6 +37327,10 @@ func UnmarshalEndpointGateway(m map[string]json.RawMessage, result interface{}) 
 		return
 	}
 	err = core.UnmarshalModel(m, "ips", &obj.Ips, UnmarshalReservedIPReference)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "lifecycle_reasons", &obj.LifecycleReasons, UnmarshalEndpointGatewayLifecycleReason)
 	if err != nil {
 		return
 	}
@@ -37767,6 +37459,44 @@ type EndpointGatewayCollectionNext struct {
 func UnmarshalEndpointGatewayCollectionNext(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(EndpointGatewayCollectionNext)
 	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// EndpointGatewayLifecycleReason : EndpointGatewayLifecycleReason struct
+type EndpointGatewayLifecycleReason struct {
+	// A snake case string succinctly identifying the reason for this lifecycle state.
+	Code *string `json:"code" validate:"required"`
+
+	// An explanation of the reason for this lifecycle state.
+	Message *string `json:"message" validate:"required"`
+
+	// Link to documentation about the reason for this lifecycle state.
+	MoreInfo *string `json:"more_info,omitempty"`
+}
+
+// Constants associated with the EndpointGatewayLifecycleReason.Code property.
+// A snake case string succinctly identifying the reason for this lifecycle state.
+const (
+	EndpointGatewayLifecycleReasonCodeDnsResolutionBindingPendingConst = "dns_resolution_binding_pending"
+	EndpointGatewayLifecycleReasonCodeResourceSuspendedByProviderConst = "resource_suspended_by_provider"
+)
+
+// UnmarshalEndpointGatewayLifecycleReason unmarshals an instance of EndpointGatewayLifecycleReason from the specified map of raw messages.
+func UnmarshalEndpointGatewayLifecycleReason(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(EndpointGatewayLifecycleReason)
+	err = core.UnmarshalPrimitive(m, "code", &obj.Code)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "message", &obj.Message)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
 	if err != nil {
 		return
 	}
@@ -59345,7 +59075,7 @@ func UnmarshalNetworkACLRuleReferenceDeleted(m map[string]json.RawMessage, resul
 
 // NetworkInterface : NetworkInterface struct
 type NetworkInterface struct {
-	// Indicates whether source IP spoofing is allowed on this instance interface.
+	// Indicates whether source IP spoofing is allowed on this instance network interface.
 	AllowIPSpoofing *bool `json:"allow_ip_spoofing" validate:"required"`
 
 	// The date and time that the instance network interface was created.
@@ -59694,7 +59424,7 @@ func UnmarshalNetworkInterfaceInstanceContextReferenceDeleted(m map[string]json.
 
 // NetworkInterfacePatch : NetworkInterfacePatch struct
 type NetworkInterfacePatch struct {
-	// Indicates whether source IP spoofing is allowed on this instance interface.
+	// Indicates whether source IP spoofing is allowed on this instance network interface.
 	AllowIPSpoofing *bool `json:"allow_ip_spoofing,omitempty"`
 
 	// The name for the instance network interface. The name must not be used by another network interface on the virtual
@@ -59729,7 +59459,7 @@ func (networkInterfacePatch *NetworkInterfacePatch) AsPatch() (_patch map[string
 
 // NetworkInterfacePrototype : NetworkInterfacePrototype struct
 type NetworkInterfacePrototype struct {
-	// Indicates whether source IP spoofing is allowed on this instance interface.
+	// Indicates whether source IP spoofing is allowed on this instance network interface.
 	AllowIPSpoofing *bool `json:"allow_ip_spoofing,omitempty"`
 
 	// The name for the instance network interface. The name must not be used by another network interface on the virtual
@@ -71250,6 +70980,14 @@ type VpcdnsResolver struct {
 	VPC *VPCReferenceDnsResolverContext `json:"vpc,omitempty"`
 
 	// The manually specified DNS servers for this VPC.
+	//
+	// If the DNS servers have `zone_affinity`, the DHCP [Domain Name Server
+	// Option](https://datatracker.ietf.org/doc/html/rfc2132#section-3.8) for a zone will list the DNS server with the
+	// affinity for that zone first, followed by the unique DNS servers from other zones.
+	//
+	// If the DNS servers do not have `zone_affinity`, the DHCP [Domain Name Server
+	// Option](https://datatracker.ietf.org/doc/html/rfc2132#section-3.8) for each zone will list all the manual DNS
+	// servers in the order specified.
 	ManualServers []DnsServer `json:"manual_servers,omitempty"`
 
 	// The configuration of the system DNS resolver for this VPC.
@@ -71352,6 +71090,14 @@ type VpcdnsResolverPatch struct {
 	// - have a unique `zone_affinity`, or
 	// - not have a `zone_affinity`.
 	//
+	// If `zone_affinity` is specified, exactly one DNS server must be specified for each zone in the region. The DHCP
+	// [Domain Name Server Option](https://datatracker.ietf.org/doc/html/rfc2132#section-3.8) for a zone will list this DNS
+	// server first, followed by unique DNS servers from other zones if available.
+	//
+	// If `zone_affinity` is not specified, the DHCP [Domain Name Server
+	// Option](https://datatracker.ietf.org/doc/html/rfc2132#section-3.8) for each zone will list all the manual DNS
+	// servers in the order specified.
+	//
 	// `dns.resolver.manual_servers` must be set if and only if `dns.resolver.type` is `manual`.
 	ManualServers []DnsServerPrototype `json:"manual_servers,omitempty"`
 
@@ -71439,6 +71185,14 @@ type VpcdnsResolverPrototype struct {
 	//
 	// - have a unique `zone_affinity`, or
 	// - not have a `zone_affinity`.
+	//
+	// If `zone_affinity` is specified, exactly one DNS server must be specified for each zone in the region. The DHCP
+	// [Domain Name Server Option](https://datatracker.ietf.org/doc/html/rfc2132#section-3.8) for a zone will list this DNS
+	// server first, followed by unique DNS servers from other zones if available.
+	//
+	// If `zone_affinity` is not specified, the DHCP [Domain Name Server
+	// Option](https://datatracker.ietf.org/doc/html/rfc2132#section-3.8) for each zone will list all the manual DNS
+	// servers in the order specified.
 	ManualServers []DnsServerPrototype `json:"manual_servers,omitempty"`
 }
 
@@ -71540,7 +71294,8 @@ type VPCHealthReason struct {
 // Constants associated with the VPCHealthReason.Code property.
 // A snake case string succinctly identifying the reason for this health state.
 const (
-	VPCHealthReasonCodeInternalErrorConst = "internal_error"
+	VPCHealthReasonCodeDnsResolutionBindingFailedConst = "dns_resolution_binding_failed"
+	VPCHealthReasonCodeInternalErrorConst              = "internal_error"
 )
 
 // UnmarshalVPCHealthReason unmarshals an instance of VPCHealthReason from the specified map of raw messages.
@@ -77647,14 +77402,14 @@ type BareMetalServerNetworkInterfaceByPci struct {
 	// The bare metal server network interface type.
 	Type *string `json:"type" validate:"required"`
 
-	// Indicates what VLAN IDs (for VLAN type only) can use this physical (PCI type) interface.
+	// The VLAN IDs allowed for `vlan` interfaces using this PCI interface.
 	AllowedVlans []int64 `json:"allowed_vlans" validate:"required"`
 
 	// - `pci`: a physical PCI device which can only be created or deleted when the bare metal
 	//   server is stopped
 	//   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 	//     to use the PCI interface
-	//   - Cannot directly use an IEEE 802.1q VLAN tag.
+	//   - Cannot directly use an IEEE 802.1Q tag.
 	InterfaceType *string `json:"interface_type" validate:"required"`
 }
 
@@ -77685,7 +77440,7 @@ const (
 //     server is stopped
 //   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 //     to use the PCI interface
-//   - Cannot directly use an IEEE 802.1q VLAN tag.
+//   - Cannot directly use an IEEE 802.1Q tag.
 const (
 	BareMetalServerNetworkInterfaceByPciInterfaceTypePciConst = "pci"
 )
@@ -77825,19 +77580,26 @@ type BareMetalServerNetworkInterfaceByVlan struct {
 	// The bare metal server network interface type.
 	Type *string `json:"type" validate:"required"`
 
-	// Indicates if the interface can float to any other server within the same
-	// `resource_group`. The interface will float automatically if the network detects a GARP or RARP on another bare metal
-	// server in the resource group.  Applies only to `vlan` type interfaces.
+	// Indicates if the data path for the network interface can float to another bare metal server. Can only be `true` for
+	// network interfaces with an `interface_type` of `vlan`.
+	//
+	// If `true`, and the network detects traffic for this data path on another bare metal server in the resource group,
+	// the network interface will be automatically deleted from this bare metal server and a new network interface with the
+	// same `id`, `name` and `vlan` will be created on the other bare metal server.
+	//
+	// For the data path to float, the other bare metal server must be in the same
+	// `resource_group`, and must have a network interface with `interface_type` of `pci` with `allowed_vlans` including
+	// this network interface's `vlan`.
 	AllowInterfaceToFloat *bool `json:"allow_interface_to_float" validate:"required"`
 
 	// - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its array
 	//    of `allowed_vlans`.
-	//   - Must use an IEEE 802.1q tag.
+	//   - Must use an IEEE 802.1Q tag.
 	//   - Has its own security groups and does not inherit those of the PCI device through
 	//     which traffic flows.
 	InterfaceType *string `json:"interface_type" validate:"required"`
 
-	// Indicates the 802.1Q VLAN ID tag that must be used for all traffic on this interface.
+	// The VLAN ID used in the IEEE 802.1Q tag present in all traffic on this interface.
 	Vlan *int64 `json:"vlan" validate:"required"`
 }
 
@@ -77866,7 +77628,7 @@ const (
 // Constants associated with the BareMetalServerNetworkInterfaceByVlan.InterfaceType property.
 //   - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its array
 //     of `allowed_vlans`.
-//   - Must use an IEEE 802.1q tag.
+//   - Must use an IEEE 802.1Q tag.
 //   - Has its own security groups and does not inherit those of the PCI device through
 //     which traffic flows.
 const (
@@ -78091,14 +77853,14 @@ type BareMetalServerNetworkInterfacePrototypeBareMetalServerNetworkInterfaceByPc
 	// The associated subnet.
 	Subnet SubnetIdentityIntf `json:"subnet" validate:"required"`
 
-	// Indicates what VLAN IDs (for VLAN type only) can use this physical (PCI type) interface.
+	// The VLAN IDs to allow for `vlan` interfaces using this PCI interface.
 	AllowedVlans []int64 `json:"allowed_vlans,omitempty"`
 
 	// - `pci`: a physical PCI device which can only be created or deleted when the bare metal
 	//   server is stopped
 	//   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 	//     to use the PCI interface
-	//   - Cannot directly use an IEEE 802.1q VLAN tag.
+	//   - Cannot directly use an IEEE 802.1Q tag.
 	//   - Not supported on bare metal servers with a `cpu.architecture` of `s390x`.
 	InterfaceType *string `json:"interface_type" validate:"required"`
 }
@@ -78108,7 +77870,7 @@ type BareMetalServerNetworkInterfacePrototypeBareMetalServerNetworkInterfaceByPc
 //     server is stopped
 //   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 //     to use the PCI interface
-//   - Cannot directly use an IEEE 802.1q VLAN tag.
+//   - Cannot directly use an IEEE 802.1Q tag.
 //   - Not supported on bare metal servers with a `cpu.architecture` of `s390x`.
 const (
 	BareMetalServerNetworkInterfacePrototypeBareMetalServerNetworkInterfaceByPciPrototypeInterfaceTypePciConst = "pci"
@@ -78203,27 +77965,34 @@ type BareMetalServerNetworkInterfacePrototypeBareMetalServerNetworkInterfaceByVl
 	// The associated subnet.
 	Subnet SubnetIdentityIntf `json:"subnet" validate:"required"`
 
-	// Indicates if the interface can float to any other server within the same
-	// `resource_group`. The interface will float automatically if the network detects a GARP or RARP on another bare metal
-	// server in the resource group.  Applies only to `vlan` type interfaces.
+	// Indicates if the data path for the network interface can float to another bare metal server. Can only be `true` for
+	// network interfaces with an `interface_type` of `vlan`.
+	//
+	// If `true`, and the network detects traffic for this data path on another bare metal server in the resource group,
+	// the network interface will be automatically deleted from this bare metal server and a new network interface with the
+	// same `id`, `name` and `vlan` will be created on the other bare metal server.
+	//
+	// For the data path to float, the other bare metal server must be in the same
+	// `resource_group`, and must have a network interface with `interface_type` of `pci` with `allowed_vlans` including
+	// this network interface's `vlan`.
 	AllowInterfaceToFloat *bool `json:"allow_interface_to_float,omitempty"`
 
 	// - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its array
 	//    of `allowed_vlans`.
-	//   - Must use an IEEE 802.1q tag.
+	//   - Must use an IEEE 802.1Q tag.
 	//   - Has its own security groups and does not inherit those of the PCI device through
 	//     which traffic flows.
 	//   - Not supported on bare metal servers with a `cpu.architecture` of `s390x`.
 	InterfaceType *string `json:"interface_type" validate:"required"`
 
-	// Indicates the 802.1Q VLAN ID tag that must be used for all traffic on this interface.
+	// The VLAN ID used in the IEEE 802.1Q tag present in all traffic on this interface.
 	Vlan *int64 `json:"vlan" validate:"required"`
 }
 
 // Constants associated with the BareMetalServerNetworkInterfacePrototypeBareMetalServerNetworkInterfaceByVlanPrototype.InterfaceType property.
 //   - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its array
 //     of `allowed_vlans`.
-//   - Must use an IEEE 802.1q tag.
+//   - Must use an IEEE 802.1Q tag.
 //   - Has its own security groups and does not inherit those of the PCI device through
 //     which traffic flows.
 //   - Not supported on bare metal servers with a `cpu.architecture` of `s390x`.
@@ -79388,99 +79157,6 @@ func UnmarshalBareMetalServerProfileNetworkInterfaceCountRange(m map[string]json
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
-	if err != nil {
-		return
-	}
-	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
-	return
-}
-
-// BareMetalServerPrototypeVPCVPCIdentityByCRN : BareMetalServerPrototypeVPCVPCIdentityByCRN struct
-// This model "extends" BareMetalServerPrototypeVPC
-type BareMetalServerPrototypeVPCVPCIdentityByCRN struct {
-	// The CRN for this VPC.
-	CRN *string `json:"crn" validate:"required"`
-}
-
-// NewBareMetalServerPrototypeVPCVPCIdentityByCRN : Instantiate BareMetalServerPrototypeVPCVPCIdentityByCRN (Generic Model Constructor)
-func (*VpcbetaV1) NewBareMetalServerPrototypeVPCVPCIdentityByCRN(crn string) (_model *BareMetalServerPrototypeVPCVPCIdentityByCRN, err error) {
-	_model = &BareMetalServerPrototypeVPCVPCIdentityByCRN{
-		CRN: core.StringPtr(crn),
-	}
-	err = core.ValidateStruct(_model, "required parameters")
-	return
-}
-
-func (*BareMetalServerPrototypeVPCVPCIdentityByCRN) isaBareMetalServerPrototypeVPC() bool {
-	return true
-}
-
-// UnmarshalBareMetalServerPrototypeVPCVPCIdentityByCRN unmarshals an instance of BareMetalServerPrototypeVPCVPCIdentityByCRN from the specified map of raw messages.
-func UnmarshalBareMetalServerPrototypeVPCVPCIdentityByCRN(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(BareMetalServerPrototypeVPCVPCIdentityByCRN)
-	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
-	if err != nil {
-		return
-	}
-	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
-	return
-}
-
-// BareMetalServerPrototypeVPCVPCIdentityByHref : BareMetalServerPrototypeVPCVPCIdentityByHref struct
-// This model "extends" BareMetalServerPrototypeVPC
-type BareMetalServerPrototypeVPCVPCIdentityByHref struct {
-	// The URL for this VPC.
-	Href *string `json:"href" validate:"required"`
-}
-
-// NewBareMetalServerPrototypeVPCVPCIdentityByHref : Instantiate BareMetalServerPrototypeVPCVPCIdentityByHref (Generic Model Constructor)
-func (*VpcbetaV1) NewBareMetalServerPrototypeVPCVPCIdentityByHref(href string) (_model *BareMetalServerPrototypeVPCVPCIdentityByHref, err error) {
-	_model = &BareMetalServerPrototypeVPCVPCIdentityByHref{
-		Href: core.StringPtr(href),
-	}
-	err = core.ValidateStruct(_model, "required parameters")
-	return
-}
-
-func (*BareMetalServerPrototypeVPCVPCIdentityByHref) isaBareMetalServerPrototypeVPC() bool {
-	return true
-}
-
-// UnmarshalBareMetalServerPrototypeVPCVPCIdentityByHref unmarshals an instance of BareMetalServerPrototypeVPCVPCIdentityByHref from the specified map of raw messages.
-func UnmarshalBareMetalServerPrototypeVPCVPCIdentityByHref(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(BareMetalServerPrototypeVPCVPCIdentityByHref)
-	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
-	if err != nil {
-		return
-	}
-	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
-	return
-}
-
-// BareMetalServerPrototypeVPCVPCIdentityByID : BareMetalServerPrototypeVPCVPCIdentityByID struct
-// This model "extends" BareMetalServerPrototypeVPC
-type BareMetalServerPrototypeVPCVPCIdentityByID struct {
-	// The unique identifier for this VPC.
-	ID *string `json:"id" validate:"required"`
-}
-
-// NewBareMetalServerPrototypeVPCVPCIdentityByID : Instantiate BareMetalServerPrototypeVPCVPCIdentityByID (Generic Model Constructor)
-func (*VpcbetaV1) NewBareMetalServerPrototypeVPCVPCIdentityByID(id string) (_model *BareMetalServerPrototypeVPCVPCIdentityByID, err error) {
-	_model = &BareMetalServerPrototypeVPCVPCIdentityByID{
-		ID: core.StringPtr(id),
-	}
-	err = core.ValidateStruct(_model, "required parameters")
-	return
-}
-
-func (*BareMetalServerPrototypeVPCVPCIdentityByID) isaBareMetalServerPrototypeVPC() bool {
-	return true
-}
-
-// UnmarshalBareMetalServerPrototypeVPCVPCIdentityByID unmarshals an instance of BareMetalServerPrototypeVPCVPCIdentityByID from the specified map of raw messages.
-func UnmarshalBareMetalServerPrototypeVPCVPCIdentityByID(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(BareMetalServerPrototypeVPCVPCIdentityByID)
-	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
 	if err != nil {
 		return
 	}
@@ -94481,6 +94157,14 @@ type VpcdnsResolverPrototypeVpcdnsResolverTypeManualPrototype struct {
 	//
 	// - have a unique `zone_affinity`, or
 	// - not have a `zone_affinity`.
+	//
+	// If `zone_affinity` is specified, exactly one DNS server must be specified for each zone in the region. The DHCP
+	// [Domain Name Server Option](https://datatracker.ietf.org/doc/html/rfc2132#section-3.8) for a zone will list this DNS
+	// server first, followed by unique DNS servers from other zones if available.
+	//
+	// If `zone_affinity` is not specified, the DHCP [Domain Name Server
+	// Option](https://datatracker.ietf.org/doc/html/rfc2132#section-3.8) for each zone will list all the manual DNS
+	// servers in the order specified.
 	ManualServers []DnsServerPrototype `json:"manual_servers" validate:"required"`
 
 	// The type of the DNS resolver to use.
@@ -94611,6 +94295,14 @@ type VpcdnsResolverTypeManual struct {
 	Servers []DnsServer `json:"servers" validate:"required"`
 
 	// The manually specified DNS servers for this VPC.
+	//
+	// If the DNS servers have `zone_affinity`, the DHCP [Domain Name Server
+	// Option](https://datatracker.ietf.org/doc/html/rfc2132#section-3.8) for a zone will list the DNS server with the
+	// affinity for that zone first, followed by the unique DNS servers from other zones.
+	//
+	// If the DNS servers do not have `zone_affinity`, the DHCP [Domain Name Server
+	// Option](https://datatracker.ietf.org/doc/html/rfc2132#section-3.8) for each zone will list all the manual DNS
+	// servers in the order specified.
 	ManualServers []DnsServer `json:"manual_servers" validate:"required"`
 
 	// The type of the DNS resolver used for the VPC.
