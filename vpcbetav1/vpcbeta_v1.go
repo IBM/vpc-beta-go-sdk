@@ -1,5 +1,5 @@
 /**
- * (C) Copyright IBM Corp. 2023.
+ * (C) Copyright IBM Corp. 2022, 2023.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 
 /*
- * IBM OpenAPI SDK Code Generator Version: 3.74.0-89f1dbab-20230630-160213
+ * IBM OpenAPI SDK Code Generator Version: 3.80.0-29334a73-20230925-151553
  */
 
 // Package vpcbetav1 : Operations and models for the VpcbetaV1 service
@@ -38,7 +38,7 @@ import (
 // VpcbetaV1 : The IBM Cloud Virtual Private Cloud (VPC) API can be used to programmatically provision and manage
 // virtual server instances, along with subnets, volumes, load balancers, and more.
 //
-// API Version: 2022-09-13
+// API Version: 2023-10-10
 type VpcbetaV1 struct {
 	Service *core.BaseService
 
@@ -46,8 +46,8 @@ type VpcbetaV1 struct {
 	// `2`.
 	generation *int64
 
-	// The API version, in format `YYYY-MM-DD`. For the API behavior documented here, specify any date between `2022-09-13`
-	// and `2023-08-28`.
+	// The API version, in format `YYYY-MM-DD`. For the API behavior documented here, specify any date between `2023-10-10`
+	// and `2023-11-23`.
 	Version *string
 }
 
@@ -63,8 +63,8 @@ type VpcbetaV1Options struct {
 	URL           string
 	Authenticator core.Authenticator
 
-	// The API version, in format `YYYY-MM-DD`. For the API behavior documented here, specify any date between `2022-09-13`
-	// and `2023-08-28`.
+	// The API version, in format `YYYY-MM-DD`. For the API behavior documented here, specify any date between `2023-10-10`
+	// and `2023-11-23`.
 	Version *string
 }
 
@@ -122,7 +122,7 @@ func NewVpcbetaV1(options *VpcbetaV1Options) (service *VpcbetaV1, err error) {
 	}
 
 	if options.Version == nil {
-		options.Version = core.StringPtr("2023-08-08")
+		options.Version = core.StringPtr("2023-11-22")
 	}
 
 	service = &VpcbetaV1{
@@ -220,6 +220,7 @@ func (vpcbeta *VpcbetaV1) ListVpcsWithContext(ctx context.Context, listVpcsOptio
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listVpcsOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listVpcsOptions.Start))
 	}
@@ -289,13 +290,16 @@ func (vpcbeta *VpcbetaV1) CreateVPCWithContext(ctx context.Context, createVPCOpt
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createVPCOptions.AddressPrefixManagement != nil {
 		body["address_prefix_management"] = createVPCOptions.AddressPrefixManagement
 	}
 	if createVPCOptions.ClassicAccess != nil {
 		body["classic_access"] = createVPCOptions.ClassicAccess
+	}
+	if createVPCOptions.Dns != nil {
+		body["dns"] = createVPCOptions.Dns
 	}
 	if createVPCOptions.Name != nil {
 		body["name"] = createVPCOptions.Name
@@ -330,10 +334,15 @@ func (vpcbeta *VpcbetaV1) CreateVPCWithContext(ctx context.Context, createVPCOpt
 }
 
 // DeleteVPC : Delete a VPC
-// This request deletes a VPC. This operation cannot be reversed. For this request to succeed, the VPC must not contain
-// any instances, subnets, public gateways, or endpoint gateways. All security groups and network ACLs associated with
-// the VPC are automatically deleted. All flow log collectors with `auto_delete` set to `true` targeting the VPC or any
-// resource in the VPC are automatically deleted.
+// This request deletes a VPC. This operation cannot be reversed.
+//
+// For this request to succeed:
+// - Instances, subnets, public gateways, and endpoint gateways must not reside in this VPC
+// - The VPC must not be providing DNS resolution for any other VPCs
+// - If `dns.enable_hub` is `true`, `dns.resolution_binding_count` must be zero
+//
+// All security groups and network ACLs associated with the VPC are automatically deleted. All flow log collectors with
+// `auto_delete` set to `true` targeting the VPC or any resource in the VPC are automatically deleted.
 func (vpcbeta *VpcbetaV1) DeleteVPC(deleteVPCOptions *DeleteVPCOptions) (response *core.DetailedResponse, err error) {
 	return vpcbeta.DeleteVPCWithContext(context.Background(), deleteVPCOptions)
 }
@@ -369,10 +378,13 @@ func (vpcbeta *VpcbetaV1) DeleteVPCWithContext(ctx context.Context, deleteVPCOpt
 	for headerName, headerValue := range sdkHeaders {
 		builder.AddHeader(headerName, headerValue)
 	}
+	if deleteVPCOptions.IfMatch != nil {
+		builder.AddHeader("If-Match", fmt.Sprint(*deleteVPCOptions.IfMatch))
+	}
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -424,7 +436,7 @@ func (vpcbeta *VpcbetaV1) GetVPCWithContext(ctx context.Context, getVPCOptions *
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -486,10 +498,13 @@ func (vpcbeta *VpcbetaV1) UpdateVPCWithContext(ctx context.Context, updateVPCOpt
 	}
 	builder.AddHeader("Accept", "application/json")
 	builder.AddHeader("Content-Type", "application/merge-patch+json")
+	if updateVPCOptions.IfMatch != nil {
+		builder.AddHeader("If-Match", fmt.Sprint(*updateVPCOptions.IfMatch))
+	}
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateVPCOptions.VPCPatch)
 	if err != nil {
 		return
@@ -558,7 +573,7 @@ func (vpcbeta *VpcbetaV1) GetVPCDefaultNetworkACLWithContext(ctx context.Context
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -623,7 +638,7 @@ func (vpcbeta *VpcbetaV1) GetVPCDefaultRoutingTableWithContext(ctx context.Conte
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -687,7 +702,7 @@ func (vpcbeta *VpcbetaV1) GetVPCDefaultSecurityGroupWithContext(ctx context.Cont
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -750,6 +765,7 @@ func (vpcbeta *VpcbetaV1) ListVPCAddressPrefixesWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listVPCAddressPrefixesOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listVPCAddressPrefixesOptions.Start))
 	}
@@ -821,7 +837,7 @@ func (vpcbeta *VpcbetaV1) CreateVPCAddressPrefixWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createVPCAddressPrefixOptions.CIDR != nil {
 		body["cidr"] = createVPCAddressPrefixOptions.CIDR
@@ -903,7 +919,7 @@ func (vpcbeta *VpcbetaV1) DeleteVPCAddressPrefixWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -956,7 +972,7 @@ func (vpcbeta *VpcbetaV1) GetVPCAddressPrefixWithContext(ctx context.Context, ge
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -1022,7 +1038,7 @@ func (vpcbeta *VpcbetaV1) UpdateVPCAddressPrefixWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateVPCAddressPrefixOptions.AddressPrefixPatch)
 	if err != nil {
 		return
@@ -1040,6 +1056,392 @@ func (vpcbeta *VpcbetaV1) UpdateVPCAddressPrefixWithContext(ctx context.Context,
 	}
 	if rawResponse != nil {
 		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalAddressPrefix)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// ListVPCDnsResolutionBindings : List all DNS resolution bindings for a VPC
+// This request lists all DNS resolution bindings for a VPC. A DNS resolution binding represents an association with
+// another VPC for centralizing DNS name resolution.
+//
+// If the VPC specified by the identifier in the URL is a DNS hub VPC (has `dns.enable_hub` set to `true`) then there is
+// one binding for each VPC bound to the hub VPC. The endpoint gateways in the bound VPCs can allow (using
+// `allow_dns_resolution_binding`) the hub VPC to centralize resolution of their DNS names.
+//
+// If the VPC specified by the identifier in the URL is not a DNS hub VPC, then there is at most one binding (to a hub
+// VPC). The endpoint gateways in the VPC specified by the identifier in the URL can allow (using
+// `allow_dns_resolution_binding`) its hub VPC to centralize resolution of their DNS names.
+//
+// To make use of centralized DNS resolution, a VPC bound to a DNS hub VPC must delegate DNS resolution to its hub VPC
+// by setting `dns.resolver.type` to `delegate`.
+//
+// The bindings will be sorted by their `created_at` property values, with newest bindings first. Bindings with
+// identical `created_at` property values will in turn be sorted by ascending `name` property values.
+func (vpcbeta *VpcbetaV1) ListVPCDnsResolutionBindings(listVPCDnsResolutionBindingsOptions *ListVPCDnsResolutionBindingsOptions) (result *VpcdnsResolutionBindingCollection, response *core.DetailedResponse, err error) {
+	return vpcbeta.ListVPCDnsResolutionBindingsWithContext(context.Background(), listVPCDnsResolutionBindingsOptions)
+}
+
+// ListVPCDnsResolutionBindingsWithContext is an alternate form of the ListVPCDnsResolutionBindings method which supports a Context parameter
+func (vpcbeta *VpcbetaV1) ListVPCDnsResolutionBindingsWithContext(ctx context.Context, listVPCDnsResolutionBindingsOptions *ListVPCDnsResolutionBindingsOptions) (result *VpcdnsResolutionBindingCollection, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(listVPCDnsResolutionBindingsOptions, "listVPCDnsResolutionBindingsOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(listVPCDnsResolutionBindingsOptions, "listVPCDnsResolutionBindingsOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"vpc_id": *listVPCDnsResolutionBindingsOptions.VPCID,
+	}
+
+	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = vpcbeta.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(vpcbeta.Service.Options.URL, `/vpcs/{vpc_id}/dns_resolution_bindings`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range listVPCDnsResolutionBindingsOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("vpcbeta", "V1", "ListVPCDnsResolutionBindings")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+
+	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
+	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
+	if listVPCDnsResolutionBindingsOptions.Sort != nil {
+		builder.AddQuery("sort", fmt.Sprint(*listVPCDnsResolutionBindingsOptions.Sort))
+	}
+	if listVPCDnsResolutionBindingsOptions.Start != nil {
+		builder.AddQuery("start", fmt.Sprint(*listVPCDnsResolutionBindingsOptions.Start))
+	}
+	if listVPCDnsResolutionBindingsOptions.Limit != nil {
+		builder.AddQuery("limit", fmt.Sprint(*listVPCDnsResolutionBindingsOptions.Limit))
+	}
+	if listVPCDnsResolutionBindingsOptions.Name != nil {
+		builder.AddQuery("name", fmt.Sprint(*listVPCDnsResolutionBindingsOptions.Name))
+	}
+	if listVPCDnsResolutionBindingsOptions.VPCCRN != nil {
+		builder.AddQuery("vpc.crn", fmt.Sprint(*listVPCDnsResolutionBindingsOptions.VPCCRN))
+	}
+	if listVPCDnsResolutionBindingsOptions.VPCName != nil {
+		builder.AddQuery("vpc.name", fmt.Sprint(*listVPCDnsResolutionBindingsOptions.VPCName))
+	}
+	if listVPCDnsResolutionBindingsOptions.AccountID != nil {
+		builder.AddQuery("account.id", fmt.Sprint(*listVPCDnsResolutionBindingsOptions.AccountID))
+	}
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = vpcbeta.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalVpcdnsResolutionBindingCollection)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// CreateVPCDnsResolutionBinding : Create a DNS resolution binding
+// This request creates a new DNS resolution binding from a DNS resolution binding prototype object. The prototype
+// object is structured in the same way as a retrieved DNS resolution binding, and contains the information necessary to
+// create the new DNS resolution binding.
+//
+// For this request to succeed, `dns.enable_hub` must be `false` for the VPC specified by the identifier in the URL, and
+// the VPC must not already have a DNS resolution binding.
+//
+// See [About DNS sharing for VPE gateways](/docs/vpc?topic=vpc-hub-spoke-model) for more information.
+func (vpcbeta *VpcbetaV1) CreateVPCDnsResolutionBinding(createVPCDnsResolutionBindingOptions *CreateVPCDnsResolutionBindingOptions) (result *VpcdnsResolutionBinding, response *core.DetailedResponse, err error) {
+	return vpcbeta.CreateVPCDnsResolutionBindingWithContext(context.Background(), createVPCDnsResolutionBindingOptions)
+}
+
+// CreateVPCDnsResolutionBindingWithContext is an alternate form of the CreateVPCDnsResolutionBinding method which supports a Context parameter
+func (vpcbeta *VpcbetaV1) CreateVPCDnsResolutionBindingWithContext(ctx context.Context, createVPCDnsResolutionBindingOptions *CreateVPCDnsResolutionBindingOptions) (result *VpcdnsResolutionBinding, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(createVPCDnsResolutionBindingOptions, "createVPCDnsResolutionBindingOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(createVPCDnsResolutionBindingOptions, "createVPCDnsResolutionBindingOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"vpc_id": *createVPCDnsResolutionBindingOptions.VPCID,
+	}
+
+	builder := core.NewRequestBuilder(core.POST)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = vpcbeta.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(vpcbeta.Service.Options.URL, `/vpcs/{vpc_id}/dns_resolution_bindings`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range createVPCDnsResolutionBindingOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("vpcbeta", "V1", "CreateVPCDnsResolutionBinding")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+	builder.AddHeader("Content-Type", "application/json")
+
+	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
+	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
+	body := make(map[string]interface{})
+	if createVPCDnsResolutionBindingOptions.VPC != nil {
+		body["vpc"] = createVPCDnsResolutionBindingOptions.VPC
+	}
+	if createVPCDnsResolutionBindingOptions.Name != nil {
+		body["name"] = createVPCDnsResolutionBindingOptions.Name
+	}
+	_, err = builder.SetBodyContentJSON(body)
+	if err != nil {
+		return
+	}
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = vpcbeta.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalVpcdnsResolutionBinding)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// DeleteVPCDnsResolutionBinding : Delete a DNS resolution binding
+// This request deletes a DNS resolution binding. This operation cannot be reversed.
+//
+// For this request to succeed, the VPC specified by the identifier in the URL must not have
+// `dns.resolver.type` set to `delegated`.
+func (vpcbeta *VpcbetaV1) DeleteVPCDnsResolutionBinding(deleteVPCDnsResolutionBindingOptions *DeleteVPCDnsResolutionBindingOptions) (result *VpcdnsResolutionBinding, response *core.DetailedResponse, err error) {
+	return vpcbeta.DeleteVPCDnsResolutionBindingWithContext(context.Background(), deleteVPCDnsResolutionBindingOptions)
+}
+
+// DeleteVPCDnsResolutionBindingWithContext is an alternate form of the DeleteVPCDnsResolutionBinding method which supports a Context parameter
+func (vpcbeta *VpcbetaV1) DeleteVPCDnsResolutionBindingWithContext(ctx context.Context, deleteVPCDnsResolutionBindingOptions *DeleteVPCDnsResolutionBindingOptions) (result *VpcdnsResolutionBinding, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(deleteVPCDnsResolutionBindingOptions, "deleteVPCDnsResolutionBindingOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(deleteVPCDnsResolutionBindingOptions, "deleteVPCDnsResolutionBindingOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"vpc_id": *deleteVPCDnsResolutionBindingOptions.VPCID,
+		"id":     *deleteVPCDnsResolutionBindingOptions.ID,
+	}
+
+	builder := core.NewRequestBuilder(core.DELETE)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = vpcbeta.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(vpcbeta.Service.Options.URL, `/vpcs/{vpc_id}/dns_resolution_bindings/{id}`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range deleteVPCDnsResolutionBindingOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("vpcbeta", "V1", "DeleteVPCDnsResolutionBinding")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+
+	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
+	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = vpcbeta.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalVpcdnsResolutionBinding)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// GetVPCDnsResolutionBinding : Retrieve a DNS resolution binding
+// This request retrieves a single DNS resolution binding specified by the identifier in the URL.
+func (vpcbeta *VpcbetaV1) GetVPCDnsResolutionBinding(getVPCDnsResolutionBindingOptions *GetVPCDnsResolutionBindingOptions) (result *VpcdnsResolutionBinding, response *core.DetailedResponse, err error) {
+	return vpcbeta.GetVPCDnsResolutionBindingWithContext(context.Background(), getVPCDnsResolutionBindingOptions)
+}
+
+// GetVPCDnsResolutionBindingWithContext is an alternate form of the GetVPCDnsResolutionBinding method which supports a Context parameter
+func (vpcbeta *VpcbetaV1) GetVPCDnsResolutionBindingWithContext(ctx context.Context, getVPCDnsResolutionBindingOptions *GetVPCDnsResolutionBindingOptions) (result *VpcdnsResolutionBinding, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(getVPCDnsResolutionBindingOptions, "getVPCDnsResolutionBindingOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(getVPCDnsResolutionBindingOptions, "getVPCDnsResolutionBindingOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"vpc_id": *getVPCDnsResolutionBindingOptions.VPCID,
+		"id":     *getVPCDnsResolutionBindingOptions.ID,
+	}
+
+	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = vpcbeta.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(vpcbeta.Service.Options.URL, `/vpcs/{vpc_id}/dns_resolution_bindings/{id}`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range getVPCDnsResolutionBindingOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("vpcbeta", "V1", "GetVPCDnsResolutionBinding")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+
+	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
+	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = vpcbeta.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalVpcdnsResolutionBinding)
+		if err != nil {
+			return
+		}
+		response.Result = result
+	}
+
+	return
+}
+
+// UpdateVPCDnsResolutionBinding : Update a DNS resolution binding
+// This request updates a DNS resolution binding with the information in a provided DNS resolution binding patch. The
+// DNS resolution binding patch object is structured in the same way as a retrieved DNS resolution binding and contains
+// only the information to be updated.
+func (vpcbeta *VpcbetaV1) UpdateVPCDnsResolutionBinding(updateVPCDnsResolutionBindingOptions *UpdateVPCDnsResolutionBindingOptions) (result *VpcdnsResolutionBinding, response *core.DetailedResponse, err error) {
+	return vpcbeta.UpdateVPCDnsResolutionBindingWithContext(context.Background(), updateVPCDnsResolutionBindingOptions)
+}
+
+// UpdateVPCDnsResolutionBindingWithContext is an alternate form of the UpdateVPCDnsResolutionBinding method which supports a Context parameter
+func (vpcbeta *VpcbetaV1) UpdateVPCDnsResolutionBindingWithContext(ctx context.Context, updateVPCDnsResolutionBindingOptions *UpdateVPCDnsResolutionBindingOptions) (result *VpcdnsResolutionBinding, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(updateVPCDnsResolutionBindingOptions, "updateVPCDnsResolutionBindingOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(updateVPCDnsResolutionBindingOptions, "updateVPCDnsResolutionBindingOptions")
+	if err != nil {
+		return
+	}
+
+	pathParamsMap := map[string]string{
+		"vpc_id": *updateVPCDnsResolutionBindingOptions.VPCID,
+		"id":     *updateVPCDnsResolutionBindingOptions.ID,
+	}
+
+	builder := core.NewRequestBuilder(core.PATCH)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = vpcbeta.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(vpcbeta.Service.Options.URL, `/vpcs/{vpc_id}/dns_resolution_bindings/{id}`, pathParamsMap)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range updateVPCDnsResolutionBindingOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("vpcbeta", "V1", "UpdateVPCDnsResolutionBinding")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+	builder.AddHeader("Content-Type", "application/merge-patch+json")
+
+	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
+	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
+	_, err = builder.SetBodyContentJSON(updateVPCDnsResolutionBindingOptions.VpcdnsResolutionBindingPatch)
+	if err != nil {
+		return
+	}
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = vpcbeta.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	if rawResponse != nil {
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalVpcdnsResolutionBinding)
 		if err != nil {
 			return
 		}
@@ -1095,6 +1497,7 @@ func (vpcbeta *VpcbetaV1) ListVPCRoutesWithContext(ctx context.Context, listVPCR
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listVPCRoutesOptions.ZoneName != nil {
 		builder.AddQuery("zone.name", fmt.Sprint(*listVPCRoutesOptions.ZoneName))
 	}
@@ -1173,7 +1576,7 @@ func (vpcbeta *VpcbetaV1) CreateVPCRouteWithContext(ctx context.Context, createV
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createVPCRouteOptions.Destination != nil {
 		body["destination"] = createVPCRouteOptions.Destination
@@ -1263,7 +1666,7 @@ func (vpcbeta *VpcbetaV1) DeleteVPCRouteWithContext(ctx context.Context, deleteV
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -1319,7 +1722,7 @@ func (vpcbeta *VpcbetaV1) GetVPCRouteWithContext(ctx context.Context, getVPCRout
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -1388,7 +1791,7 @@ func (vpcbeta *VpcbetaV1) UpdateVPCRouteWithContext(ctx context.Context, updateV
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateVPCRouteOptions.RoutePatch)
 	if err != nil {
 		return
@@ -1459,6 +1862,7 @@ func (vpcbeta *VpcbetaV1) ListVPCRoutingTablesWithContext(ctx context.Context, l
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listVPCRoutingTablesOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listVPCRoutingTablesOptions.Start))
 	}
@@ -1533,7 +1937,7 @@ func (vpcbeta *VpcbetaV1) CreateVPCRoutingTableWithContext(ctx context.Context, 
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createVPCRoutingTableOptions.AcceptRoutesFrom != nil {
 		body["accept_routes_from"] = createVPCRoutingTableOptions.AcceptRoutesFrom
@@ -1627,7 +2031,7 @@ func (vpcbeta *VpcbetaV1) DeleteVPCRoutingTableWithContext(ctx context.Context, 
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -1680,7 +2084,7 @@ func (vpcbeta *VpcbetaV1) GetVPCRoutingTableWithContext(ctx context.Context, get
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -1749,7 +2153,7 @@ func (vpcbeta *VpcbetaV1) UpdateVPCRoutingTableWithContext(ctx context.Context, 
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateVPCRoutingTableOptions.RoutingTablePatch)
 	if err != nil {
 		return
@@ -1822,6 +2226,7 @@ func (vpcbeta *VpcbetaV1) ListVPCRoutingTableRoutesWithContext(ctx context.Conte
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listVPCRoutingTableRoutesOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listVPCRoutingTableRoutesOptions.Start))
 	}
@@ -1894,7 +2299,7 @@ func (vpcbeta *VpcbetaV1) CreateVPCRoutingTableRouteWithContext(ctx context.Cont
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createVPCRoutingTableRouteOptions.Destination != nil {
 		body["destination"] = createVPCRoutingTableRouteOptions.Destination
@@ -1983,7 +2388,7 @@ func (vpcbeta *VpcbetaV1) DeleteVPCRoutingTableRouteWithContext(ctx context.Cont
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -2037,7 +2442,7 @@ func (vpcbeta *VpcbetaV1) GetVPCRoutingTableRouteWithContext(ctx context.Context
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -2105,7 +2510,7 @@ func (vpcbeta *VpcbetaV1) UpdateVPCRoutingTableRouteWithContext(ctx context.Cont
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateVPCRoutingTableRouteOptions.RoutePatch)
 	if err != nil {
 		return
@@ -2166,6 +2571,7 @@ func (vpcbeta *VpcbetaV1) ListSubnetsWithContext(ctx context.Context, listSubnet
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listSubnetsOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listSubnetsOptions.Start))
 	}
@@ -2174,6 +2580,18 @@ func (vpcbeta *VpcbetaV1) ListSubnetsWithContext(ctx context.Context, listSubnet
 	}
 	if listSubnetsOptions.ResourceGroupID != nil {
 		builder.AddQuery("resource_group.id", fmt.Sprint(*listSubnetsOptions.ResourceGroupID))
+	}
+	if listSubnetsOptions.ZoneName != nil {
+		builder.AddQuery("zone.name", fmt.Sprint(*listSubnetsOptions.ZoneName))
+	}
+	if listSubnetsOptions.VPCID != nil {
+		builder.AddQuery("vpc.id", fmt.Sprint(*listSubnetsOptions.VPCID))
+	}
+	if listSubnetsOptions.VPCCRN != nil {
+		builder.AddQuery("vpc.crn", fmt.Sprint(*listSubnetsOptions.VPCCRN))
+	}
+	if listSubnetsOptions.VPCName != nil {
+		builder.AddQuery("vpc.name", fmt.Sprint(*listSubnetsOptions.VPCName))
 	}
 	if listSubnetsOptions.RoutingTableID != nil {
 		builder.AddQuery("routing_table.id", fmt.Sprint(*listSubnetsOptions.RoutingTableID))
@@ -2243,7 +2661,7 @@ func (vpcbeta *VpcbetaV1) CreateSubnetWithContext(ctx context.Context, createSub
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(createSubnetOptions.SubnetPrototype)
 	if err != nil {
 		return
@@ -2314,7 +2732,7 @@ func (vpcbeta *VpcbetaV1) DeleteSubnetWithContext(ctx context.Context, deleteSub
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -2366,7 +2784,7 @@ func (vpcbeta *VpcbetaV1) GetSubnetWithContext(ctx context.Context, getSubnetOpt
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -2431,7 +2849,7 @@ func (vpcbeta *VpcbetaV1) UpdateSubnetWithContext(ctx context.Context, updateSub
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateSubnetOptions.SubnetPatch)
 	if err != nil {
 		return
@@ -2499,7 +2917,7 @@ func (vpcbeta *VpcbetaV1) GetSubnetNetworkACLWithContext(ctx context.Context, ge
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -2563,7 +2981,7 @@ func (vpcbeta *VpcbetaV1) ReplaceSubnetNetworkACLWithContext(ctx context.Context
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(replaceSubnetNetworkACLOptions.NetworkACLIdentity)
 	if err != nil {
 		return
@@ -2630,7 +3048,7 @@ func (vpcbeta *VpcbetaV1) UnsetSubnetPublicGatewayWithContext(ctx context.Contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -2682,7 +3100,7 @@ func (vpcbeta *VpcbetaV1) GetSubnetPublicGatewayWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -2747,7 +3165,7 @@ func (vpcbeta *VpcbetaV1) SetSubnetPublicGatewayWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(setSubnetPublicGatewayOptions.PublicGatewayIdentity)
 	if err != nil {
 		return
@@ -2815,7 +3233,7 @@ func (vpcbeta *VpcbetaV1) GetSubnetRoutingTableWithContext(ctx context.Context, 
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -2882,7 +3300,7 @@ func (vpcbeta *VpcbetaV1) ReplaceSubnetRoutingTableWithContext(ctx context.Conte
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(replaceSubnetRoutingTableOptions.RoutingTableIdentity)
 	if err != nil {
 		return
@@ -2951,6 +3369,7 @@ func (vpcbeta *VpcbetaV1) ListSubnetReservedIpsWithContext(ctx context.Context, 
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listSubnetReservedIpsOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listSubnetReservedIpsOptions.Start))
 	}
@@ -3025,7 +3444,7 @@ func (vpcbeta *VpcbetaV1) CreateSubnetReservedIPWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createSubnetReservedIPOptions.Address != nil {
 		body["address"] = createSubnetReservedIPOptions.Address
@@ -3110,7 +3529,7 @@ func (vpcbeta *VpcbetaV1) DeleteSubnetReservedIPWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -3163,7 +3582,7 @@ func (vpcbeta *VpcbetaV1) GetSubnetReservedIPWithContext(ctx context.Context, ge
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -3231,7 +3650,7 @@ func (vpcbeta *VpcbetaV1) UpdateSubnetReservedIPWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateSubnetReservedIPOptions.ReservedIPPatch)
 	if err != nil {
 		return
@@ -3292,6 +3711,7 @@ func (vpcbeta *VpcbetaV1) ListImagesWithContext(ctx context.Context, listImagesO
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listImagesOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listImagesOptions.Start))
 	}
@@ -3373,7 +3793,7 @@ func (vpcbeta *VpcbetaV1) CreateImageWithContext(ctx context.Context, createImag
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(createImageOptions.ImagePrototype)
 	if err != nil {
 		return
@@ -3444,7 +3864,7 @@ func (vpcbeta *VpcbetaV1) DeleteImageWithContext(ctx context.Context, deleteImag
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -3496,7 +3916,7 @@ func (vpcbeta *VpcbetaV1) GetImageWithContext(ctx context.Context, getImageOptio
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -3562,7 +3982,7 @@ func (vpcbeta *VpcbetaV1) UpdateImageWithContext(ctx context.Context, updateImag
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateImageOptions.ImagePatch)
 	if err != nil {
 		return
@@ -3640,7 +4060,7 @@ func (vpcbeta *VpcbetaV1) DeprecateImageWithContext(ctx context.Context, depreca
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -3700,7 +4120,7 @@ func (vpcbeta *VpcbetaV1) ObsoleteImageWithContext(ctx context.Context, obsolete
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -3757,6 +4177,7 @@ func (vpcbeta *VpcbetaV1) ListImageExportJobsWithContext(ctx context.Context, li
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listImageExportJobsOptions.Name != nil {
 		builder.AddQuery("name", fmt.Sprint(*listImageExportJobsOptions.Name))
 	}
@@ -3827,7 +4248,7 @@ func (vpcbeta *VpcbetaV1) CreateImageExportJobWithContext(ctx context.Context, c
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createImageExportJobOptions.StorageBucket != nil {
 		body["storage_bucket"] = createImageExportJobOptions.StorageBucket
@@ -3907,7 +4328,7 @@ func (vpcbeta *VpcbetaV1) DeleteImageExportJobWithContext(ctx context.Context, d
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -3960,7 +4381,7 @@ func (vpcbeta *VpcbetaV1) GetImageExportJobWithContext(ctx context.Context, getI
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -4027,7 +4448,7 @@ func (vpcbeta *VpcbetaV1) UpdateImageExportJobWithContext(ctx context.Context, u
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateImageExportJobOptions.ImageExportJobPatch)
 	if err != nil {
 		return
@@ -4087,6 +4508,7 @@ func (vpcbeta *VpcbetaV1) ListOperatingSystemsWithContext(ctx context.Context, l
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listOperatingSystemsOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listOperatingSystemsOptions.Start))
 	}
@@ -4156,7 +4578,7 @@ func (vpcbeta *VpcbetaV1) GetOperatingSystemWithContext(ctx context.Context, get
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -4212,6 +4634,7 @@ func (vpcbeta *VpcbetaV1) ListKeysWithContext(ctx context.Context, listKeysOptio
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listKeysOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listKeysOptions.Start))
 	}
@@ -4280,7 +4703,7 @@ func (vpcbeta *VpcbetaV1) CreateKeyWithContext(ctx context.Context, createKeyOpt
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createKeyOptions.PublicKey != nil {
 		body["public_key"] = createKeyOptions.PublicKey
@@ -4360,7 +4783,7 @@ func (vpcbeta *VpcbetaV1) DeleteKeyWithContext(ctx context.Context, deleteKeyOpt
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -4412,7 +4835,7 @@ func (vpcbeta *VpcbetaV1) GetKeyWithContext(ctx context.Context, getKeyOptions *
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -4476,7 +4899,7 @@ func (vpcbeta *VpcbetaV1) UpdateKeyWithContext(ctx context.Context, updateKeyOpt
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateKeyOptions.KeyPatch)
 	if err != nil {
 		return
@@ -4537,7 +4960,7 @@ func (vpcbeta *VpcbetaV1) ListInstanceProfilesWithContext(ctx context.Context, l
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -4600,7 +5023,7 @@ func (vpcbeta *VpcbetaV1) GetInstanceProfileWithContext(ctx context.Context, get
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -4655,7 +5078,7 @@ func (vpcbeta *VpcbetaV1) ListInstanceTemplatesWithContext(ctx context.Context, 
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -4719,7 +5142,7 @@ func (vpcbeta *VpcbetaV1) CreateInstanceTemplateWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(createInstanceTemplateOptions.InstanceTemplatePrototype)
 	if err != nil {
 		return
@@ -4786,7 +5209,7 @@ func (vpcbeta *VpcbetaV1) DeleteInstanceTemplateWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -4838,7 +5261,7 @@ func (vpcbeta *VpcbetaV1) GetInstanceTemplateWithContext(ctx context.Context, ge
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -4904,7 +5327,7 @@ func (vpcbeta *VpcbetaV1) UpdateInstanceTemplateWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateInstanceTemplateOptions.InstanceTemplatePatch)
 	if err != nil {
 		return
@@ -4964,6 +5387,7 @@ func (vpcbeta *VpcbetaV1) ListInstancesWithContext(ctx context.Context, listInst
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listInstancesOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listInstancesOptions.Start))
 	}
@@ -5065,7 +5489,7 @@ func (vpcbeta *VpcbetaV1) CreateInstanceWithContext(ctx context.Context, createI
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(createInstanceOptions.InstancePrototype)
 	if err != nil {
 		return
@@ -5134,7 +5558,7 @@ func (vpcbeta *VpcbetaV1) DeleteInstanceWithContext(ctx context.Context, deleteI
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -5186,7 +5610,7 @@ func (vpcbeta *VpcbetaV1) GetInstanceWithContext(ctx context.Context, getInstanc
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -5251,7 +5675,7 @@ func (vpcbeta *VpcbetaV1) UpdateInstanceWithContext(ctx context.Context, updateI
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateInstanceOptions.InstancePatch)
 	if err != nil {
 		return
@@ -5320,7 +5744,7 @@ func (vpcbeta *VpcbetaV1) GetInstanceInitializationWithContext(ctx context.Conte
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -5385,7 +5809,7 @@ func (vpcbeta *VpcbetaV1) CreateInstanceActionWithContext(ctx context.Context, c
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createInstanceActionOptions.Type != nil {
 		body["type"] = createInstanceActionOptions.Type
@@ -5464,7 +5888,7 @@ func (vpcbeta *VpcbetaV1) CreateInstanceConsoleAccessTokenWithContext(ctx contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createInstanceConsoleAccessTokenOptions.ConsoleType != nil {
 		body["console_type"] = createInstanceConsoleAccessTokenOptions.ConsoleType
@@ -5541,7 +5965,7 @@ func (vpcbeta *VpcbetaV1) ListInstanceDisksWithContext(ctx context.Context, list
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -5605,7 +6029,7 @@ func (vpcbeta *VpcbetaV1) GetInstanceDiskWithContext(ctx context.Context, getIns
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -5670,7 +6094,7 @@ func (vpcbeta *VpcbetaV1) UpdateInstanceDiskWithContext(ctx context.Context, upd
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateInstanceDiskOptions.InstanceDiskPatch)
 	if err != nil {
 		return
@@ -5741,7 +6165,7 @@ func (vpcbeta *VpcbetaV1) ListInstanceNetworkInterfacesWithContext(ctx context.C
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -5808,7 +6232,7 @@ func (vpcbeta *VpcbetaV1) CreateInstanceNetworkInterfaceWithContext(ctx context.
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createInstanceNetworkInterfaceOptions.Subnet != nil {
 		body["subnet"] = createInstanceNetworkInterfaceOptions.Subnet
@@ -5895,7 +6319,7 @@ func (vpcbeta *VpcbetaV1) DeleteInstanceNetworkInterfaceWithContext(ctx context.
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -5948,7 +6372,7 @@ func (vpcbeta *VpcbetaV1) GetInstanceNetworkInterfaceWithContext(ctx context.Con
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -6015,7 +6439,7 @@ func (vpcbeta *VpcbetaV1) UpdateInstanceNetworkInterfaceWithContext(ctx context.
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateInstanceNetworkInterfaceOptions.NetworkInterfacePatch)
 	if err != nil {
 		return
@@ -6084,7 +6508,7 @@ func (vpcbeta *VpcbetaV1) ListInstanceNetworkInterfaceFloatingIpsWithContext(ctx
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -6148,7 +6572,7 @@ func (vpcbeta *VpcbetaV1) RemoveInstanceNetworkInterfaceFloatingIPWithContext(ct
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -6203,7 +6627,7 @@ func (vpcbeta *VpcbetaV1) GetInstanceNetworkInterfaceFloatingIPWithContext(ctx c
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -6270,7 +6694,7 @@ func (vpcbeta *VpcbetaV1) AddInstanceNetworkInterfaceFloatingIPWithContext(ctx c
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -6292,8 +6716,8 @@ func (vpcbeta *VpcbetaV1) AddInstanceNetworkInterfaceFloatingIPWithContext(ctx c
 	return
 }
 
-// ListInstanceNetworkInterfaceIps : List all reserved IPs bound to an instance network interface
-// This request lists all reserved IPs bound to an instance network interface.
+// ListInstanceNetworkInterfaceIps : List the primary reserved IP for an instance network interface
+// This request lists the primary reserved IP for an instance network interface.
 func (vpcbeta *VpcbetaV1) ListInstanceNetworkInterfaceIps(listInstanceNetworkInterfaceIpsOptions *ListInstanceNetworkInterfaceIpsOptions) (result *ReservedIPCollectionInstanceNetworkInterfaceContext, response *core.DetailedResponse, err error) {
 	return vpcbeta.ListInstanceNetworkInterfaceIpsWithContext(context.Background(), listInstanceNetworkInterfaceIpsOptions)
 }
@@ -6334,6 +6758,7 @@ func (vpcbeta *VpcbetaV1) ListInstanceNetworkInterfaceIpsWithContext(ctx context
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listInstanceNetworkInterfaceIpsOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listInstanceNetworkInterfaceIpsOptions.Start))
 	}
@@ -6362,9 +6787,8 @@ func (vpcbeta *VpcbetaV1) ListInstanceNetworkInterfaceIpsWithContext(ctx context
 	return
 }
 
-// GetInstanceNetworkInterfaceIP : Retrieve bound reserved IP
-// This request retrieves the specified reserved IP address if it is bound to the network interface and instance
-// specified in the URL.
+// GetInstanceNetworkInterfaceIP : Retrieve the primary reserved IP
+// This request retrieves the primary reserved IP for an instance network interface.
 func (vpcbeta *VpcbetaV1) GetInstanceNetworkInterfaceIP(getInstanceNetworkInterfaceIPOptions *GetInstanceNetworkInterfaceIPOptions) (result *ReservedIP, response *core.DetailedResponse, err error) {
 	return vpcbeta.GetInstanceNetworkInterfaceIPWithContext(context.Background(), getInstanceNetworkInterfaceIPOptions)
 }
@@ -6406,7 +6830,7 @@ func (vpcbeta *VpcbetaV1) GetInstanceNetworkInterfaceIPWithContext(ctx context.C
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -6471,7 +6895,7 @@ func (vpcbeta *VpcbetaV1) ListInstanceVolumeAttachmentsWithContext(ctx context.C
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -6538,7 +6962,7 @@ func (vpcbeta *VpcbetaV1) CreateInstanceVolumeAttachmentWithContext(ctx context.
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createInstanceVolumeAttachmentOptions.Volume != nil {
 		body["volume"] = createInstanceVolumeAttachmentOptions.Volume
@@ -6617,7 +7041,7 @@ func (vpcbeta *VpcbetaV1) DeleteInstanceVolumeAttachmentWithContext(ctx context.
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -6670,7 +7094,7 @@ func (vpcbeta *VpcbetaV1) GetInstanceVolumeAttachmentWithContext(ctx context.Con
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -6737,7 +7161,7 @@ func (vpcbeta *VpcbetaV1) UpdateInstanceVolumeAttachmentWithContext(ctx context.
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateInstanceVolumeAttachmentOptions.VolumeAttachmentPatch)
 	if err != nil {
 		return
@@ -6797,6 +7221,7 @@ func (vpcbeta *VpcbetaV1) ListInstanceGroupsWithContext(ctx context.Context, lis
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listInstanceGroupsOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listInstanceGroupsOptions.Start))
 	}
@@ -6863,7 +7288,7 @@ func (vpcbeta *VpcbetaV1) CreateInstanceGroupWithContext(ctx context.Context, cr
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createInstanceGroupOptions.InstanceTemplate != nil {
 		body["instance_template"] = createInstanceGroupOptions.InstanceTemplate
@@ -6956,7 +7381,7 @@ func (vpcbeta *VpcbetaV1) DeleteInstanceGroupWithContext(ctx context.Context, de
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -7008,7 +7433,7 @@ func (vpcbeta *VpcbetaV1) GetInstanceGroupWithContext(ctx context.Context, getIn
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -7073,7 +7498,7 @@ func (vpcbeta *VpcbetaV1) UpdateInstanceGroupWithContext(ctx context.Context, up
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateInstanceGroupOptions.InstanceGroupPatch)
 	if err != nil {
 		return
@@ -7140,7 +7565,7 @@ func (vpcbeta *VpcbetaV1) DeleteInstanceGroupLoadBalancerWithContext(ctx context
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -7192,6 +7617,7 @@ func (vpcbeta *VpcbetaV1) ListInstanceGroupManagersWithContext(ctx context.Conte
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listInstanceGroupManagersOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listInstanceGroupManagersOptions.Start))
 	}
@@ -7262,7 +7688,7 @@ func (vpcbeta *VpcbetaV1) CreateInstanceGroupManagerWithContext(ctx context.Cont
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(createInstanceGroupManagerOptions.InstanceGroupManagerPrototype)
 	if err != nil {
 		return
@@ -7330,7 +7756,7 @@ func (vpcbeta *VpcbetaV1) DeleteInstanceGroupManagerWithContext(ctx context.Cont
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -7383,7 +7809,7 @@ func (vpcbeta *VpcbetaV1) GetInstanceGroupManagerWithContext(ctx context.Context
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -7448,7 +7874,7 @@ func (vpcbeta *VpcbetaV1) UpdateInstanceGroupManagerWithContext(ctx context.Cont
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateInstanceGroupManagerOptions.InstanceGroupManagerPatch)
 	if err != nil {
 		return
@@ -7517,6 +7943,7 @@ func (vpcbeta *VpcbetaV1) ListInstanceGroupManagerActionsWithContext(ctx context
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listInstanceGroupManagerActionsOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listInstanceGroupManagerActionsOptions.Start))
 	}
@@ -7588,7 +8015,7 @@ func (vpcbeta *VpcbetaV1) CreateInstanceGroupManagerActionWithContext(ctx contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(createInstanceGroupManagerActionOptions.InstanceGroupManagerActionPrototype)
 	if err != nil {
 		return
@@ -7657,7 +8084,7 @@ func (vpcbeta *VpcbetaV1) DeleteInstanceGroupManagerActionWithContext(ctx contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -7711,7 +8138,7 @@ func (vpcbeta *VpcbetaV1) GetInstanceGroupManagerActionWithContext(ctx context.C
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -7777,7 +8204,7 @@ func (vpcbeta *VpcbetaV1) UpdateInstanceGroupManagerActionWithContext(ctx contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateInstanceGroupManagerActionOptions.InstanceGroupManagerActionPatch)
 	if err != nil {
 		return
@@ -7846,6 +8273,7 @@ func (vpcbeta *VpcbetaV1) ListInstanceGroupManagerPoliciesWithContext(ctx contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listInstanceGroupManagerPoliciesOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listInstanceGroupManagerPoliciesOptions.Start))
 	}
@@ -7917,7 +8345,7 @@ func (vpcbeta *VpcbetaV1) CreateInstanceGroupManagerPolicyWithContext(ctx contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(createInstanceGroupManagerPolicyOptions.InstanceGroupManagerPolicyPrototype)
 	if err != nil {
 		return
@@ -7986,7 +8414,7 @@ func (vpcbeta *VpcbetaV1) DeleteInstanceGroupManagerPolicyWithContext(ctx contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -8040,7 +8468,7 @@ func (vpcbeta *VpcbetaV1) GetInstanceGroupManagerPolicyWithContext(ctx context.C
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -8106,7 +8534,7 @@ func (vpcbeta *VpcbetaV1) UpdateInstanceGroupManagerPolicyWithContext(ctx contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateInstanceGroupManagerPolicyOptions.InstanceGroupManagerPolicyPatch)
 	if err != nil {
 		return
@@ -8174,7 +8602,7 @@ func (vpcbeta *VpcbetaV1) DeleteInstanceGroupMembershipsWithContext(ctx context.
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -8226,6 +8654,7 @@ func (vpcbeta *VpcbetaV1) ListInstanceGroupMembershipsWithContext(ctx context.Co
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listInstanceGroupMembershipsOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listInstanceGroupMembershipsOptions.Start))
 	}
@@ -8296,7 +8725,7 @@ func (vpcbeta *VpcbetaV1) DeleteInstanceGroupMembershipWithContext(ctx context.C
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -8349,7 +8778,7 @@ func (vpcbeta *VpcbetaV1) GetInstanceGroupMembershipWithContext(ctx context.Cont
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -8414,7 +8843,7 @@ func (vpcbeta *VpcbetaV1) UpdateInstanceGroupMembershipWithContext(ctx context.C
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateInstanceGroupMembershipOptions.InstanceGroupMembershipPatch)
 	if err != nil {
 		return
@@ -8475,6 +8904,7 @@ func (vpcbeta *VpcbetaV1) ListDedicatedHostGroupsWithContext(ctx context.Context
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listDedicatedHostGroupsOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listDedicatedHostGroupsOptions.Start))
 	}
@@ -8550,7 +8980,7 @@ func (vpcbeta *VpcbetaV1) CreateDedicatedHostGroupWithContext(ctx context.Contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createDedicatedHostGroupOptions.Class != nil {
 		body["class"] = createDedicatedHostGroupOptions.Class
@@ -8633,7 +9063,7 @@ func (vpcbeta *VpcbetaV1) DeleteDedicatedHostGroupWithContext(ctx context.Contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -8685,7 +9115,7 @@ func (vpcbeta *VpcbetaV1) GetDedicatedHostGroupWithContext(ctx context.Context, 
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -8751,7 +9181,7 @@ func (vpcbeta *VpcbetaV1) UpdateDedicatedHostGroupWithContext(ctx context.Contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateDedicatedHostGroupOptions.DedicatedHostGroupPatch)
 	if err != nil {
 		return
@@ -8812,6 +9242,7 @@ func (vpcbeta *VpcbetaV1) ListDedicatedHostProfilesWithContext(ctx context.Conte
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listDedicatedHostProfilesOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listDedicatedHostProfilesOptions.Start))
 	}
@@ -8881,7 +9312,7 @@ func (vpcbeta *VpcbetaV1) GetDedicatedHostProfileWithContext(ctx context.Context
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -8936,6 +9367,7 @@ func (vpcbeta *VpcbetaV1) ListDedicatedHostsWithContext(ctx context.Context, lis
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listDedicatedHostsOptions.DedicatedHostGroupID != nil {
 		builder.AddQuery("dedicated_host_group.id", fmt.Sprint(*listDedicatedHostsOptions.DedicatedHostGroupID))
 	}
@@ -9014,7 +9446,7 @@ func (vpcbeta *VpcbetaV1) CreateDedicatedHostWithContext(ctx context.Context, cr
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(createDedicatedHostOptions.DedicatedHostPrototype)
 	if err != nil {
 		return
@@ -9084,7 +9516,7 @@ func (vpcbeta *VpcbetaV1) ListDedicatedHostDisksWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -9148,7 +9580,7 @@ func (vpcbeta *VpcbetaV1) GetDedicatedHostDiskWithContext(ctx context.Context, g
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -9213,7 +9645,7 @@ func (vpcbeta *VpcbetaV1) UpdateDedicatedHostDiskWithContext(ctx context.Context
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateDedicatedHostDiskOptions.DedicatedHostDiskPatch)
 	if err != nil {
 		return
@@ -9280,7 +9712,7 @@ func (vpcbeta *VpcbetaV1) DeleteDedicatedHostWithContext(ctx context.Context, de
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -9332,7 +9764,7 @@ func (vpcbeta *VpcbetaV1) GetDedicatedHostWithContext(ctx context.Context, getDe
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -9398,7 +9830,7 @@ func (vpcbeta *VpcbetaV1) UpdateDedicatedHostWithContext(ctx context.Context, up
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateDedicatedHostOptions.DedicatedHostPatch)
 	if err != nil {
 		return
@@ -9459,6 +9891,7 @@ func (vpcbeta *VpcbetaV1) ListBackupPoliciesWithContext(ctx context.Context, lis
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listBackupPoliciesOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listBackupPoliciesOptions.Start))
 	}
@@ -9535,7 +9968,7 @@ func (vpcbeta *VpcbetaV1) CreateBackupPolicyWithContext(ctx context.Context, cre
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createBackupPolicyOptions.MatchUserTags != nil {
 		body["match_user_tags"] = createBackupPolicyOptions.MatchUserTags
@@ -9551,6 +9984,9 @@ func (vpcbeta *VpcbetaV1) CreateBackupPolicyWithContext(ctx context.Context, cre
 	}
 	if createBackupPolicyOptions.ResourceGroup != nil {
 		body["resource_group"] = createBackupPolicyOptions.ResourceGroup
+	}
+	if createBackupPolicyOptions.Scope != nil {
+		body["scope"] = createBackupPolicyOptions.Scope
 	}
 	_, err = builder.SetBodyContentJSON(body)
 	if err != nil {
@@ -9620,6 +10056,7 @@ func (vpcbeta *VpcbetaV1) ListBackupPolicyJobsWithContext(ctx context.Context, l
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listBackupPolicyJobsOptions.Status != nil {
 		builder.AddQuery("status", fmt.Sprint(*listBackupPolicyJobsOptions.Status))
 	}
@@ -9708,7 +10145,7 @@ func (vpcbeta *VpcbetaV1) GetBackupPolicyJobWithContext(ctx context.Context, get
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -9771,6 +10208,7 @@ func (vpcbeta *VpcbetaV1) ListBackupPolicyPlansWithContext(ctx context.Context, 
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listBackupPolicyPlansOptions.Name != nil {
 		builder.AddQuery("name", fmt.Sprint(*listBackupPolicyPlansOptions.Name))
 	}
@@ -9845,7 +10283,7 @@ func (vpcbeta *VpcbetaV1) CreateBackupPolicyPlanWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createBackupPolicyPlanOptions.CronSpec != nil {
 		body["cron_spec"] = createBackupPolicyPlanOptions.CronSpec
@@ -9947,7 +10385,7 @@ func (vpcbeta *VpcbetaV1) DeleteBackupPolicyPlanWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -10011,7 +10449,7 @@ func (vpcbeta *VpcbetaV1) GetBackupPolicyPlanWithContext(ctx context.Context, ge
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -10080,7 +10518,7 @@ func (vpcbeta *VpcbetaV1) UpdateBackupPolicyPlanWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateBackupPolicyPlanOptions.BackupPolicyPlanPatch)
 	if err != nil {
 		return
@@ -10154,7 +10592,7 @@ func (vpcbeta *VpcbetaV1) DeleteBackupPolicyWithContext(ctx context.Context, del
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -10217,7 +10655,7 @@ func (vpcbeta *VpcbetaV1) GetBackupPolicyWithContext(ctx context.Context, getBac
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -10285,7 +10723,7 @@ func (vpcbeta *VpcbetaV1) UpdateBackupPolicyWithContext(ctx context.Context, upd
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateBackupPolicyOptions.BackupPolicyPatch)
 	if err != nil {
 		return
@@ -10345,6 +10783,7 @@ func (vpcbeta *VpcbetaV1) ListPlacementGroupsWithContext(ctx context.Context, li
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listPlacementGroupsOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listPlacementGroupsOptions.Start))
 	}
@@ -10411,7 +10850,7 @@ func (vpcbeta *VpcbetaV1) CreatePlacementGroupWithContext(ctx context.Context, c
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createPlacementGroupOptions.Strategy != nil {
 		body["strategy"] = createPlacementGroupOptions.Strategy
@@ -10489,7 +10928,7 @@ func (vpcbeta *VpcbetaV1) DeletePlacementGroupWithContext(ctx context.Context, d
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -10541,7 +10980,7 @@ func (vpcbeta *VpcbetaV1) GetPlacementGroupWithContext(ctx context.Context, getP
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -10606,7 +11045,7 @@ func (vpcbeta *VpcbetaV1) UpdatePlacementGroupWithContext(ctx context.Context, u
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updatePlacementGroupOptions.PlacementGroupPatch)
 	if err != nil {
 		return
@@ -10668,6 +11107,7 @@ func (vpcbeta *VpcbetaV1) ListBareMetalServerProfilesWithContext(ctx context.Con
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listBareMetalServerProfilesOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listBareMetalServerProfilesOptions.Start))
 	}
@@ -10737,7 +11177,7 @@ func (vpcbeta *VpcbetaV1) GetBareMetalServerProfileWithContext(ctx context.Conte
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -10792,6 +11232,7 @@ func (vpcbeta *VpcbetaV1) ListBareMetalServersWithContext(ctx context.Context, l
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listBareMetalServersOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listBareMetalServersOptions.Start))
 	}
@@ -10812,15 +11253,6 @@ func (vpcbeta *VpcbetaV1) ListBareMetalServersWithContext(ctx context.Context, l
 	}
 	if listBareMetalServersOptions.VPCName != nil {
 		builder.AddQuery("vpc.name", fmt.Sprint(*listBareMetalServersOptions.VPCName))
-	}
-	if listBareMetalServersOptions.NetworkInterfacesSubnetID != nil {
-		builder.AddQuery("network_interfaces.subnet.id", fmt.Sprint(*listBareMetalServersOptions.NetworkInterfacesSubnetID))
-	}
-	if listBareMetalServersOptions.NetworkInterfacesSubnetCRN != nil {
-		builder.AddQuery("network_interfaces.subnet.crn", fmt.Sprint(*listBareMetalServersOptions.NetworkInterfacesSubnetCRN))
-	}
-	if listBareMetalServersOptions.NetworkInterfacesSubnetName != nil {
-		builder.AddQuery("network_interfaces.subnet.name", fmt.Sprint(*listBareMetalServersOptions.NetworkInterfacesSubnetName))
 	}
 
 	request, err := builder.Build()
@@ -10884,7 +11316,7 @@ func (vpcbeta *VpcbetaV1) CreateBareMetalServerWithContext(ctx context.Context, 
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createBareMetalServerOptions.Initialization != nil {
 		body["initialization"] = createBareMetalServerOptions.Initialization
@@ -10987,7 +11419,7 @@ func (vpcbeta *VpcbetaV1) CreateBareMetalServerConsoleAccessTokenWithContext(ctx
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createBareMetalServerConsoleAccessTokenOptions.ConsoleType != nil {
 		body["console_type"] = createBareMetalServerConsoleAccessTokenOptions.ConsoleType
@@ -11064,7 +11496,7 @@ func (vpcbeta *VpcbetaV1) ListBareMetalServerDisksWithContext(ctx context.Contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -11128,7 +11560,7 @@ func (vpcbeta *VpcbetaV1) GetBareMetalServerDiskWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -11193,7 +11625,7 @@ func (vpcbeta *VpcbetaV1) UpdateBareMetalServerDiskWithContext(ctx context.Conte
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateBareMetalServerDiskOptions.BareMetalServerDiskPatch)
 	if err != nil {
 		return
@@ -11264,6 +11696,7 @@ func (vpcbeta *VpcbetaV1) ListBareMetalServerNetworkInterfacesWithContext(ctx co
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listBareMetalServerNetworkInterfacesOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listBareMetalServerNetworkInterfacesOptions.Start))
 	}
@@ -11338,7 +11771,7 @@ func (vpcbeta *VpcbetaV1) CreateBareMetalServerNetworkInterfaceWithContext(ctx c
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(createBareMetalServerNetworkInterfaceOptions.BareMetalServerNetworkInterfacePrototype)
 	if err != nil {
 		return
@@ -11408,7 +11841,7 @@ func (vpcbeta *VpcbetaV1) DeleteBareMetalServerNetworkInterfaceWithContext(ctx c
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -11461,7 +11894,7 @@ func (vpcbeta *VpcbetaV1) GetBareMetalServerNetworkInterfaceWithContext(ctx cont
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -11528,7 +11961,7 @@ func (vpcbeta *VpcbetaV1) UpdateBareMetalServerNetworkInterfaceWithContext(ctx c
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateBareMetalServerNetworkInterfaceOptions.BareMetalServerNetworkInterfacePatch)
 	if err != nil {
 		return
@@ -11597,7 +12030,7 @@ func (vpcbeta *VpcbetaV1) ListBareMetalServerNetworkInterfaceFloatingIpsWithCont
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -11661,7 +12094,7 @@ func (vpcbeta *VpcbetaV1) RemoveBareMetalServerNetworkInterfaceFloatingIPWithCon
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -11716,7 +12149,7 @@ func (vpcbeta *VpcbetaV1) GetBareMetalServerNetworkInterfaceFloatingIPWithContex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -11784,7 +12217,7 @@ func (vpcbeta *VpcbetaV1) AddBareMetalServerNetworkInterfaceFloatingIPWithContex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -11806,8 +12239,8 @@ func (vpcbeta *VpcbetaV1) AddBareMetalServerNetworkInterfaceFloatingIPWithContex
 	return
 }
 
-// ListBareMetalServerNetworkInterfaceIps : List all reserved IPs bound to a bare metal server network interface
-// This request lists all reserved IPs bound to a bare metal server network interface.
+// ListBareMetalServerNetworkInterfaceIps : List the primary reserved IP for a bare metal server network interface
+// This request lists the primary reserved IP for a bare metal server network interface.
 func (vpcbeta *VpcbetaV1) ListBareMetalServerNetworkInterfaceIps(listBareMetalServerNetworkInterfaceIpsOptions *ListBareMetalServerNetworkInterfaceIpsOptions) (result *ReservedIPCollectionBareMetalServerNetworkInterfaceContext, response *core.DetailedResponse, err error) {
 	return vpcbeta.ListBareMetalServerNetworkInterfaceIpsWithContext(context.Background(), listBareMetalServerNetworkInterfaceIpsOptions)
 }
@@ -11848,7 +12281,7 @@ func (vpcbeta *VpcbetaV1) ListBareMetalServerNetworkInterfaceIpsWithContext(ctx 
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -11870,9 +12303,8 @@ func (vpcbeta *VpcbetaV1) ListBareMetalServerNetworkInterfaceIpsWithContext(ctx 
 	return
 }
 
-// GetBareMetalServerNetworkInterfaceIP : Retrieve bound reserved IP
-// This request retrieves the specified reserved IP address if it is bound to the network interface for the bare metal
-// server specified in the URL.
+// GetBareMetalServerNetworkInterfaceIP : Retrieve the primary reserved IP
+// This request retrieves the primary reserved IP for a bare metal server network interface.
 func (vpcbeta *VpcbetaV1) GetBareMetalServerNetworkInterfaceIP(getBareMetalServerNetworkInterfaceIPOptions *GetBareMetalServerNetworkInterfaceIPOptions) (result *ReservedIP, response *core.DetailedResponse, err error) {
 	return vpcbeta.GetBareMetalServerNetworkInterfaceIPWithContext(context.Background(), getBareMetalServerNetworkInterfaceIPOptions)
 }
@@ -11914,7 +12346,7 @@ func (vpcbeta *VpcbetaV1) GetBareMetalServerNetworkInterfaceIPWithContext(ctx co
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -11977,7 +12409,7 @@ func (vpcbeta *VpcbetaV1) DeleteBareMetalServerWithContext(ctx context.Context, 
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -12029,7 +12461,7 @@ func (vpcbeta *VpcbetaV1) GetBareMetalServerWithContext(ctx context.Context, get
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -12094,7 +12526,7 @@ func (vpcbeta *VpcbetaV1) UpdateBareMetalServerWithContext(ctx context.Context, 
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateBareMetalServerOptions.BareMetalServerPatch)
 	if err != nil {
 		return
@@ -12164,7 +12596,7 @@ func (vpcbeta *VpcbetaV1) GetBareMetalServerInitializationWithContext(ctx contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -12226,7 +12658,7 @@ func (vpcbeta *VpcbetaV1) RestartBareMetalServerWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -12277,7 +12709,7 @@ func (vpcbeta *VpcbetaV1) StartBareMetalServerWithContext(ctx context.Context, s
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -12330,7 +12762,7 @@ func (vpcbeta *VpcbetaV1) StopBareMetalServerWithContext(ctx context.Context, st
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if stopBareMetalServerOptions.Type != nil {
 		body["type"] = stopBareMetalServerOptions.Type
@@ -12384,6 +12816,7 @@ func (vpcbeta *VpcbetaV1) ListVolumeProfilesWithContext(ctx context.Context, lis
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listVolumeProfilesOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listVolumeProfilesOptions.Start))
 	}
@@ -12453,7 +12886,7 @@ func (vpcbeta *VpcbetaV1) GetVolumeProfileWithContext(ctx context.Context, getVo
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -12509,6 +12942,7 @@ func (vpcbeta *VpcbetaV1) ListVolumesWithContext(ctx context.Context, listVolume
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listVolumesOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listVolumesOptions.Start))
 	}
@@ -12594,7 +13028,7 @@ func (vpcbeta *VpcbetaV1) CreateVolumeWithContext(ctx context.Context, createVol
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(createVolumeOptions.VolumePrototype)
 	if err != nil {
 		return
@@ -12604,7 +13038,7 @@ func (vpcbeta *VpcbetaV1) CreateVolumeWithContext(ctx context.Context, createVol
 	if err != nil {
 		return
 	}
-
+	fmt.Println(request)
 	var rawResponse map[string]json.RawMessage
 	response, err = vpcbeta.Service.Request(request, &rawResponse)
 	if err != nil {
@@ -12665,7 +13099,7 @@ func (vpcbeta *VpcbetaV1) DeleteVolumeWithContext(ctx context.Context, deleteVol
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -12717,7 +13151,7 @@ func (vpcbeta *VpcbetaV1) GetVolumeWithContext(ctx context.Context, getVolumeOpt
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -12785,7 +13219,7 @@ func (vpcbeta *VpcbetaV1) UpdateVolumeWithContext(ctx context.Context, updateVol
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateVolumeOptions.VolumePatch)
 	if err != nil {
 		return
@@ -12848,6 +13282,7 @@ func (vpcbeta *VpcbetaV1) DeleteSnapshotsWithContext(ctx context.Context, delete
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	builder.AddQuery("source_volume.id", fmt.Sprint(*deleteSnapshotsOptions.SourceVolumeID))
 
 	request, err := builder.Build()
@@ -12894,6 +13329,7 @@ func (vpcbeta *VpcbetaV1) ListSnapshotsWithContext(ctx context.Context, listSnap
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listSnapshotsOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listSnapshotsOptions.Start))
 	}
@@ -13015,7 +13451,7 @@ func (vpcbeta *VpcbetaV1) CreateSnapshotWithContext(ctx context.Context, createS
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(createSnapshotOptions.SnapshotPrototype)
 	if err != nil {
 		return
@@ -13085,7 +13521,7 @@ func (vpcbeta *VpcbetaV1) DeleteSnapshotWithContext(ctx context.Context, deleteS
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -13137,7 +13573,7 @@ func (vpcbeta *VpcbetaV1) GetSnapshotWithContext(ctx context.Context, getSnapsho
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -13205,7 +13641,7 @@ func (vpcbeta *VpcbetaV1) UpdateSnapshotWithContext(ctx context.Context, updateS
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateSnapshotOptions.SnapshotPatch)
 	if err != nil {
 		return
@@ -13273,7 +13709,7 @@ func (vpcbeta *VpcbetaV1) ListSnapshotClonesWithContext(ctx context.Context, lis
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -13337,7 +13773,7 @@ func (vpcbeta *VpcbetaV1) DeleteSnapshotCloneWithContext(ctx context.Context, de
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -13390,7 +13826,7 @@ func (vpcbeta *VpcbetaV1) GetSnapshotCloneWithContext(ctx context.Context, getSn
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -13455,7 +13891,7 @@ func (vpcbeta *VpcbetaV1) CreateSnapshotCloneWithContext(ctx context.Context, cr
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -14535,7 +14971,7 @@ func (vpcbeta *VpcbetaV1) ListRegionsWithContext(ctx context.Context, listRegion
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -14598,7 +15034,7 @@ func (vpcbeta *VpcbetaV1) GetRegionWithContext(ctx context.Context, getRegionOpt
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -14662,7 +15098,7 @@ func (vpcbeta *VpcbetaV1) ListRegionZonesWithContext(ctx context.Context, listRe
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -14726,7 +15162,7 @@ func (vpcbeta *VpcbetaV1) GetRegionZoneWithContext(ctx context.Context, getRegio
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -14987,6 +15423,7 @@ func (vpcbeta *VpcbetaV1) ListPublicGatewaysWithContext(ctx context.Context, lis
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listPublicGatewaysOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listPublicGatewaysOptions.Start))
 	}
@@ -15061,7 +15498,7 @@ func (vpcbeta *VpcbetaV1) CreatePublicGatewayWithContext(ctx context.Context, cr
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createPublicGatewayOptions.VPC != nil {
 		body["vpc"] = createPublicGatewayOptions.VPC
@@ -15146,7 +15583,7 @@ func (vpcbeta *VpcbetaV1) DeletePublicGatewayWithContext(ctx context.Context, de
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -15198,7 +15635,7 @@ func (vpcbeta *VpcbetaV1) GetPublicGatewayWithContext(ctx context.Context, getPu
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -15262,7 +15699,7 @@ func (vpcbeta *VpcbetaV1) UpdatePublicGatewayWithContext(ctx context.Context, up
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updatePublicGatewayOptions.PublicGatewayPatch)
 	if err != nil {
 		return
@@ -15323,6 +15760,7 @@ func (vpcbeta *VpcbetaV1) ListFloatingIpsWithContext(ctx context.Context, listFl
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listFloatingIpsOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listFloatingIpsOptions.Start))
 	}
@@ -15395,7 +15833,7 @@ func (vpcbeta *VpcbetaV1) CreateFloatingIPWithContext(ctx context.Context, creat
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(createFloatingIPOptions.FloatingIPPrototype)
 	if err != nil {
 		return
@@ -15463,7 +15901,7 @@ func (vpcbeta *VpcbetaV1) DeleteFloatingIPWithContext(ctx context.Context, delet
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -15515,7 +15953,7 @@ func (vpcbeta *VpcbetaV1) GetFloatingIPWithContext(ctx context.Context, getFloat
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -15579,7 +16017,7 @@ func (vpcbeta *VpcbetaV1) UpdateFloatingIPWithContext(ctx context.Context, updat
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateFloatingIPOptions.FloatingIPPatch)
 	if err != nil {
 		return
@@ -15641,6 +16079,7 @@ func (vpcbeta *VpcbetaV1) ListNetworkAclsWithContext(ctx context.Context, listNe
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listNetworkAclsOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listNetworkAclsOptions.Start))
 	}
@@ -15712,7 +16151,7 @@ func (vpcbeta *VpcbetaV1) CreateNetworkACLWithContext(ctx context.Context, creat
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(createNetworkACLOptions.NetworkACLPrototype)
 	if err != nil {
 		return
@@ -15780,7 +16219,7 @@ func (vpcbeta *VpcbetaV1) DeleteNetworkACLWithContext(ctx context.Context, delet
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -15832,7 +16271,7 @@ func (vpcbeta *VpcbetaV1) GetNetworkACLWithContext(ctx context.Context, getNetwo
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -15896,7 +16335,7 @@ func (vpcbeta *VpcbetaV1) UpdateNetworkACLWithContext(ctx context.Context, updat
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateNetworkACLOptions.NetworkACLPatch)
 	if err != nil {
 		return
@@ -15965,6 +16404,7 @@ func (vpcbeta *VpcbetaV1) ListNetworkACLRulesWithContext(ctx context.Context, li
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listNetworkACLRulesOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listNetworkACLRulesOptions.Start))
 	}
@@ -16039,7 +16479,7 @@ func (vpcbeta *VpcbetaV1) CreateNetworkACLRuleWithContext(ctx context.Context, c
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(createNetworkACLRuleOptions.NetworkACLRulePrototype)
 	if err != nil {
 		return
@@ -16107,7 +16547,7 @@ func (vpcbeta *VpcbetaV1) DeleteNetworkACLRuleWithContext(ctx context.Context, d
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -16160,7 +16600,7 @@ func (vpcbeta *VpcbetaV1) GetNetworkACLRuleWithContext(ctx context.Context, getN
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -16226,7 +16666,7 @@ func (vpcbeta *VpcbetaV1) UpdateNetworkACLRuleWithContext(ctx context.Context, u
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateNetworkACLRuleOptions.NetworkACLRulePatch)
 	if err != nil {
 		return
@@ -16289,6 +16729,7 @@ func (vpcbeta *VpcbetaV1) ListSecurityGroupsWithContext(ctx context.Context, lis
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listSecurityGroupsOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listSecurityGroupsOptions.Start))
 	}
@@ -16370,7 +16811,7 @@ func (vpcbeta *VpcbetaV1) CreateSecurityGroupWithContext(ctx context.Context, cr
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createSecurityGroupOptions.VPC != nil {
 		body["vpc"] = createSecurityGroupOptions.VPC
@@ -16451,7 +16892,7 @@ func (vpcbeta *VpcbetaV1) DeleteSecurityGroupWithContext(ctx context.Context, de
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -16503,7 +16944,7 @@ func (vpcbeta *VpcbetaV1) GetSecurityGroupWithContext(ctx context.Context, getSe
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -16569,7 +17010,7 @@ func (vpcbeta *VpcbetaV1) UpdateSecurityGroupWithContext(ctx context.Context, up
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateSecurityGroupOptions.SecurityGroupPatch)
 	if err != nil {
 		return
@@ -16639,7 +17080,7 @@ func (vpcbeta *VpcbetaV1) ListSecurityGroupRulesWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -16708,7 +17149,7 @@ func (vpcbeta *VpcbetaV1) CreateSecurityGroupRuleWithContext(ctx context.Context
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(createSecurityGroupRuleOptions.SecurityGroupRulePrototype)
 	if err != nil {
 		return
@@ -16777,7 +17218,7 @@ func (vpcbeta *VpcbetaV1) DeleteSecurityGroupRuleWithContext(ctx context.Context
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -16830,7 +17271,7 @@ func (vpcbeta *VpcbetaV1) GetSecurityGroupRuleWithContext(ctx context.Context, g
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -16897,7 +17338,7 @@ func (vpcbeta *VpcbetaV1) UpdateSecurityGroupRuleWithContext(ctx context.Context
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateSecurityGroupRuleOptions.SecurityGroupRulePatch)
 	if err != nil {
 		return
@@ -16966,6 +17407,7 @@ func (vpcbeta *VpcbetaV1) ListSecurityGroupTargetsWithContext(ctx context.Contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listSecurityGroupTargetsOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listSecurityGroupTargetsOptions.Start))
 	}
@@ -17001,7 +17443,7 @@ func (vpcbeta *VpcbetaV1) ListSecurityGroupTargetsWithContext(ctx context.Contex
 // - A bare metal server network interface identifier
 // - A virtual network interface identifier
 // - A VPN server identifier
-// - An application load balancer identifier
+// - A load balancer identifier
 // - An endpoint gateway identifier
 // - An instance network interface identifier
 //
@@ -17046,7 +17488,7 @@ func (vpcbeta *VpcbetaV1) DeleteSecurityGroupTargetBindingWithContext(ctx contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -17100,7 +17542,7 @@ func (vpcbeta *VpcbetaV1) GetSecurityGroupTargetWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -17128,7 +17570,7 @@ func (vpcbeta *VpcbetaV1) GetSecurityGroupTargetWithContext(ctx context.Context,
 // - A bare metal server network interface identifier
 // - A virtual network interface identifier
 // - A VPN server identifier
-// - An application load balancer identifier
+// - A load balancer identifier
 // - An endpoint gateway identifier
 // - An instance network interface identifier
 //
@@ -17174,7 +17616,7 @@ func (vpcbeta *VpcbetaV1) CreateSecurityGroupTargetBindingWithContext(ctx contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -17229,6 +17671,7 @@ func (vpcbeta *VpcbetaV1) ListIkePoliciesWithContext(ctx context.Context, listIk
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listIkePoliciesOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listIkePoliciesOptions.Start))
 	}
@@ -17295,7 +17738,7 @@ func (vpcbeta *VpcbetaV1) CreateIkePolicyWithContext(ctx context.Context, create
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createIkePolicyOptions.AuthenticationAlgorithm != nil {
 		body["authentication_algorithm"] = createIkePolicyOptions.AuthenticationAlgorithm
@@ -17385,7 +17828,7 @@ func (vpcbeta *VpcbetaV1) DeleteIkePolicyWithContext(ctx context.Context, delete
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -17437,7 +17880,7 @@ func (vpcbeta *VpcbetaV1) GetIkePolicyWithContext(ctx context.Context, getIkePol
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -17501,7 +17944,7 @@ func (vpcbeta *VpcbetaV1) UpdateIkePolicyWithContext(ctx context.Context, update
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateIkePolicyOptions.IkePolicyPatch)
 	if err != nil {
 		return
@@ -17569,7 +18012,7 @@ func (vpcbeta *VpcbetaV1) ListIkePolicyConnectionsWithContext(ctx context.Contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -17624,6 +18067,7 @@ func (vpcbeta *VpcbetaV1) ListIpsecPoliciesWithContext(ctx context.Context, list
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listIpsecPoliciesOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listIpsecPoliciesOptions.Start))
 	}
@@ -17690,7 +18134,7 @@ func (vpcbeta *VpcbetaV1) CreateIpsecPolicyWithContext(ctx context.Context, crea
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createIpsecPolicyOptions.AuthenticationAlgorithm != nil {
 		body["authentication_algorithm"] = createIpsecPolicyOptions.AuthenticationAlgorithm
@@ -17777,7 +18221,7 @@ func (vpcbeta *VpcbetaV1) DeleteIpsecPolicyWithContext(ctx context.Context, dele
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -17829,7 +18273,7 @@ func (vpcbeta *VpcbetaV1) GetIpsecPolicyWithContext(ctx context.Context, getIpse
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -17893,7 +18337,7 @@ func (vpcbeta *VpcbetaV1) UpdateIpsecPolicyWithContext(ctx context.Context, upda
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateIpsecPolicyOptions.IPsecPolicyPatch)
 	if err != nil {
 		return
@@ -17961,7 +18405,7 @@ func (vpcbeta *VpcbetaV1) ListIpsecPolicyConnectionsWithContext(ctx context.Cont
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -18016,6 +18460,7 @@ func (vpcbeta *VpcbetaV1) ListVPNGatewaysWithContext(ctx context.Context, listVP
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listVPNGatewaysOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listVPNGatewaysOptions.Start))
 	}
@@ -18091,7 +18536,7 @@ func (vpcbeta *VpcbetaV1) CreateVPNGatewayWithContext(ctx context.Context, creat
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(createVPNGatewayOptions.VPNGatewayPrototype)
 	if err != nil {
 		return
@@ -18160,7 +18605,7 @@ func (vpcbeta *VpcbetaV1) DeleteVPNGatewayWithContext(ctx context.Context, delet
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -18212,7 +18657,7 @@ func (vpcbeta *VpcbetaV1) GetVPNGatewayWithContext(ctx context.Context, getVPNGa
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -18276,7 +18721,7 @@ func (vpcbeta *VpcbetaV1) UpdateVPNGatewayWithContext(ctx context.Context, updat
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateVPNGatewayOptions.VPNGatewayPatch)
 	if err != nil {
 		return
@@ -18344,6 +18789,7 @@ func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionsWithContext(ctx context.Conte
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listVPNGatewayConnectionsOptions.Status != nil {
 		builder.AddQuery("status", fmt.Sprint(*listVPNGatewayConnectionsOptions.Status))
 	}
@@ -18411,7 +18857,7 @@ func (vpcbeta *VpcbetaV1) CreateVPNGatewayConnectionWithContext(ctx context.Cont
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(createVPNGatewayConnectionOptions.VPNGatewayConnectionPrototype)
 	if err != nil {
 		return
@@ -18480,7 +18926,7 @@ func (vpcbeta *VpcbetaV1) DeleteVPNGatewayConnectionWithContext(ctx context.Cont
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -18533,7 +18979,7 @@ func (vpcbeta *VpcbetaV1) GetVPNGatewayConnectionWithContext(ctx context.Context
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -18598,7 +19044,7 @@ func (vpcbeta *VpcbetaV1) UpdateVPNGatewayConnectionWithContext(ctx context.Cont
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateVPNGatewayConnectionOptions.VPNGatewayConnectionPatch)
 	if err != nil {
 		return
@@ -18669,7 +19115,7 @@ func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionLocalCIDRsWithContext(ctx cont
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -18736,7 +19182,7 @@ func (vpcbeta *VpcbetaV1) RemoveVPNGatewayConnectionLocalCIDRWithContext(ctx con
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -18792,7 +19238,7 @@ func (vpcbeta *VpcbetaV1) CheckVPNGatewayConnectionLocalCIDRWithContext(ctx cont
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -18849,7 +19295,7 @@ func (vpcbeta *VpcbetaV1) AddVPNGatewayConnectionLocalCIDRWithContext(ctx contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -18904,7 +19350,7 @@ func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionPeerCIDRsWithContext(ctx conte
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -18971,7 +19417,7 @@ func (vpcbeta *VpcbetaV1) RemoveVPNGatewayConnectionPeerCIDRWithContext(ctx cont
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -19027,7 +19473,7 @@ func (vpcbeta *VpcbetaV1) CheckVPNGatewayConnectionPeerCIDRWithContext(ctx conte
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -19084,7 +19530,7 @@ func (vpcbeta *VpcbetaV1) AddVPNGatewayConnectionPeerCIDRWithContext(ctx context
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -19128,6 +19574,7 @@ func (vpcbeta *VpcbetaV1) ListVPNServersWithContext(ctx context.Context, listVPN
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listVPNServersOptions.Name != nil {
 		builder.AddQuery("name", fmt.Sprint(*listVPNServersOptions.Name))
 	}
@@ -19203,7 +19650,7 @@ func (vpcbeta *VpcbetaV1) CreateVPNServerWithContext(ctx context.Context, create
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createVPNServerOptions.Certificate != nil {
 		body["certificate"] = createVPNServerOptions.Certificate
@@ -19310,7 +19757,7 @@ func (vpcbeta *VpcbetaV1) DeleteVPNServerWithContext(ctx context.Context, delete
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -19362,7 +19809,7 @@ func (vpcbeta *VpcbetaV1) GetVPNServerWithContext(ctx context.Context, getVPNSer
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -19430,7 +19877,7 @@ func (vpcbeta *VpcbetaV1) UpdateVPNServerWithContext(ctx context.Context, update
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateVPNServerOptions.VPNServerPatch)
 	if err != nil {
 		return
@@ -19499,7 +19946,7 @@ func (vpcbeta *VpcbetaV1) GetVPNServerClientConfigurationWithContext(ctx context
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -19552,6 +19999,7 @@ func (vpcbeta *VpcbetaV1) ListVPNServerClientsWithContext(ctx context.Context, l
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listVPNServerClientsOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listVPNServerClientsOptions.Start))
 	}
@@ -19626,7 +20074,7 @@ func (vpcbeta *VpcbetaV1) DeleteVPNServerClientWithContext(ctx context.Context, 
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -19679,7 +20127,7 @@ func (vpcbeta *VpcbetaV1) GetVPNServerClientWithContext(ctx context.Context, get
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -19744,7 +20192,7 @@ func (vpcbeta *VpcbetaV1) DisconnectVPNClientWithContext(ctx context.Context, di
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -19798,6 +20246,7 @@ func (vpcbeta *VpcbetaV1) ListVPNServerRoutesWithContext(ctx context.Context, li
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listVPNServerRoutesOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listVPNServerRoutesOptions.Start))
 	}
@@ -19874,7 +20323,7 @@ func (vpcbeta *VpcbetaV1) CreateVPNServerRouteWithContext(ctx context.Context, c
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createVPNServerRouteOptions.Destination != nil {
 		body["destination"] = createVPNServerRouteOptions.Destination
@@ -19952,7 +20401,7 @@ func (vpcbeta *VpcbetaV1) DeleteVPNServerRouteWithContext(ctx context.Context, d
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -20005,7 +20454,7 @@ func (vpcbeta *VpcbetaV1) GetVPNServerRouteWithContext(ctx context.Context, getV
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -20071,7 +20520,7 @@ func (vpcbeta *VpcbetaV1) UpdateVPNServerRouteWithContext(ctx context.Context, u
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateVPNServerRouteOptions.VPNServerRoutePatch)
 	if err != nil {
 		return
@@ -20132,6 +20581,7 @@ func (vpcbeta *VpcbetaV1) ListLoadBalancerProfilesWithContext(ctx context.Contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listLoadBalancerProfilesOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listLoadBalancerProfilesOptions.Start))
 	}
@@ -20201,7 +20651,7 @@ func (vpcbeta *VpcbetaV1) GetLoadBalancerProfileWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -20256,6 +20706,7 @@ func (vpcbeta *VpcbetaV1) ListLoadBalancersWithContext(ctx context.Context, list
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listLoadBalancersOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listLoadBalancersOptions.Start))
 	}
@@ -20322,7 +20773,7 @@ func (vpcbeta *VpcbetaV1) CreateLoadBalancerWithContext(ctx context.Context, cre
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createLoadBalancerOptions.IsPublic != nil {
 		body["is_public"] = createLoadBalancerOptions.IsPublic
@@ -20430,7 +20881,7 @@ func (vpcbeta *VpcbetaV1) DeleteLoadBalancerWithContext(ctx context.Context, del
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -20482,7 +20933,7 @@ func (vpcbeta *VpcbetaV1) GetLoadBalancerWithContext(ctx context.Context, getLoa
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -20551,7 +21002,7 @@ func (vpcbeta *VpcbetaV1) UpdateLoadBalancerWithContext(ctx context.Context, upd
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateLoadBalancerOptions.LoadBalancerPatch)
 	if err != nil {
 		return
@@ -20619,7 +21070,7 @@ func (vpcbeta *VpcbetaV1) GetLoadBalancerStatisticsWithContext(ctx context.Conte
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -20682,7 +21133,7 @@ func (vpcbeta *VpcbetaV1) ListLoadBalancerListenersWithContext(ctx context.Conte
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -20746,7 +21197,7 @@ func (vpcbeta *VpcbetaV1) CreateLoadBalancerListenerWithContext(ctx context.Cont
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createLoadBalancerListenerOptions.Protocol != nil {
 		body["protocol"] = createLoadBalancerListenerOptions.Protocol
@@ -20849,7 +21300,7 @@ func (vpcbeta *VpcbetaV1) DeleteLoadBalancerListenerWithContext(ctx context.Cont
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -20902,7 +21353,7 @@ func (vpcbeta *VpcbetaV1) GetLoadBalancerListenerWithContext(ctx context.Context
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -20967,7 +21418,7 @@ func (vpcbeta *VpcbetaV1) UpdateLoadBalancerListenerWithContext(ctx context.Cont
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateLoadBalancerListenerOptions.LoadBalancerListenerPatch)
 	if err != nil {
 		return
@@ -21036,7 +21487,7 @@ func (vpcbeta *VpcbetaV1) ListLoadBalancerListenerPoliciesWithContext(ctx contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -21101,7 +21552,7 @@ func (vpcbeta *VpcbetaV1) CreateLoadBalancerListenerPolicyWithContext(ctx contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createLoadBalancerListenerPolicyOptions.Action != nil {
 		body["action"] = createLoadBalancerListenerPolicyOptions.Action
@@ -21186,7 +21637,7 @@ func (vpcbeta *VpcbetaV1) DeleteLoadBalancerListenerPolicyWithContext(ctx contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -21240,7 +21691,7 @@ func (vpcbeta *VpcbetaV1) GetLoadBalancerListenerPolicyWithContext(ctx context.C
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -21306,7 +21757,7 @@ func (vpcbeta *VpcbetaV1) UpdateLoadBalancerListenerPolicyWithContext(ctx contex
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateLoadBalancerListenerPolicyOptions.LoadBalancerListenerPolicyPatch)
 	if err != nil {
 		return
@@ -21376,7 +21827,7 @@ func (vpcbeta *VpcbetaV1) ListLoadBalancerListenerPolicyRulesWithContext(ctx con
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -21442,7 +21893,7 @@ func (vpcbeta *VpcbetaV1) CreateLoadBalancerListenerPolicyRuleWithContext(ctx co
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createLoadBalancerListenerPolicyRuleOptions.Condition != nil {
 		body["condition"] = createLoadBalancerListenerPolicyRuleOptions.Condition
@@ -21525,7 +21976,7 @@ func (vpcbeta *VpcbetaV1) DeleteLoadBalancerListenerPolicyRuleWithContext(ctx co
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -21580,7 +22031,7 @@ func (vpcbeta *VpcbetaV1) GetLoadBalancerListenerPolicyRuleWithContext(ctx conte
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -21647,7 +22098,7 @@ func (vpcbeta *VpcbetaV1) UpdateLoadBalancerListenerPolicyRuleWithContext(ctx co
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateLoadBalancerListenerPolicyRuleOptions.LoadBalancerListenerPolicyRulePatch)
 	if err != nil {
 		return
@@ -21715,7 +22166,7 @@ func (vpcbeta *VpcbetaV1) ListLoadBalancerPoolsWithContext(ctx context.Context, 
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -21779,7 +22230,7 @@ func (vpcbeta *VpcbetaV1) CreateLoadBalancerPoolWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createLoadBalancerPoolOptions.Algorithm != nil {
 		body["algorithm"] = createLoadBalancerPoolOptions.Algorithm
@@ -21870,7 +22321,7 @@ func (vpcbeta *VpcbetaV1) DeleteLoadBalancerPoolWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -21923,7 +22374,7 @@ func (vpcbeta *VpcbetaV1) GetLoadBalancerPoolWithContext(ctx context.Context, ge
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -21988,7 +22439,7 @@ func (vpcbeta *VpcbetaV1) UpdateLoadBalancerPoolWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateLoadBalancerPoolOptions.LoadBalancerPoolPatch)
 	if err != nil {
 		return
@@ -22057,7 +22508,7 @@ func (vpcbeta *VpcbetaV1) ListLoadBalancerPoolMembersWithContext(ctx context.Con
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -22122,7 +22573,7 @@ func (vpcbeta *VpcbetaV1) CreateLoadBalancerPoolMemberWithContext(ctx context.Co
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createLoadBalancerPoolMemberOptions.Port != nil {
 		body["port"] = createLoadBalancerPoolMemberOptions.Port
@@ -22203,7 +22654,7 @@ func (vpcbeta *VpcbetaV1) ReplaceLoadBalancerPoolMembersWithContext(ctx context.
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if replaceLoadBalancerPoolMembersOptions.Members != nil {
 		body["members"] = replaceLoadBalancerPoolMembersOptions.Members
@@ -22276,7 +22727,7 @@ func (vpcbeta *VpcbetaV1) DeleteLoadBalancerPoolMemberWithContext(ctx context.Co
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -22330,7 +22781,7 @@ func (vpcbeta *VpcbetaV1) GetLoadBalancerPoolMemberWithContext(ctx context.Conte
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -22396,7 +22847,7 @@ func (vpcbeta *VpcbetaV1) UpdateLoadBalancerPoolMemberWithContext(ctx context.Co
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateLoadBalancerPoolMemberOptions.LoadBalancerPoolMemberPatch)
 	if err != nil {
 		return
@@ -22457,6 +22908,7 @@ func (vpcbeta *VpcbetaV1) ListEndpointGatewaysWithContext(ctx context.Context, l
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listEndpointGatewaysOptions.Name != nil {
 		builder.AddQuery("name", fmt.Sprint(*listEndpointGatewaysOptions.Name))
 	}
@@ -22468,6 +22920,18 @@ func (vpcbeta *VpcbetaV1) ListEndpointGatewaysWithContext(ctx context.Context, l
 	}
 	if listEndpointGatewaysOptions.ResourceGroupID != nil {
 		builder.AddQuery("resource_group.id", fmt.Sprint(*listEndpointGatewaysOptions.ResourceGroupID))
+	}
+	if listEndpointGatewaysOptions.VPCID != nil {
+		builder.AddQuery("vpc.id", fmt.Sprint(*listEndpointGatewaysOptions.VPCID))
+	}
+	if listEndpointGatewaysOptions.VPCCRN != nil {
+		builder.AddQuery("vpc.crn", fmt.Sprint(*listEndpointGatewaysOptions.VPCCRN))
+	}
+	if listEndpointGatewaysOptions.VPCName != nil {
+		builder.AddQuery("vpc.name", fmt.Sprint(*listEndpointGatewaysOptions.VPCName))
+	}
+	if listEndpointGatewaysOptions.AllowDnsResolutionBinding != nil {
+		builder.AddQuery("allow_dns_resolution_binding", fmt.Sprint(*listEndpointGatewaysOptions.AllowDnsResolutionBinding))
 	}
 
 	request, err := builder.Build()
@@ -22530,13 +22994,16 @@ func (vpcbeta *VpcbetaV1) CreateEndpointGatewayWithContext(ctx context.Context, 
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createEndpointGatewayOptions.Target != nil {
 		body["target"] = createEndpointGatewayOptions.Target
 	}
 	if createEndpointGatewayOptions.VPC != nil {
 		body["vpc"] = createEndpointGatewayOptions.VPC
+	}
+	if createEndpointGatewayOptions.AllowDnsResolutionBinding != nil {
+		body["allow_dns_resolution_binding"] = createEndpointGatewayOptions.AllowDnsResolutionBinding
 	}
 	if createEndpointGatewayOptions.Ips != nil {
 		body["ips"] = createEndpointGatewayOptions.Ips
@@ -22617,6 +23084,7 @@ func (vpcbeta *VpcbetaV1) ListEndpointGatewayIpsWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listEndpointGatewayIpsOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listEndpointGatewayIpsOptions.Start))
 	}
@@ -22690,7 +23158,7 @@ func (vpcbeta *VpcbetaV1) RemoveEndpointGatewayIPWithContext(ctx context.Context
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -22743,7 +23211,7 @@ func (vpcbeta *VpcbetaV1) GetEndpointGatewayIPWithContext(ctx context.Context, g
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -22810,7 +23278,7 @@ func (vpcbeta *VpcbetaV1) AddEndpointGatewayIPWithContext(ctx context.Context, a
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -22875,7 +23343,7 @@ func (vpcbeta *VpcbetaV1) DeleteEndpointGatewayWithContext(ctx context.Context, 
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -22927,7 +23395,7 @@ func (vpcbeta *VpcbetaV1) GetEndpointGatewayWithContext(ctx context.Context, get
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -22991,7 +23459,7 @@ func (vpcbeta *VpcbetaV1) UpdateEndpointGatewayWithContext(ctx context.Context, 
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateEndpointGatewayOptions.EndpointGatewayPatch)
 	if err != nil {
 		return
@@ -23052,6 +23520,7 @@ func (vpcbeta *VpcbetaV1) ListFlowLogCollectorsWithContext(ctx context.Context, 
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
+	builder.AddQuery("maturity", "beta")
 	if listFlowLogCollectorsOptions.Start != nil {
 		builder.AddQuery("start", fmt.Sprint(*listFlowLogCollectorsOptions.Start))
 	}
@@ -23141,7 +23610,7 @@ func (vpcbeta *VpcbetaV1) CreateFlowLogCollectorWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	body := make(map[string]interface{})
 	if createFlowLogCollectorOptions.StorageBucket != nil {
 		body["storage_bucket"] = createFlowLogCollectorOptions.StorageBucket
@@ -23226,7 +23695,7 @@ func (vpcbeta *VpcbetaV1) DeleteFlowLogCollectorWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -23278,7 +23747,7 @@ func (vpcbeta *VpcbetaV1) GetFlowLogCollectorWithContext(ctx context.Context, ge
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	request, err := builder.Build()
 	if err != nil {
 		return
@@ -23344,7 +23813,7 @@ func (vpcbeta *VpcbetaV1) UpdateFlowLogCollectorWithContext(ctx context.Context,
 
 	builder.AddQuery("version", fmt.Sprint(*vpcbeta.Version))
 	builder.AddQuery("generation", fmt.Sprint(*vpcbeta.generation))
-
+	builder.AddQuery("maturity", "beta")
 	_, err = builder.SetBodyContentJSON(updateFlowLogCollectorOptions.FlowLogCollectorPatch)
 	if err != nil {
 		return
@@ -23855,6 +24324,22 @@ type BackupPolicy struct {
 	// The CRN for this backup policy.
 	CRN *string `json:"crn" validate:"required"`
 
+	// The reasons for the current `health_state` (if any).
+	//
+	// The enumerated reason code values for this property will expand in the future. When processing this property, check
+	// for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
+	// unexpected reason code was encountered.
+	HealthReasons []BackupPolicyHealthReason `json:"health_reasons" validate:"required"`
+
+	// The health of this resource.
+	// - `ok`: No abnormal behavior detected
+	// - `degraded`: Experiencing compromised performance, capacity, or connectivity
+	// - `faulted`: Completely unreachable, inoperative, or otherwise entirely incapacitated
+	// - `inapplicable`: The health state does not apply because of the current lifecycle state. A resource with a
+	// lifecycle state of `failed` or `deleting` will have a health state of `inapplicable`. A `pending` resource may also
+	// have this state.
+	HealthState *string `json:"health_state" validate:"required"`
+
 	// The URL for this backup policy.
 	Href *string `json:"href" validate:"required"`
 
@@ -23892,7 +24377,25 @@ type BackupPolicy struct {
 
 	// The resource type.
 	ResourceType *string `json:"resource_type" validate:"required"`
+
+	// The scope for this backup policy.
+	Scope BackupPolicyScopeIntf `json:"scope" validate:"required"`
 }
+
+// Constants associated with the BackupPolicy.HealthState property.
+// The health of this resource.
+// - `ok`: No abnormal behavior detected
+// - `degraded`: Experiencing compromised performance, capacity, or connectivity
+// - `faulted`: Completely unreachable, inoperative, or otherwise entirely incapacitated
+// - `inapplicable`: The health state does not apply because of the current lifecycle state. A resource with a lifecycle
+// state of `failed` or `deleting` will have a health state of `inapplicable`. A `pending` resource may also have this
+// state.
+const (
+	BackupPolicyHealthStateDegradedConst     = "degraded"
+	BackupPolicyHealthStateFaultedConst      = "faulted"
+	BackupPolicyHealthStateInapplicableConst = "inapplicable"
+	BackupPolicyHealthStateOkConst           = "ok"
+)
 
 // Constants associated with the BackupPolicy.LifecycleState property.
 // The lifecycle state of the backup policy.
@@ -23926,6 +24429,14 @@ func UnmarshalBackupPolicy(m map[string]json.RawMessage, result interface{}) (er
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "health_reasons", &obj.HealthReasons, UnmarshalBackupPolicyHealthReason)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "health_state", &obj.HealthState)
 	if err != nil {
 		return
 	}
@@ -23966,6 +24477,10 @@ func UnmarshalBackupPolicy(m map[string]json.RawMessage, result interface{}) (er
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "resource_type", &obj.ResourceType)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "scope", &obj.Scope, UnmarshalBackupPolicyScope)
 	if err != nil {
 		return
 	}
@@ -24058,6 +24573,43 @@ type BackupPolicyCollectionNext struct {
 func UnmarshalBackupPolicyCollectionNext(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(BackupPolicyCollectionNext)
 	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// BackupPolicyHealthReason : BackupPolicyHealthReason struct
+type BackupPolicyHealthReason struct {
+	// A snake case string succinctly identifying the reason for this health state.
+	Code *string `json:"code" validate:"required"`
+
+	// An explanation of the reason for this health state.
+	Message *string `json:"message" validate:"required"`
+
+	// Link to documentation about the reason for this health state.
+	MoreInfo *string `json:"more_info,omitempty"`
+}
+
+// Constants associated with the BackupPolicyHealthReason.Code property.
+// A snake case string succinctly identifying the reason for this health state.
+const (
+	BackupPolicyHealthReasonCodeMissingServiceAuthorizationPoliciesConst = "missing_service_authorization_policies"
+)
+
+// UnmarshalBackupPolicyHealthReason unmarshals an instance of BackupPolicyHealthReason from the specified map of raw messages.
+func UnmarshalBackupPolicyHealthReason(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(BackupPolicyHealthReason)
+	err = core.UnmarshalPrimitive(m, "code", &obj.Code)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "message", &obj.Message)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
 	if err != nil {
 		return
 	}
@@ -25087,6 +25639,83 @@ func UnmarshalBackupPolicyPlanRemoteRegionPolicyPrototype(m map[string]json.RawM
 	return
 }
 
+// BackupPolicyScope : The scope for this backup policy.
+// Models which "extend" this model:
+// - BackupPolicyScopeEnterpriseReference
+// - BackupPolicyScopeAccountReference
+type BackupPolicyScope struct {
+	// The CRN for this enterprise.
+	CRN *string `json:"crn,omitempty"`
+
+	// The unique identifier for this enterprise.
+	ID *string `json:"id,omitempty"`
+
+	// The resource type.
+	ResourceType *string `json:"resource_type,omitempty"`
+}
+
+// Constants associated with the BackupPolicyScope.ResourceType property.
+// The resource type.
+const (
+	BackupPolicyScopeResourceTypeEnterpriseConst = "enterprise"
+)
+
+func (*BackupPolicyScope) isaBackupPolicyScope() bool {
+	return true
+}
+
+type BackupPolicyScopeIntf interface {
+	isaBackupPolicyScope() bool
+}
+
+// UnmarshalBackupPolicyScope unmarshals an instance of BackupPolicyScope from the specified map of raw messages.
+func UnmarshalBackupPolicyScope(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(BackupPolicyScope)
+	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "resource_type", &obj.ResourceType)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// BackupPolicyScopePrototype : The scope to use for this backup policy.
+//
+// If unspecified, the policy will be scoped to the account.
+// Models which "extend" this model:
+// - BackupPolicyScopePrototypeEnterpriseIdentity
+type BackupPolicyScopePrototype struct {
+	// The CRN for this enterprise.
+	CRN *string `json:"crn,omitempty"`
+}
+
+func (*BackupPolicyScopePrototype) isaBackupPolicyScopePrototype() bool {
+	return true
+}
+
+type BackupPolicyScopePrototypeIntf interface {
+	isaBackupPolicyScopePrototype() bool
+}
+
+// UnmarshalBackupPolicyScopePrototype unmarshals an instance of BackupPolicyScopePrototype from the specified map of raw messages.
+func UnmarshalBackupPolicyScopePrototype(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(BackupPolicyScopePrototype)
+	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // BareMetalServer : BareMetalServer struct
 type BareMetalServer struct {
 	// The total bandwidth (in megabits per second) shared across the bare metal server network interfaces.
@@ -25134,10 +25763,10 @@ type BareMetalServer struct {
 	// The name for this bare metal server. The name is unique across all bare metal servers in the region.
 	Name *string `json:"name" validate:"required"`
 
-	// The bare metal server network interfaces, including the primary interface.
+	// The network interfaces for this bare metal server, including the primary network interface.
 	NetworkInterfaces []NetworkInterfaceBareMetalServerContextReference `json:"network_interfaces" validate:"required"`
 
-	// The primary bare metal server network interface.
+	// The primary network interface for this bare metal server.
 	PrimaryNetworkInterface *NetworkInterfaceBareMetalServerContextReference `json:"primary_network_interface" validate:"required"`
 
 	// The [profile](https://cloud.ibm.com/docs/vpc?topic=vpc-bare-metal-servers-profile)
@@ -25912,10 +26541,10 @@ type BareMetalServerNetworkInterface struct {
 	//   server is stopped
 	//   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 	//     to use the PCI interface
-	//   - Cannot directly use an IEEE 802.1q VLAN tag.
+	//   - Cannot directly use an IEEE 802.1Q tag.
 	// - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its
 	//   array of `allowed_vlans`.
-	//   - Must use an IEEE 802.1q tag.
+	//   - Must use an IEEE 802.1Q tag.
 	//   - Has its own security groups and does not inherit those of the PCI device through
 	//     which traffic flows.
 	//
@@ -25948,18 +26577,25 @@ type BareMetalServerNetworkInterface struct {
 	// The associated subnet.
 	Subnet *SubnetReference `json:"subnet" validate:"required"`
 
-	// The type of this bare metal server network interface.
+	// The bare metal server network interface type.
 	Type *string `json:"type" validate:"required"`
 
-	// Indicates what VLAN IDs (for VLAN type only) can use this physical (PCI type) interface.
+	// The VLAN IDs allowed for `vlan` interfaces using this PCI interface.
 	AllowedVlans []int64 `json:"allowed_vlans,omitempty"`
 
-	// Indicates if the interface can float to any other server within the same
-	// `resource_group`. The interface will float automatically if the network detects a GARP or RARP on another bare metal
-	// server in the resource group.  Applies only to `vlan` type interfaces.
+	// Indicates if the data path for the network interface can float to another bare metal server. Can only be `true` for
+	// network interfaces with an `interface_type` of `vlan`.
+	//
+	// If `true`, and the network detects traffic for this data path on another bare metal server in the resource group,
+	// the network interface will be automatically deleted from this bare metal server and a new network interface with the
+	// same `id`, `name` and `vlan` will be created on the other bare metal server.
+	//
+	// For the data path to float, the other bare metal server must be in the same
+	// `resource_group`, and must have a network interface with `interface_type` of `pci` with `allowed_vlans` including
+	// this network interface's `vlan`.
 	AllowInterfaceToFloat *bool `json:"allow_interface_to_float,omitempty"`
 
-	// Indicates the 802.1Q VLAN ID tag that must be used for all traffic on this interface.
+	// The VLAN ID used in the IEEE 802.1Q tag present in all traffic on this interface.
 	Vlan *int64 `json:"vlan,omitempty"`
 }
 
@@ -25971,10 +26607,10 @@ type BareMetalServerNetworkInterface struct {
 //     server is stopped
 //   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 //     to use the PCI interface
-//   - Cannot directly use an IEEE 802.1q VLAN tag.
+//   - Cannot directly use an IEEE 802.1Q tag.
 //   - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its
 //     array of `allowed_vlans`.
-//   - Must use an IEEE 802.1q tag.
+//   - Must use an IEEE 802.1Q tag.
 //   - Has its own security groups and does not inherit those of the PCI device through
 //     which traffic flows.
 //
@@ -26003,7 +26639,7 @@ const (
 )
 
 // Constants associated with the BareMetalServerNetworkInterface.Type property.
-// The type of this bare metal server network interface.
+// The bare metal server network interface type.
 const (
 	BareMetalServerNetworkInterfaceTypePrimaryConst   = "primary"
 	BareMetalServerNetworkInterfaceTypeSecondaryConst = "secondary"
@@ -26139,7 +26775,8 @@ type BareMetalServerNetworkInterfacePatch struct {
 	// Indicates whether source IP spoofing is allowed on this bare metal server network interface.
 	AllowIPSpoofing *bool `json:"allow_ip_spoofing,omitempty"`
 
-	// Indicates what VLAN IDs (for VLAN type only) can use this physical (PCI type) interface.
+	// The VLAN IDs to allow for `vlan` interfaces using this PCI interface, replacing any existing VLAN IDs. The specified
+	// values must include IDs for all `vlan` interfaces currently using this PCI interface.
 	AllowedVlans []int64 `json:"allowed_vlans,omitempty"`
 
 	// If `true`:
@@ -26219,11 +26856,11 @@ type BareMetalServerNetworkInterfacePrototype struct {
 	//   server is stopped
 	//   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 	//     to use the PCI interface
-	//   - Cannot directly use an IEEE 802.1q VLAN tag.
+	//   - Cannot directly use an IEEE 802.1Q tag.
 	//   - Not supported on bare metal servers with a `cpu.architecture` of `s390x`
 	// - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its
 	//   array of `allowed_vlans`.
-	//   - Must use an IEEE 802.1q tag.
+	//   - Must use an IEEE 802.1Q tag.
 	//   - Has its own security groups and does not inherit those of the PCI device through
 	//     which traffic flows.
 	//   - Not supported on bare metal servers with a `cpu.architecture` of `s390x`.
@@ -26248,15 +26885,22 @@ type BareMetalServerNetworkInterfacePrototype struct {
 	// The associated subnet.
 	Subnet SubnetIdentityIntf `json:"subnet" validate:"required"`
 
-	// Indicates what VLAN IDs (for VLAN type only) can use this physical (PCI type) interface.
+	// The VLAN IDs to allow for `vlan` interfaces using this PCI interface.
 	AllowedVlans []int64 `json:"allowed_vlans,omitempty"`
 
-	// Indicates if the interface can float to any other server within the same
-	// `resource_group`. The interface will float automatically if the network detects a GARP or RARP on another bare metal
-	// server in the resource group.  Applies only to `vlan` type interfaces.
+	// Indicates if the data path for the network interface can float to another bare metal server. Can only be `true` for
+	// network interfaces with an `interface_type` of `vlan`.
+	//
+	// If `true`, and the network detects traffic for this data path on another bare metal server in the resource group,
+	// the network interface will be automatically deleted from this bare metal server and a new network interface with the
+	// same `id`, `name` and `vlan` will be created on the other bare metal server.
+	//
+	// For the data path to float, the other bare metal server must be in the same
+	// `resource_group`, and must have a network interface with `interface_type` of `pci` with `allowed_vlans` including
+	// this network interface's `vlan`.
 	AllowInterfaceToFloat *bool `json:"allow_interface_to_float,omitempty"`
 
-	// Indicates the 802.1Q VLAN ID tag that must be used for all traffic on this interface.
+	// The VLAN ID used in the IEEE 802.1Q tag present in all traffic on this interface.
 	Vlan *int64 `json:"vlan,omitempty"`
 }
 
@@ -26269,11 +26913,11 @@ type BareMetalServerNetworkInterfacePrototype struct {
 //     server is stopped
 //   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 //     to use the PCI interface
-//   - Cannot directly use an IEEE 802.1q VLAN tag.
+//   - Cannot directly use an IEEE 802.1Q tag.
 //   - Not supported on bare metal servers with a `cpu.architecture` of `s390x`
 //   - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its
 //     array of `allowed_vlans`.
-//   - Must use an IEEE 802.1q tag.
+//   - Must use an IEEE 802.1Q tag.
 //   - Has its own security groups and does not inherit those of the PCI device through
 //     which traffic flows.
 //   - Not supported on bare metal servers with a `cpu.architecture` of `s390x`.
@@ -26402,7 +27046,7 @@ type BareMetalServerPrimaryNetworkInterfacePrototype struct {
 	// Indicates whether source IP spoofing is allowed on this bare metal server network interface.
 	AllowIPSpoofing *bool `json:"allow_ip_spoofing,omitempty"`
 
-	// Indicates what VLAN IDs (for VLAN type only) can use this physical (PCI type) interface.
+	// The VLAN IDs allowed for `vlan` interfaces using this PCI interface.
 	AllowedVlans []int64 `json:"allowed_vlans,omitempty"`
 
 	// If `true`:
@@ -26424,7 +27068,7 @@ type BareMetalServerPrimaryNetworkInterfacePrototype struct {
 	//   server is stopped
 	//   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 	//     to use the PCI interface
-	//   - Cannot directly use an IEEE 802.1q VLAN tag.
+	//   - Cannot directly use an IEEE 802.1Q tag.
 	//   - Not supported on bare metal servers with a `cpu.architecture` of `s390x`.
 	InterfaceType *string `json:"interface_type,omitempty"`
 
@@ -26457,7 +27101,7 @@ type BareMetalServerPrimaryNetworkInterfacePrototype struct {
 //     server is stopped
 //   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 //     to use the PCI interface
-//   - Cannot directly use an IEEE 802.1q VLAN tag.
+//   - Cannot directly use an IEEE 802.1Q tag.
 //   - Not supported on bare metal servers with a `cpu.architecture` of `s390x`.
 const (
 	BareMetalServerPrimaryNetworkInterfacePrototypeInterfaceTypeHipersocketConst = "hipersocket"
@@ -27558,52 +28202,6 @@ func UnmarshalBareMetalServerProfileSupportedTrustedPlatformModuleModes(m map[st
 	return
 }
 
-// BareMetalServerPrototypeVPC : The VPC this bare metal server will reside in.
-//
-// If specified, it must match the VPC for the subnets that the network interfaces of the bare metal server are attached
-// to.
-// Models which "extend" this model:
-// - BareMetalServerPrototypeVPCVPCIdentityByID
-// - BareMetalServerPrototypeVPCVPCIdentityByCRN
-// - BareMetalServerPrototypeVPCVPCIdentityByHref
-type BareMetalServerPrototypeVPC struct {
-	// The unique identifier for this VPC.
-	ID *string `json:"id,omitempty"`
-
-	// The CRN for this VPC.
-	CRN *string `json:"crn,omitempty"`
-
-	// The URL for this VPC.
-	Href *string `json:"href,omitempty"`
-}
-
-func (*BareMetalServerPrototypeVPC) isaBareMetalServerPrototypeVPC() bool {
-	return true
-}
-
-type BareMetalServerPrototypeVPCIntf interface {
-	isaBareMetalServerPrototypeVPC() bool
-}
-
-// UnmarshalBareMetalServerPrototypeVPC unmarshals an instance of BareMetalServerPrototypeVPC from the specified map of raw messages.
-func UnmarshalBareMetalServerPrototypeVPC(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(BareMetalServerPrototypeVPC)
-	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
-	if err != nil {
-		return
-	}
-	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
-	return
-}
-
 // BareMetalServerStatusReason : BareMetalServerStatusReason struct
 type BareMetalServerStatusReason struct {
 	// The status reason code:
@@ -28104,8 +28702,13 @@ type CreateBackupPolicyOptions struct {
 	Plans []BackupPolicyPlanPrototype `json:"plans,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
+
+	// The scope to use for this backup policy.
+	//
+	// If unspecified, the policy will be scoped to the account.
+	Scope BackupPolicyScopePrototypeIntf `json:"scope,omitempty"`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -28151,6 +28754,12 @@ func (_options *CreateBackupPolicyOptions) SetPlans(plans []BackupPolicyPlanProt
 // SetResourceGroup : Allow user to set ResourceGroup
 func (_options *CreateBackupPolicyOptions) SetResourceGroup(resourceGroup ResourceGroupIdentityIntf) *CreateBackupPolicyOptions {
 	_options.ResourceGroup = resourceGroup
+	return _options
+}
+
+// SetScope : Allow user to set Scope
+func (_options *CreateBackupPolicyOptions) SetScope(scope BackupPolicyScopePrototypeIntf) *CreateBackupPolicyOptions {
+	_options.Scope = scope
 	return _options
 }
 
@@ -28389,7 +28998,7 @@ type CreateBareMetalServerOptions struct {
 	NetworkInterfaces []BareMetalServerNetworkInterfacePrototypeIntf `json:"network_interfaces,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	TrustedPlatformModule *BareMetalServerTrustedPlatformModulePrototype `json:"trusted_platform_module,omitempty"`
@@ -28398,7 +29007,7 @@ type CreateBareMetalServerOptions struct {
 	//
 	// If specified, it must match the VPC for the subnets that the network interfaces of
 	// the bare metal server are attached to.
-	VPC BareMetalServerPrototypeVPCIntf `json:"vpc,omitempty"`
+	VPC VPCIdentityIntf `json:"vpc,omitempty"`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -28469,7 +29078,7 @@ func (_options *CreateBareMetalServerOptions) SetTrustedPlatformModule(trustedPl
 }
 
 // SetVPC : Allow user to set VPC
-func (_options *CreateBareMetalServerOptions) SetVPC(vpc BareMetalServerPrototypeVPCIntf) *CreateBareMetalServerOptions {
+func (_options *CreateBareMetalServerOptions) SetVPC(vpc VPCIdentityIntf) *CreateBareMetalServerOptions {
 	_options.VPC = vpc
 	return _options
 }
@@ -28496,7 +29105,7 @@ type CreateDedicatedHostGroupOptions struct {
 	Name *string `json:"name,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// Allows users to set headers on API requests
@@ -28593,6 +29202,13 @@ type CreateEndpointGatewayOptions struct {
 	// The VPC this endpoint gateway will reside in.
 	VPC VPCIdentityIntf `json:"vpc" validate:"required"`
 
+	// Indicates whether to allow DNS resolution for this endpoint gateway when the VPC this endpoint gateway resides in
+	// has a DNS resolution binding to a VPC with `dns.enable_hub` set to `true`.
+	//
+	// Must be `true` if the VPC this endpoint gateway resides in has `dns.enable_hub` set to
+	// `true`.
+	AllowDnsResolutionBinding *bool `json:"allow_dns_resolution_binding,omitempty"`
+
 	// The reserved IPs to bind to this endpoint gateway. At most one reserved IP per zone is allowed.
 	Ips []EndpointGatewayReservedIPIntf `json:"ips,omitempty"`
 
@@ -28601,7 +29217,7 @@ type CreateEndpointGatewayOptions struct {
 	Name *string `json:"name,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// The security groups to use for this endpoint gateway. If unspecified, the VPC's default security group is used.
@@ -28628,6 +29244,12 @@ func (_options *CreateEndpointGatewayOptions) SetTarget(target EndpointGatewayTa
 // SetVPC : Allow user to set VPC
 func (_options *CreateEndpointGatewayOptions) SetVPC(vpc VPCIdentityIntf) *CreateEndpointGatewayOptions {
 	_options.VPC = vpc
+	return _options
+}
+
+// SetAllowDnsResolutionBinding : Allow user to set AllowDnsResolutionBinding
+func (_options *CreateEndpointGatewayOptions) SetAllowDnsResolutionBinding(allowDnsResolutionBinding bool) *CreateEndpointGatewayOptions {
+	_options.AllowDnsResolutionBinding = core.BoolPtr(allowDnsResolutionBinding)
 	return _options
 }
 
@@ -28694,7 +29316,8 @@ type CreateFlowLogCollectorOptions struct {
 	// The Cloud Object Storage bucket where the collected flows will be logged.
 	// The bucket must exist and an IAM service authorization must grant
 	// `IBM Cloud Flow Logs` resources of `VPC Infrastructure Services` writer
-	// access to the bucket.
+	// access to the bucket. For more information, see [Creating a flow log
+	// collector](https://cloud.ibm.com/docs/vpc?topic=vpc-ordering-flow-log-collector).
 	StorageBucket LegacyCloudObjectStorageBucketIdentityIntf `json:"storage_bucket" validate:"required"`
 
 	// The target this collector will collect flow logs for. If the target is an instance,
@@ -28710,7 +29333,7 @@ type CreateFlowLogCollectorOptions struct {
 	Name *string `json:"name,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// Allows users to set headers on API requests
@@ -28783,7 +29406,7 @@ type CreateIkePolicyOptions struct {
 	Name *string `json:"name,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// Allows users to set headers on API requests
@@ -29247,7 +29870,7 @@ type CreateInstanceGroupOptions struct {
 	Name *string `json:"name,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// Allows users to set headers on API requests
@@ -29324,7 +29947,7 @@ type CreateInstanceNetworkInterfaceOptions struct {
 	// The associated subnet.
 	Subnet SubnetIdentityIntf `json:"subnet" validate:"required"`
 
-	// Indicates whether source IP spoofing is allowed on this instance interface.
+	// Indicates whether source IP spoofing is allowed on this instance network interface.
 	AllowIPSpoofing *bool `json:"allow_ip_spoofing,omitempty"`
 
 	// The name for the instance network interface. The name must not be used by another network interface on the virtual
@@ -29536,7 +30159,7 @@ type CreateIpsecPolicyOptions struct {
 	Name *string `json:"name,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// Allows users to set headers on API requests
@@ -29654,7 +30277,7 @@ type CreateKeyOptions struct {
 	Name *string `json:"name,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// The crypto-system used by this key.
@@ -30167,7 +30790,7 @@ type CreateLoadBalancerOptions struct {
 	Profile LoadBalancerProfileIdentityIntf `json:"profile,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// Indicates whether route mode is enabled for this load balancer.
@@ -30565,7 +31188,7 @@ type CreatePlacementGroupOptions struct {
 	Name *string `json:"name,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// Allows users to set headers on API requests
@@ -30631,7 +31254,7 @@ type CreatePublicGatewayOptions struct {
 	Name *string `json:"name,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// Allows users to set headers on API requests
@@ -30692,7 +31315,7 @@ type CreateSecurityGroupOptions struct {
 	Name *string `json:"name,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// The prototype objects for rules to be created for this security group. If unspecified, no rules will be created,
@@ -31305,6 +31928,59 @@ func (options *CreateVPCAddressPrefixOptions) SetHeaders(param map[string]string
 	return options
 }
 
+// CreateVPCDnsResolutionBindingOptions : The CreateVPCDnsResolutionBinding options.
+type CreateVPCDnsResolutionBindingOptions struct {
+	// The VPC identifier.
+	VPCID *string `json:"vpc_id" validate:"required,ne="`
+
+	// Another VPC to bind this VPC to for DNS resolution. The VPC must have
+	// `dns.enable_hub` set to `true`, and may be in a different account (subject to
+	// IAM policies).
+	//
+	// Additionally, the VPC specified in the URL (this VPC) must have `dns.enable_hub`
+	// set to `false` and a `dns.resolution_binding_count` of zero.
+	VPC VPCIdentityIntf `json:"vpc" validate:"required"`
+
+	// The name for this DNS resolution binding. The name must not be used by another DNS resolution binding for the VPC.
+	// If unspecified, the name will be a hyphenated list of randomly-selected words.
+	Name *string `json:"name,omitempty"`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewCreateVPCDnsResolutionBindingOptions : Instantiate CreateVPCDnsResolutionBindingOptions
+func (*VpcbetaV1) NewCreateVPCDnsResolutionBindingOptions(vpcID string, vpc VPCIdentityIntf) *CreateVPCDnsResolutionBindingOptions {
+	return &CreateVPCDnsResolutionBindingOptions{
+		VPCID: core.StringPtr(vpcID),
+		VPC:   vpc,
+	}
+}
+
+// SetVPCID : Allow user to set VPCID
+func (_options *CreateVPCDnsResolutionBindingOptions) SetVPCID(vpcID string) *CreateVPCDnsResolutionBindingOptions {
+	_options.VPCID = core.StringPtr(vpcID)
+	return _options
+}
+
+// SetVPC : Allow user to set VPC
+func (_options *CreateVPCDnsResolutionBindingOptions) SetVPC(vpc VPCIdentityIntf) *CreateVPCDnsResolutionBindingOptions {
+	_options.VPC = vpc
+	return _options
+}
+
+// SetName : Allow user to set Name
+func (_options *CreateVPCDnsResolutionBindingOptions) SetName(name string) *CreateVPCDnsResolutionBindingOptions {
+	_options.Name = core.StringPtr(name)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *CreateVPCDnsResolutionBindingOptions) SetHeaders(param map[string]string) *CreateVPCDnsResolutionBindingOptions {
+	options.Headers = param
+	return options
+}
+
 // CreateVPCOptions : The CreateVPC options.
 type CreateVPCOptions struct {
 	// Indicates whether a [default address prefix](https://cloud.ibm.com/docs/vpc?topic=vpc-configuring-address-prefixes)
@@ -31320,12 +31996,18 @@ type CreateVPCOptions struct {
 	// connected in this way. This value is set at creation and subsequently immutable.
 	ClassicAccess *bool `json:"classic_access,omitempty"`
 
+	// The DNS configuration for this VPC.
+	//
+	// If unspecified, the system will assign DNS servers capable of resolving hosts and endpoint
+	// gateways within this VPC, and hosts on the internet.
+	Dns *VpcdnsPrototype `json:"dns,omitempty"`
+
 	// The name for this VPC. The name must not be used by another VPC in the region. If unspecified, the name will be a
 	// hyphenated list of randomly-selected words.
 	Name *string `json:"name,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// Allows users to set headers on API requests
@@ -31358,6 +32040,12 @@ func (_options *CreateVPCOptions) SetAddressPrefixManagement(addressPrefixManage
 // SetClassicAccess : Allow user to set ClassicAccess
 func (_options *CreateVPCOptions) SetClassicAccess(classicAccess bool) *CreateVPCOptions {
 	_options.ClassicAccess = core.BoolPtr(classicAccess)
+	return _options
+}
+
+// SetDns : Allow user to set Dns
+func (_options *CreateVPCOptions) SetDns(dns *VpcdnsPrototype) *CreateVPCOptions {
+	_options.Dns = dns
 	return _options
 }
 
@@ -31514,9 +32202,9 @@ type CreateVPCRoutingTableOptions struct {
 	// set to `true`.
 	//
 	// Incoming traffic will be routed according to the routing table with one exception: routes with an `action` of
-	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone`. Therefore,
-	// if an incoming packet matches a route with a `next_hop` of an internet-bound IP address or a VPN gateway connection,
-	// the packet will be dropped.
+	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone` that is
+	// able to accept traffic. Therefore, if an incoming packet matches a route with a `next_hop` of a VPN gateway
+	// connection, the packet will be dropped.
 	//
 	// If [Classic Access](https://cloud.ibm.com/docs/vpc?topic=vpc-setting-up-access-to-classic-infrastructure) is enabled
 	// for this VPC, and this property is set to `true`, its incoming traffic will also be routed according to this routing
@@ -31529,9 +32217,9 @@ type CreateVPCRoutingTableOptions struct {
 	// Incoming traffic will be routed according to the routing table with two exceptions:
 	// - Traffic destined for IP addresses associated with public gateways will not be
 	//   subject to routes in this routing table.
-	// - Routes with an action of deliver are treated as drop unless the `next_hop` is an
-	//   IP address in a subnet in the route's `zone`. Therefore, if an incoming packet
-	//   matches a route with a `next_hop` of an internet-bound IP address or a VPN gateway
+	// - Routes with an `action` of `deliver` are treated as `drop` unless the `next_hop` is
+	//   an IP address in a subnet in the route's `zone` that is able to accept traffic.
+	//   Therefore, if an incoming packet matches a route with a `next_hop` of a VPN gateway
 	//   connection, the packet will be dropped.
 	RouteInternetIngress *bool `json:"route_internet_ingress,omitempty"`
 
@@ -31540,18 +32228,18 @@ type CreateVPCRoutingTableOptions struct {
 	// this property set to `true`.
 	//
 	// Incoming traffic will be routed according to the routing table with one exception: routes with an `action` of
-	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone`. Therefore,
-	// if an incoming packet matches a route with a `next_hop` of an internet-bound IP address or a VPN gateway connection,
-	// the packet will be dropped.
+	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone` that is
+	// able to accept traffic. Therefore, if an incoming packet matches a route with a `next_hop` of a VPN gateway
+	// connection, the packet will be dropped.
 	RouteTransitGatewayIngress *bool `json:"route_transit_gateway_ingress,omitempty"`
 
 	// If set to `true`, this routing table will be used to route traffic that originates from subnets in other zones in
 	// this VPC. The VPC must not already have a routing table with this property set to `true`.
 	//
 	// Incoming traffic will be routed according to the routing table with one exception: routes with an `action` of
-	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone`. Therefore,
-	// if an incoming packet matches a route with a `next_hop` of an internet-bound IP address or a VPN gateway connection,
-	// the packet will be dropped.
+	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone` that is
+	// able to accept traffic. Therefore, if an incoming packet matches a route with a `next_hop` of a VPN gateway
+	// connection, the packet will be dropped.
 	RouteVPCZoneIngress *bool `json:"route_vpc_zone_ingress,omitempty"`
 
 	// The prototype objects for routes to create for this routing table. If unspecified, the routing table will be created
@@ -31860,7 +32548,7 @@ type CreateVPNServerOptions struct {
 	Protocol *string `json:"protocol,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// The security groups to use for this VPN server. If unspecified, the VPC's default security group is used.
@@ -32091,6 +32779,71 @@ func UnmarshalDnsInstanceReference(m map[string]json.RawMessage, result interfac
 	return
 }
 
+// DnsServer : A DNS server.
+type DnsServer struct {
+	// The IP address.
+	//
+	// This property may add support for IPv6 addresses in the future. When processing a value in this property, verify
+	// that the address is in an expected format. If it is not, log an error. Optionally halt processing and surface the
+	// error, or bypass the resource on which the unexpected IP address format was encountered.
+	Address *string `json:"address" validate:"required"`
+
+	// If present, DHCP configuration for this zone will have this DNS server listed first.
+	ZoneAffinity *ZoneReference `json:"zone_affinity,omitempty"`
+}
+
+// UnmarshalDnsServer unmarshals an instance of DnsServer from the specified map of raw messages.
+func UnmarshalDnsServer(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(DnsServer)
+	err = core.UnmarshalPrimitive(m, "address", &obj.Address)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "zone_affinity", &obj.ZoneAffinity, UnmarshalZoneReference)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// DnsServerPrototype : DnsServerPrototype struct
+type DnsServerPrototype struct {
+	// The IP address.
+	//
+	// This property may add support for IPv6 addresses in the future. When processing a value in this property, verify
+	// that the address is in an expected format. If it is not, log an error. Optionally halt processing and surface the
+	// error, or bypass the resource on which the unexpected IP address format was encountered.
+	Address *string `json:"address" validate:"required"`
+
+	// DHCP configuration for the specified zone will have this DNS server listed first.
+	ZoneAffinity ZoneIdentityIntf `json:"zone_affinity,omitempty"`
+}
+
+// NewDnsServerPrototype : Instantiate DnsServerPrototype (Generic Model Constructor)
+func (*VpcbetaV1) NewDnsServerPrototype(address string) (_model *DnsServerPrototype, err error) {
+	_model = &DnsServerPrototype{
+		Address: core.StringPtr(address),
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+// UnmarshalDnsServerPrototype unmarshals an instance of DnsServerPrototype from the specified map of raw messages.
+func UnmarshalDnsServerPrototype(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(DnsServerPrototype)
+	err = core.UnmarshalPrimitive(m, "address", &obj.Address)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "zone_affinity", &obj.ZoneAffinity, UnmarshalZoneIdentity)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // DnsZoneIdentity : Identifies a DNS zone by a unique property.
 // Models which "extend" this model:
 // - DnsZoneIdentityByID
@@ -32173,6 +32926,9 @@ type DedicatedHost struct {
 
 	// The name for this dedicated host. The name is unique across all dedicated hosts in the region.
 	Name *string `json:"name" validate:"required"`
+
+	// The dedicated host NUMA configuration.
+	Numa *DedicatedHostNuma `json:"numa" validate:"required"`
 
 	// The [profile](https://cloud.ibm.com/docs/vpc?topic=vpc-dh-profiles) for this
 	// dedicated host.
@@ -32290,6 +33046,10 @@ func UnmarshalDedicatedHost(m map[string]json.RawMessage, result interface{}) (e
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "numa", &obj.Numa, UnmarshalDedicatedHostNuma)
 	if err != nil {
 		return
 	}
@@ -32978,6 +33738,54 @@ func UnmarshalDedicatedHostGroupReferenceDeleted(m map[string]json.RawMessage, r
 	return
 }
 
+// DedicatedHostNuma : The dedicated host NUMA configuration.
+type DedicatedHostNuma struct {
+	// The total number of NUMA nodes for this dedicated host.
+	Count *int64 `json:"count" validate:"required"`
+
+	// The NUMA nodes for this dedicated host.
+	Nodes []DedicatedHostNumaNode `json:"nodes" validate:"required"`
+}
+
+// UnmarshalDedicatedHostNuma unmarshals an instance of DedicatedHostNuma from the specified map of raw messages.
+func UnmarshalDedicatedHostNuma(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(DedicatedHostNuma)
+	err = core.UnmarshalPrimitive(m, "count", &obj.Count)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "nodes", &obj.Nodes, UnmarshalDedicatedHostNumaNode)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// DedicatedHostNumaNode : The dedicated host NUMA node configuration.
+type DedicatedHostNumaNode struct {
+	// The available VCPU for this NUMA node.
+	AvailableVcpu *int64 `json:"available_vcpu" validate:"required"`
+
+	// The total VCPU capacity for this NUMA node.
+	Vcpu *int64 `json:"vcpu" validate:"required"`
+}
+
+// UnmarshalDedicatedHostNumaNode unmarshals an instance of DedicatedHostNumaNode from the specified map of raw messages.
+func UnmarshalDedicatedHostNumaNode(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(DedicatedHostNumaNode)
+	err = core.UnmarshalPrimitive(m, "available_vcpu", &obj.AvailableVcpu)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "vcpu", &obj.Vcpu)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // DedicatedHostPatch : DedicatedHostPatch struct
 type DedicatedHostPatch struct {
 	// If set to true, instances can be placed on this dedicated host.
@@ -33037,6 +33845,21 @@ type DedicatedHostProfile struct {
 
 	SocketCount DedicatedHostProfileSocketIntf `json:"socket_count" validate:"required"`
 
+	// The status of the dedicated host profile:
+	//   - `previous`:  This dedicated host profile is an older revision, but remains provisionable
+	//   and usable.
+	//   - `current`:  This profile is the latest revision.
+	//
+	// Note that revisions are indicated by the generation of a dedicated host profile.  Refer to the [profile naming
+	// conventions]
+	// (https://cloud.ibm.com/docs/vpc?topic=vpc-dh-profiles&interface=ui#profiles-naming-rule) for information on how
+	// generations are defined within a dedicated host profile.
+	//
+	// The enumerated values for this property are expected to expand in the future. When processing this property, check
+	// for and log unknown values. Optionally halt processing and surface the error, or bypass the profile on which the
+	// unexpected property value was encountered.
+	Status *string `json:"status" validate:"required"`
+
 	// The instance profiles usable by instances placed on dedicated hosts with this profile.
 	SupportedInstanceProfiles []InstanceProfileReference `json:"supported_instance_profiles" validate:"required"`
 
@@ -33057,6 +33880,25 @@ const (
 	DedicatedHostProfileFamilyBalancedConst = "balanced"
 	DedicatedHostProfileFamilyComputeConst  = "compute"
 	DedicatedHostProfileFamilyMemoryConst   = "memory"
+)
+
+// Constants associated with the DedicatedHostProfile.Status property.
+// The status of the dedicated host profile:
+//   - `previous`:  This dedicated host profile is an older revision, but remains provisionable
+//     and usable.
+//   - `current`:  This profile is the latest revision.
+//
+// Note that revisions are indicated by the generation of a dedicated host profile.  Refer to the [profile naming
+// conventions]
+// (https://cloud.ibm.com/docs/vpc?topic=vpc-dh-profiles&interface=ui#profiles-naming-rule) for information on how
+// generations are defined within a dedicated host profile.
+//
+// The enumerated values for this property are expected to expand in the future. When processing this property, check
+// for and log unknown values. Optionally halt processing and surface the error, or bypass the profile on which the
+// unexpected property value was encountered.
+const (
+	DedicatedHostProfileStatusCurrentConst  = "current"
+	DedicatedHostProfileStatusPreviousConst = "previous"
 )
 
 // UnmarshalDedicatedHostProfile unmarshals an instance of DedicatedHostProfile from the specified map of raw messages.
@@ -33087,6 +33929,10 @@ func UnmarshalDedicatedHostProfile(m map[string]json.RawMessage, result interfac
 		return
 	}
 	err = core.UnmarshalModel(m, "socket_count", &obj.SocketCount, UnmarshalDedicatedHostProfileSocket)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "status", &obj.Status)
 	if err != nil {
 		return
 	}
@@ -33753,7 +34599,7 @@ type DedicatedHostPrototype struct {
 	Profile DedicatedHostProfileIdentityIntf `json:"profile" validate:"required"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// The dedicated host group for this dedicated host.
@@ -33989,9 +34835,9 @@ type DefaultRoutingTable struct {
 	// [Direct Link](https://cloud.ibm.com/docs/dl) to this VPC.
 	//
 	// Incoming traffic will be routed according to the routing table with one exception: routes with an `action` of
-	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone`. Therefore,
-	// if an incoming packet matches a route with a `next_hop` of an internet-bound IP address or a VPN gateway connection,
-	// the packet will be dropped.
+	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone` that is
+	// able to accept traffic. Therefore, if an incoming packet matches a route with a `next_hop` of a VPN gateway
+	// connection, the packet will be dropped.
 	RouteDirectLinkIngress *bool `json:"route_direct_link_ingress" validate:"required"`
 
 	// Indicates whether this routing table is used to route traffic that originates from the internet.
@@ -33999,9 +34845,9 @@ type DefaultRoutingTable struct {
 	// Incoming traffic will be routed according to the routing table with two exceptions:
 	// - Traffic destined for IP addresses associated with public gateways will not be
 	//   subject to routes in this routing table.
-	// - Routes with an action of deliver are treated as drop unless the `next_hop` is an
-	//   IP address in a subnet in the route's `zone`. Therefore, if an incoming packet
-	//   matches a route with a `next_hop` of an internet-bound IP address or a VPN gateway
+	// - Routes with an `action` of `deliver` are treated as `drop` unless the `next_hop` is
+	//   an IP address in a subnet in the route's `zone` that is able to accept traffic.
+	//   Therefore, if an incoming packet matches a route with a `next_hop` of a VPN gateway
 	//   connection, the packet will be dropped.
 	RouteInternetIngress *bool `json:"route_internet_ingress" validate:"required"`
 
@@ -34009,18 +34855,18 @@ type DefaultRoutingTable struct {
 	// Gateway](https://cloud.ibm.com/docs/transit-gateway) to this VPC.
 	//
 	// Incoming traffic will be routed according to the routing table with one exception: routes with an `action` of
-	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone`. Therefore,
-	// if an incoming packet matches a route with a `next_hop` of an internet-bound IP address or a VPN gateway connection,
-	// the packet will be dropped.
+	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone` that is
+	// able to accept traffic. Therefore, if an incoming packet matches a route with a `next_hop` of a VPN gateway
+	// connection, the packet will be dropped.
 	RouteTransitGatewayIngress *bool `json:"route_transit_gateway_ingress" validate:"required"`
 
 	// Indicates whether this routing table is used to route traffic that originates from subnets in other zones in this
 	// VPC.
 	//
 	// Incoming traffic will be routed according to the routing table with one exception: routes with an `action` of
-	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone`. Therefore,
-	// if an incoming packet matches a route with a `next_hop` of an internet-bound IP address or a VPN gateway connection,
-	// the packet will be dropped.
+	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone` that is
+	// able to accept traffic. Therefore, if an incoming packet matches a route with a `next_hop` of a VPN gateway
+	// connection, the packet will be dropped.
 	RouteVPCZoneIngress *bool `json:"route_vpc_zone_ingress" validate:"required"`
 
 	// The routes for the default routing table for this VPC. The table is created with no routes, but routes may be added,
@@ -35856,10 +36702,51 @@ func (options *DeleteVPCAddressPrefixOptions) SetHeaders(param map[string]string
 	return options
 }
 
+// DeleteVPCDnsResolutionBindingOptions : The DeleteVPCDnsResolutionBinding options.
+type DeleteVPCDnsResolutionBindingOptions struct {
+	// The VPC identifier.
+	VPCID *string `json:"vpc_id" validate:"required,ne="`
+
+	// The DNS resolution binding identifier.
+	ID *string `json:"id" validate:"required,ne="`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewDeleteVPCDnsResolutionBindingOptions : Instantiate DeleteVPCDnsResolutionBindingOptions
+func (*VpcbetaV1) NewDeleteVPCDnsResolutionBindingOptions(vpcID string, id string) *DeleteVPCDnsResolutionBindingOptions {
+	return &DeleteVPCDnsResolutionBindingOptions{
+		VPCID: core.StringPtr(vpcID),
+		ID:    core.StringPtr(id),
+	}
+}
+
+// SetVPCID : Allow user to set VPCID
+func (_options *DeleteVPCDnsResolutionBindingOptions) SetVPCID(vpcID string) *DeleteVPCDnsResolutionBindingOptions {
+	_options.VPCID = core.StringPtr(vpcID)
+	return _options
+}
+
+// SetID : Allow user to set ID
+func (_options *DeleteVPCDnsResolutionBindingOptions) SetID(id string) *DeleteVPCDnsResolutionBindingOptions {
+	_options.ID = core.StringPtr(id)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *DeleteVPCDnsResolutionBindingOptions) SetHeaders(param map[string]string) *DeleteVPCDnsResolutionBindingOptions {
+	options.Headers = param
+	return options
+}
+
 // DeleteVPCOptions : The DeleteVPC options.
 type DeleteVPCOptions struct {
 	// The VPC identifier.
 	ID *string `json:"id" validate:"required,ne="`
+
+	// If present, the request will fail if the specified ETag value does not match the resource's current ETag value.
+	IfMatch *string `json:"If-Match,omitempty"`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -35875,6 +36762,12 @@ func (*VpcbetaV1) NewDeleteVPCOptions(id string) *DeleteVPCOptions {
 // SetID : Allow user to set ID
 func (_options *DeleteVPCOptions) SetID(id string) *DeleteVPCOptions {
 	_options.ID = core.StringPtr(id)
+	return _options
+}
+
+// SetIfMatch : Allow user to set IfMatch
+func (_options *DeleteVPCOptions) SetIfMatch(ifMatch string) *DeleteVPCOptions {
+	_options.IfMatch = core.StringPtr(ifMatch)
 	return _options
 }
 
@@ -36312,6 +37205,10 @@ func UnmarshalEncryptionKeyReference(m map[string]json.RawMessage, result interf
 
 // EndpointGateway : EndpointGateway struct
 type EndpointGateway struct {
+	// Indicates whether to allow DNS resolution for this endpoint gateway when the VPC this endpoint gateway resides in
+	// has a DNS resolution binding to a VPC with `dns.enable_hub` set to `true`.
+	AllowDnsResolutionBinding *bool `json:"allow_dns_resolution_binding" validate:"required"`
+
 	// The date and time that the endpoint gateway was created.
 	CreatedAt *strfmt.DateTime `json:"created_at" validate:"required"`
 
@@ -36335,6 +37232,10 @@ type EndpointGateway struct {
 
 	// The reserved IPs bound to this endpoint gateway.
 	Ips []ReservedIPReference `json:"ips" validate:"required"`
+
+	// The reasons for the current `lifecycle_state` (if any):
+	// - `dns_resolution_binding_pending`: the DNS resolution binding is being set up.
+	LifecycleReasons []EndpointGatewayLifecycleReason `json:"lifecycle_reasons" validate:"required"`
 
 	// The lifecycle state of the endpoint gateway.
 	LifecycleState *string `json:"lifecycle_state" validate:"required"`
@@ -36401,6 +37302,10 @@ const (
 // UnmarshalEndpointGateway unmarshals an instance of EndpointGateway from the specified map of raw messages.
 func UnmarshalEndpointGateway(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(EndpointGateway)
+	err = core.UnmarshalPrimitive(m, "allow_dns_resolution_binding", &obj.AllowDnsResolutionBinding)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "created_at", &obj.CreatedAt)
 	if err != nil {
 		return
@@ -36422,6 +37327,10 @@ func UnmarshalEndpointGateway(m map[string]json.RawMessage, result interface{}) 
 		return
 	}
 	err = core.UnmarshalModel(m, "ips", &obj.Ips, UnmarshalReservedIPReference)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "lifecycle_reasons", &obj.LifecycleReasons, UnmarshalEndpointGatewayLifecycleReason)
 	if err != nil {
 		return
 	}
@@ -36557,8 +37466,53 @@ func UnmarshalEndpointGatewayCollectionNext(m map[string]json.RawMessage, result
 	return
 }
 
+// EndpointGatewayLifecycleReason : EndpointGatewayLifecycleReason struct
+type EndpointGatewayLifecycleReason struct {
+	// A snake case string succinctly identifying the reason for this lifecycle state.
+	Code *string `json:"code" validate:"required"`
+
+	// An explanation of the reason for this lifecycle state.
+	Message *string `json:"message" validate:"required"`
+
+	// Link to documentation about the reason for this lifecycle state.
+	MoreInfo *string `json:"more_info,omitempty"`
+}
+
+// Constants associated with the EndpointGatewayLifecycleReason.Code property.
+// A snake case string succinctly identifying the reason for this lifecycle state.
+const (
+	EndpointGatewayLifecycleReasonCodeDnsResolutionBindingPendingConst = "dns_resolution_binding_pending"
+	EndpointGatewayLifecycleReasonCodeResourceSuspendedByProviderConst = "resource_suspended_by_provider"
+)
+
+// UnmarshalEndpointGatewayLifecycleReason unmarshals an instance of EndpointGatewayLifecycleReason from the specified map of raw messages.
+func UnmarshalEndpointGatewayLifecycleReason(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(EndpointGatewayLifecycleReason)
+	err = core.UnmarshalPrimitive(m, "code", &obj.Code)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "message", &obj.Message)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // EndpointGatewayPatch : EndpointGatewayPatch struct
 type EndpointGatewayPatch struct {
+	// Indicates whether to allow DNS resolution for this endpoint gateway when the VPC this endpoint gateway resides in
+	// has a DNS resolution binding to a VPC with `dns.enable_hub` set to `true`.
+	//
+	// Must be `true` if the VPC this endpoint gateway resides in has `dns.enable_hub` set to
+	// `true`.
+	AllowDnsResolutionBinding *bool `json:"allow_dns_resolution_binding,omitempty"`
+
 	// The name for this endpoint gateway. The name must not be used by another endpoint gateway in the VPC.
 	Name *string `json:"name,omitempty"`
 }
@@ -36566,6 +37520,10 @@ type EndpointGatewayPatch struct {
 // UnmarshalEndpointGatewayPatch unmarshals an instance of EndpointGatewayPatch from the specified map of raw messages.
 func UnmarshalEndpointGatewayPatch(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(EndpointGatewayPatch)
+	err = core.UnmarshalPrimitive(m, "allow_dns_resolution_binding", &obj.AllowDnsResolutionBinding)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
 	if err != nil {
 		return
@@ -36595,6 +37553,92 @@ type EndpointGatewayReferenceDeleted struct {
 func UnmarshalEndpointGatewayReferenceDeleted(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(EndpointGatewayReferenceDeleted)
 	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// EndpointGatewayReferenceRemote : EndpointGatewayReferenceRemote struct
+type EndpointGatewayReferenceRemote struct {
+	// The CRN for this endpoint gateway.
+	CRN *string `json:"crn" validate:"required"`
+
+	// The URL for this endpoint gateway.
+	Href *string `json:"href" validate:"required"`
+
+	// The unique identifier for this endpoint gateway.
+	ID *string `json:"id" validate:"required"`
+
+	// The name for this endpoint gateway. The name is unique across all endpoint gateways in the VPC.
+	Name *string `json:"name" validate:"required"`
+
+	// If present, this property indicates that the resource associated with this reference
+	// is remote and therefore may not be directly retrievable.
+	Remote *EndpointGatewayRemote `json:"remote,omitempty"`
+
+	// The resource type.
+	ResourceType *string `json:"resource_type" validate:"required"`
+}
+
+// Constants associated with the EndpointGatewayReferenceRemote.ResourceType property.
+// The resource type.
+const (
+	EndpointGatewayReferenceRemoteResourceTypeEndpointGatewayConst = "endpoint_gateway"
+)
+
+// UnmarshalEndpointGatewayReferenceRemote unmarshals an instance of EndpointGatewayReferenceRemote from the specified map of raw messages.
+func UnmarshalEndpointGatewayReferenceRemote(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(EndpointGatewayReferenceRemote)
+	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "remote", &obj.Remote, UnmarshalEndpointGatewayRemote)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "resource_type", &obj.ResourceType)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// EndpointGatewayRemote : If present, this property indicates that the resource associated with this reference is remote and therefore may not
+// be directly retrievable.
+type EndpointGatewayRemote struct {
+	// If present, this property indicates that the referenced resource is remote to this
+	// account, and identifies the owning account.
+	Account *AccountReference `json:"account,omitempty"`
+
+	// If present, this property indicates that the referenced resource is remote to this
+	// region, and identifies the native region.
+	Region *RegionReference `json:"region,omitempty"`
+}
+
+// UnmarshalEndpointGatewayRemote unmarshals an instance of EndpointGatewayRemote from the specified map of raw messages.
+func UnmarshalEndpointGatewayRemote(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(EndpointGatewayRemote)
+	err = core.UnmarshalModel(m, "account", &obj.Account, UnmarshalAccountReference)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "region", &obj.Region, UnmarshalRegionReference)
 	if err != nil {
 		return
 	}
@@ -36784,8 +37828,8 @@ type FailoverShareOptions struct {
 	// - `fail`: Fail the operation, resulting in the replication relationship being unchanged.
 	// - `split`: Split the replica from its source, resulting in two individual read-write
 	//     file shares. Because the final sync was not completed, the replica may be
-	//     out-of-date. This is useful in disaster recovery scenarios where the source is known
-	//     to be unreachable.
+	//     out-of-date. This occurs in disaster recovery scenarios where the source is known to
+	//     be unreachable.
 	FallbackPolicy *string `json:"fallback_policy,omitempty"`
 
 	// The failover timeout in seconds.
@@ -36802,8 +37846,8 @@ type FailoverShareOptions struct {
 //   - `fail`: Fail the operation, resulting in the replication relationship being unchanged.
 //   - `split`: Split the replica from its source, resulting in two individual read-write
 //     file shares. Because the final sync was not completed, the replica may be
-//     out-of-date. This is useful in disaster recovery scenarios where the source is known
-//     to be unreachable.
+//     out-of-date. This occurs in disaster recovery scenarios where the source is known to
+//     be unreachable.
 const (
 	FailoverShareOptionsFallbackPolicyFailConst  = "fail"
 	FailoverShareOptionsFallbackPolicySplitConst = "split"
@@ -37072,7 +38116,7 @@ type FloatingIPPrototype struct {
 	Name *string `json:"name,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// The zone this floating IP will reside in.
@@ -37275,12 +38319,13 @@ func UnmarshalFloatingIPTarget(m map[string]json.RawMessage, result interface{})
 // - an instance network interface
 // - a bare metal server network interface with `enable_infrastructure_nat` set to `true`.
 // Models which "extend" this model:
+// - FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentity
 // - FloatingIPTargetPatchNetworkInterfaceIdentity
 type FloatingIPTargetPatch struct {
-	// The unique identifier for this instance network interface.
+	// The unique identifier for this bare metal server network interface.
 	ID *string `json:"id,omitempty"`
 
-	// The URL for this instance network interface.
+	// The URL for this bare metal server network interface.
 	Href *string `json:"href,omitempty"`
 }
 
@@ -37314,12 +38359,13 @@ func UnmarshalFloatingIPTargetPatch(m map[string]json.RawMessage, result interfa
 // - an instance network interface
 // - a bare metal server network interface with `enable_infrastructure_nat` set to `true`.
 // Models which "extend" this model:
+// - FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentity
 // - FloatingIPTargetPrototypeNetworkInterfaceIdentity
 type FloatingIPTargetPrototype struct {
-	// The unique identifier for this instance network interface.
+	// The unique identifier for this bare metal server network interface.
 	ID *string `json:"id,omitempty"`
 
-	// The URL for this instance network interface.
+	// The URL for this bare metal server network interface.
 	Href *string `json:"href,omitempty"`
 }
 
@@ -37393,7 +38439,9 @@ type FlowLogCollector struct {
 	// The resource group for this flow log collector.
 	ResourceGroup *ResourceGroupReference `json:"resource_group" validate:"required"`
 
-	// The Cloud Object Storage bucket where the collected flows are logged.
+	// The Cloud Object Storage bucket where the collected flows are logged. For more
+	// information, see [Viewing flow log
+	// objects](https://cloud.ibm.com/docs/vpc?topic=vpc-fl-analyze).
 	StorageBucket *LegacyCloudObjectStorageBucketReference `json:"storage_bucket" validate:"required"`
 
 	// The target this collector is collecting flow logs for.
@@ -40359,6 +41407,44 @@ func (options *GetVPCDefaultSecurityGroupOptions) SetHeaders(param map[string]st
 	return options
 }
 
+// GetVPCDnsResolutionBindingOptions : The GetVPCDnsResolutionBinding options.
+type GetVPCDnsResolutionBindingOptions struct {
+	// The VPC identifier.
+	VPCID *string `json:"vpc_id" validate:"required,ne="`
+
+	// The DNS resolution binding identifier.
+	ID *string `json:"id" validate:"required,ne="`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewGetVPCDnsResolutionBindingOptions : Instantiate GetVPCDnsResolutionBindingOptions
+func (*VpcbetaV1) NewGetVPCDnsResolutionBindingOptions(vpcID string, id string) *GetVPCDnsResolutionBindingOptions {
+	return &GetVPCDnsResolutionBindingOptions{
+		VPCID: core.StringPtr(vpcID),
+		ID:    core.StringPtr(id),
+	}
+}
+
+// SetVPCID : Allow user to set VPCID
+func (_options *GetVPCDnsResolutionBindingOptions) SetVPCID(vpcID string) *GetVPCDnsResolutionBindingOptions {
+	_options.VPCID = core.StringPtr(vpcID)
+	return _options
+}
+
+// SetID : Allow user to set ID
+func (_options *GetVPCDnsResolutionBindingOptions) SetID(id string) *GetVPCDnsResolutionBindingOptions {
+	_options.ID = core.StringPtr(id)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *GetVPCDnsResolutionBindingOptions) SetHeaders(param map[string]string) *GetVPCDnsResolutionBindingOptions {
+	options.Headers = param
+	return options
+}
+
 // GetVPCOptions : The GetVPC options.
 type GetVPCOptions struct {
 	// The VPC identifier.
@@ -42399,7 +43485,7 @@ type ImagePrototype struct {
 	ObsolescenceAt *strfmt.DateTime `json:"obsolescence_at,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// A base64-encoded, encrypted representation of the key that was used to encrypt the data for this image.
@@ -42701,13 +43787,18 @@ type Instance struct {
 	// The name for this virtual server instance. The name is unique across all virtual server instances in the region.
 	Name *string `json:"name" validate:"required"`
 
-	// The instance network interfaces, including the primary instance network interface.
+	// The network interfaces for this instance, including the primary network interface.
 	NetworkInterfaces []NetworkInterfaceInstanceContextReference `json:"network_interfaces" validate:"required"`
+
+	// The number of NUMA nodes this virtual server instance is provisioned on.
+	//
+	// This property will be absent if the instance's `status` is not `running`.
+	NumaCount *int64 `json:"numa_count,omitempty"`
 
 	// The placement restrictions for the virtual server instance.
 	PlacementTarget InstancePlacementTargetIntf `json:"placement_target,omitempty"`
 
-	// The primary instance network interface.
+	// The primary network interface for this virtual server instance.
 	PrimaryNetworkInterface *NetworkInterfaceInstanceContextReference `json:"primary_network_interface" validate:"required"`
 
 	// The [profile](https://cloud.ibm.com/docs/vpc?topic=vpc-profiles) for this virtual
@@ -42865,6 +43956,10 @@ func UnmarshalInstance(m map[string]json.RawMessage, result interface{}) (err er
 		return
 	}
 	err = core.UnmarshalModel(m, "network_interfaces", &obj.NetworkInterfaces, UnmarshalNetworkInterfaceInstanceContextReference)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "numa_count", &obj.NumaCount)
 	if err != nil {
 		return
 	}
@@ -46134,9 +47229,26 @@ type InstanceProfile struct {
 
 	NetworkInterfaceCount InstanceProfileNetworkInterfaceCountIntf `json:"network_interface_count" validate:"required"`
 
+	NumaCount InstanceProfileNumaCountIntf `json:"numa_count,omitempty"`
+
 	OsArchitecture *InstanceProfileOsArchitecture `json:"os_architecture" validate:"required"`
 
 	PortSpeed InstanceProfilePortSpeedIntf `json:"port_speed" validate:"required"`
+
+	// The status of the instance profile:
+	//   - `previous`:  This instance profile is an older revision, but remains provisionable and
+	//   usable.
+	//   - `current`:  This profile is the latest revision.
+	//
+	// Note that revisions are indicated by the generation of an instance profile.  Refer to the
+	// [profile naming conventions]
+	// (https://cloud.ibm.com/docs/vpc?topic=vpc-profiles&interface=ui#profiles-naming-rule) for information on how
+	// generations are defined within an instance profile.
+	//
+	// The enumerated values for this property are expected to expand in the future. When processing this property, check
+	// for and log unknown values. Optionally halt processing and surface the error, or bypass the profile on which the
+	// unexpected property value was encountered.
+	Status *string `json:"status" validate:"required"`
 
 	TotalVolumeBandwidth InstanceProfileVolumeBandwidthIntf `json:"total_volume_bandwidth" validate:"required"`
 
@@ -46146,6 +47258,25 @@ type InstanceProfile struct {
 
 	VcpuManufacturer *InstanceProfileVcpuManufacturer `json:"vcpu_manufacturer" validate:"required"`
 }
+
+// Constants associated with the InstanceProfile.Status property.
+// The status of the instance profile:
+//   - `previous`:  This instance profile is an older revision, but remains provisionable and
+//     usable.
+//   - `current`:  This profile is the latest revision.
+//
+// Note that revisions are indicated by the generation of an instance profile.  Refer to the
+// [profile naming conventions]
+// (https://cloud.ibm.com/docs/vpc?topic=vpc-profiles&interface=ui#profiles-naming-rule) for information on how
+// generations are defined within an instance profile.
+//
+// The enumerated values for this property are expected to expand in the future. When processing this property, check
+// for and log unknown values. Optionally halt processing and surface the error, or bypass the profile on which the
+// unexpected property value was encountered.
+const (
+	InstanceProfileStatusCurrentConst  = "current"
+	InstanceProfileStatusPreviousConst = "previous"
+)
 
 // UnmarshalInstanceProfile unmarshals an instance of InstanceProfile from the specified map of raw messages.
 func UnmarshalInstanceProfile(m map[string]json.RawMessage, result interface{}) (err error) {
@@ -46194,11 +47325,19 @@ func UnmarshalInstanceProfile(m map[string]json.RawMessage, result interface{}) 
 	if err != nil {
 		return
 	}
+	err = core.UnmarshalModel(m, "numa_count", &obj.NumaCount, UnmarshalInstanceProfileNumaCount)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalModel(m, "os_architecture", &obj.OsArchitecture, UnmarshalInstanceProfileOsArchitecture)
 	if err != nil {
 		return
 	}
 	err = core.UnmarshalModel(m, "port_speed", &obj.PortSpeed, UnmarshalInstanceProfilePortSpeed)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "status", &obj.Status)
 	if err != nil {
 		return
 	}
@@ -46893,6 +48032,47 @@ func UnmarshalInstanceProfileMemory(m map[string]json.RawMessage, result interfa
 	return
 }
 
+// InstanceProfileNumaCount : InstanceProfileNumaCount struct
+// Models which "extend" this model:
+// - InstanceProfileNumaCountFixed
+// - InstanceProfileNumaCountDependent
+type InstanceProfileNumaCount struct {
+	// The type for this profile field.
+	Type *string `json:"type,omitempty"`
+
+	// The value for this profile field.
+	Value *int64 `json:"value,omitempty"`
+}
+
+// Constants associated with the InstanceProfileNumaCount.Type property.
+// The type for this profile field.
+const (
+	InstanceProfileNumaCountTypeFixedConst = "fixed"
+)
+
+func (*InstanceProfileNumaCount) isaInstanceProfileNumaCount() bool {
+	return true
+}
+
+type InstanceProfileNumaCountIntf interface {
+	isaInstanceProfileNumaCount() bool
+}
+
+// UnmarshalInstanceProfileNumaCount unmarshals an instance of InstanceProfileNumaCount from the specified map of raw messages.
+func UnmarshalInstanceProfileNumaCount(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(InstanceProfileNumaCount)
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "value", &obj.Value)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // InstanceProfileNetworkInterfaceCount : InstanceProfileNetworkInterfaceCount struct
 // Models which "extend" this model:
 // - InstanceProfileNetworkInterfaceCountRange
@@ -47326,7 +48506,7 @@ type InstancePrototype struct {
 	Profile InstanceProfileIdentityIntf `json:"profile,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// The amount of bandwidth (in megabits per second) allocated exclusively to instance storage volumes. An increase in
@@ -47986,7 +49166,7 @@ type InstanceTemplatePrototype struct {
 	Profile InstanceProfileIdentityIntf `json:"profile,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// The amount of bandwidth (in megabits per second) allocated exclusively to instance storage volumes. An increase in
@@ -49028,18 +50208,6 @@ type ListBareMetalServersOptions struct {
 	// Filters the collection to resources with a `vpc.name` property matching the exact specified name.
 	VPCName *string `json:"vpc.name,omitempty"`
 
-	// Filters the collection to bare metal servers with an item in the `network_interfaces` property with a `subnet.id`
-	// property matching the specified identifier.
-	NetworkInterfacesSubnetID *string `json:"network_interfaces.subnet.id,omitempty"`
-
-	// Filters the collection to bare metal servers with an item in the `network_interfaces` property with a `subnet.crn`
-	// property matching the specified CRN.
-	NetworkInterfacesSubnetCRN *string `json:"network_interfaces.subnet.crn,omitempty"`
-
-	// Filters the collection to bare metal servers with an item in the `network_interfaces` property with a `subnet.name`
-	// property matching the exact specified name.
-	NetworkInterfacesSubnetName *string `json:"network_interfaces.subnet.name,omitempty"`
-
 	// Allows users to set headers on API requests
 	Headers map[string]string
 }
@@ -49088,24 +50256,6 @@ func (_options *ListBareMetalServersOptions) SetVPCCRN(vpcCRN string) *ListBareM
 // SetVPCName : Allow user to set VPCName
 func (_options *ListBareMetalServersOptions) SetVPCName(vpcName string) *ListBareMetalServersOptions {
 	_options.VPCName = core.StringPtr(vpcName)
-	return _options
-}
-
-// SetNetworkInterfacesSubnetID : Allow user to set NetworkInterfacesSubnetID
-func (_options *ListBareMetalServersOptions) SetNetworkInterfacesSubnetID(networkInterfacesSubnetID string) *ListBareMetalServersOptions {
-	_options.NetworkInterfacesSubnetID = core.StringPtr(networkInterfacesSubnetID)
-	return _options
-}
-
-// SetNetworkInterfacesSubnetCRN : Allow user to set NetworkInterfacesSubnetCRN
-func (_options *ListBareMetalServersOptions) SetNetworkInterfacesSubnetCRN(networkInterfacesSubnetCRN string) *ListBareMetalServersOptions {
-	_options.NetworkInterfacesSubnetCRN = core.StringPtr(networkInterfacesSubnetCRN)
-	return _options
-}
-
-// SetNetworkInterfacesSubnetName : Allow user to set NetworkInterfacesSubnetName
-func (_options *ListBareMetalServersOptions) SetNetworkInterfacesSubnetName(networkInterfacesSubnetName string) *ListBareMetalServersOptions {
-	_options.NetworkInterfacesSubnetName = core.StringPtr(networkInterfacesSubnetName)
 	return _options
 }
 
@@ -49392,6 +50542,19 @@ type ListEndpointGatewaysOptions struct {
 	// Filters the collection to resources with a `resource_group.id` property matching the specified identifier.
 	ResourceGroupID *string `json:"resource_group.id,omitempty"`
 
+	// Filters the collection to resources with a `vpc.id` property matching the specified identifier.
+	VPCID *string `json:"vpc.id,omitempty"`
+
+	// Filters the collection to resources with a `vpc.crn` property matching the specified CRN.
+	VPCCRN *string `json:"vpc.crn,omitempty"`
+
+	// Filters the collection to resources with a `vpc.name` property matching the exact specified name.
+	VPCName *string `json:"vpc.name,omitempty"`
+
+	// Filters the collection to endpoint gateways with an `allow_dns_resolution_binding` property matching the specified
+	// value.
+	AllowDnsResolutionBinding *bool `json:"allow_dns_resolution_binding,omitempty"`
+
 	// Allows users to set headers on API requests
 	Headers map[string]string
 }
@@ -49422,6 +50585,30 @@ func (_options *ListEndpointGatewaysOptions) SetLimit(limit int64) *ListEndpoint
 // SetResourceGroupID : Allow user to set ResourceGroupID
 func (_options *ListEndpointGatewaysOptions) SetResourceGroupID(resourceGroupID string) *ListEndpointGatewaysOptions {
 	_options.ResourceGroupID = core.StringPtr(resourceGroupID)
+	return _options
+}
+
+// SetVPCID : Allow user to set VPCID
+func (_options *ListEndpointGatewaysOptions) SetVPCID(vpcID string) *ListEndpointGatewaysOptions {
+	_options.VPCID = core.StringPtr(vpcID)
+	return _options
+}
+
+// SetVPCCRN : Allow user to set VPCCRN
+func (_options *ListEndpointGatewaysOptions) SetVPCCRN(vpcCRN string) *ListEndpointGatewaysOptions {
+	_options.VPCCRN = core.StringPtr(vpcCRN)
+	return _options
+}
+
+// SetVPCName : Allow user to set VPCName
+func (_options *ListEndpointGatewaysOptions) SetVPCName(vpcName string) *ListEndpointGatewaysOptions {
+	_options.VPCName = core.StringPtr(vpcName)
+	return _options
+}
+
+// SetAllowDnsResolutionBinding : Allow user to set AllowDnsResolutionBinding
+func (_options *ListEndpointGatewaysOptions) SetAllowDnsResolutionBinding(allowDnsResolutionBinding bool) *ListEndpointGatewaysOptions {
+	_options.AllowDnsResolutionBinding = core.BoolPtr(allowDnsResolutionBinding)
 	return _options
 }
 
@@ -51660,6 +52847,18 @@ type ListSubnetsOptions struct {
 	// Filters the collection to resources with a `resource_group.id` property matching the specified identifier.
 	ResourceGroupID *string `json:"resource_group.id,omitempty"`
 
+	// Filters the collection to resources with a `zone.name` property matching the exact specified name.
+	ZoneName *string `json:"zone.name,omitempty"`
+
+	// Filters the collection to resources with a `vpc.id` property matching the specified identifier.
+	VPCID *string `json:"vpc.id,omitempty"`
+
+	// Filters the collection to resources with a `vpc.crn` property matching the specified CRN.
+	VPCCRN *string `json:"vpc.crn,omitempty"`
+
+	// Filters the collection to resources with a `vpc.name` property matching the exact specified name.
+	VPCName *string `json:"vpc.name,omitempty"`
+
 	// Filters the collection to subnets with a `routing_table.id` property matching the specified identifier.
 	RoutingTableID *string `json:"routing_table.id,omitempty"`
 
@@ -51690,6 +52889,30 @@ func (_options *ListSubnetsOptions) SetLimit(limit int64) *ListSubnetsOptions {
 // SetResourceGroupID : Allow user to set ResourceGroupID
 func (_options *ListSubnetsOptions) SetResourceGroupID(resourceGroupID string) *ListSubnetsOptions {
 	_options.ResourceGroupID = core.StringPtr(resourceGroupID)
+	return _options
+}
+
+// SetZoneName : Allow user to set ZoneName
+func (_options *ListSubnetsOptions) SetZoneName(zoneName string) *ListSubnetsOptions {
+	_options.ZoneName = core.StringPtr(zoneName)
+	return _options
+}
+
+// SetVPCID : Allow user to set VPCID
+func (_options *ListSubnetsOptions) SetVPCID(vpcID string) *ListSubnetsOptions {
+	_options.VPCID = core.StringPtr(vpcID)
+	return _options
+}
+
+// SetVPCCRN : Allow user to set VPCCRN
+func (_options *ListSubnetsOptions) SetVPCCRN(vpcCRN string) *ListSubnetsOptions {
+	_options.VPCCRN = core.StringPtr(vpcCRN)
+	return _options
+}
+
+// SetVPCName : Allow user to set VPCName
+func (_options *ListSubnetsOptions) SetVPCName(vpcName string) *ListSubnetsOptions {
+	_options.VPCName = core.StringPtr(vpcName)
 	return _options
 }
 
@@ -51944,6 +53167,109 @@ func (_options *ListVPCAddressPrefixesOptions) SetLimit(limit int64) *ListVPCAdd
 
 // SetHeaders : Allow user to set Headers
 func (options *ListVPCAddressPrefixesOptions) SetHeaders(param map[string]string) *ListVPCAddressPrefixesOptions {
+	options.Headers = param
+	return options
+}
+
+// ListVPCDnsResolutionBindingsOptions : The ListVPCDnsResolutionBindings options.
+type ListVPCDnsResolutionBindingsOptions struct {
+	// The VPC identifier.
+	VPCID *string `json:"vpc_id" validate:"required,ne="`
+
+	// Sorts the returned collection by the specified property name in ascending order. A `-` may be prepended to the name
+	// to sort in descending order. For example, the value `-created_at` sorts the collection by the `created_at` property
+	// in descending order, and the value `name` sorts it by the `name` property in ascending order.
+	Sort *string `json:"sort,omitempty"`
+
+	// A server-provided token determining what resource to start the page on.
+	Start *string `json:"start,omitempty"`
+
+	// The number of resources to return on a page.
+	Limit *int64 `json:"limit,omitempty"`
+
+	// Filters the collection to resources with a `name` property matching the exact specified name.
+	Name *string `json:"name,omitempty"`
+
+	// Filters the collection to resources with a `vpc.crn` property matching the specified CRN.
+	VPCCRN *string `json:"vpc.crn,omitempty"`
+
+	// Filters the collection to resources with a `vpc.name` property matching the exact specified name.
+	VPCName *string `json:"vpc.name,omitempty"`
+
+	// Filters the collection to resources with a `vpc.remote.account.id` property matching the specified account
+	// identifier.
+	AccountID *string `json:"account.id,omitempty"`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// Constants associated with the ListVPCDnsResolutionBindingsOptions.Sort property.
+// Sorts the returned collection by the specified property name in ascending order. A `-` may be prepended to the name
+// to sort in descending order. For example, the value `-created_at` sorts the collection by the `created_at` property
+// in descending order, and the value `name` sorts it by the `name` property in ascending order.
+const (
+	ListVPCDnsResolutionBindingsOptionsSortCreatedAtConst = "created_at"
+	ListVPCDnsResolutionBindingsOptionsSortNameConst      = "name"
+)
+
+// NewListVPCDnsResolutionBindingsOptions : Instantiate ListVPCDnsResolutionBindingsOptions
+func (*VpcbetaV1) NewListVPCDnsResolutionBindingsOptions(vpcID string) *ListVPCDnsResolutionBindingsOptions {
+	return &ListVPCDnsResolutionBindingsOptions{
+		VPCID: core.StringPtr(vpcID),
+	}
+}
+
+// SetVPCID : Allow user to set VPCID
+func (_options *ListVPCDnsResolutionBindingsOptions) SetVPCID(vpcID string) *ListVPCDnsResolutionBindingsOptions {
+	_options.VPCID = core.StringPtr(vpcID)
+	return _options
+}
+
+// SetSort : Allow user to set Sort
+func (_options *ListVPCDnsResolutionBindingsOptions) SetSort(sort string) *ListVPCDnsResolutionBindingsOptions {
+	_options.Sort = core.StringPtr(sort)
+	return _options
+}
+
+// SetStart : Allow user to set Start
+func (_options *ListVPCDnsResolutionBindingsOptions) SetStart(start string) *ListVPCDnsResolutionBindingsOptions {
+	_options.Start = core.StringPtr(start)
+	return _options
+}
+
+// SetLimit : Allow user to set Limit
+func (_options *ListVPCDnsResolutionBindingsOptions) SetLimit(limit int64) *ListVPCDnsResolutionBindingsOptions {
+	_options.Limit = core.Int64Ptr(limit)
+	return _options
+}
+
+// SetName : Allow user to set Name
+func (_options *ListVPCDnsResolutionBindingsOptions) SetName(name string) *ListVPCDnsResolutionBindingsOptions {
+	_options.Name = core.StringPtr(name)
+	return _options
+}
+
+// SetVPCCRN : Allow user to set VPCCRN
+func (_options *ListVPCDnsResolutionBindingsOptions) SetVPCCRN(vpcCRN string) *ListVPCDnsResolutionBindingsOptions {
+	_options.VPCCRN = core.StringPtr(vpcCRN)
+	return _options
+}
+
+// SetVPCName : Allow user to set VPCName
+func (_options *ListVPCDnsResolutionBindingsOptions) SetVPCName(vpcName string) *ListVPCDnsResolutionBindingsOptions {
+	_options.VPCName = core.StringPtr(vpcName)
+	return _options
+}
+
+// SetAccountID : Allow user to set AccountID
+func (_options *ListVPCDnsResolutionBindingsOptions) SetAccountID(accountID string) *ListVPCDnsResolutionBindingsOptions {
+	_options.AccountID = core.StringPtr(accountID)
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *ListVPCDnsResolutionBindingsOptions) SetHeaders(param map[string]string) *ListVPCDnsResolutionBindingsOptions {
 	options.Headers = param
 	return options
 }
@@ -52656,6 +53982,8 @@ type LoadBalancer struct {
 	RouteMode *bool `json:"route_mode" validate:"required"`
 
 	// The security groups targeting this load balancer.
+	//
+	// If empty, all inbound and outbound traffic is allowed.
 	//
 	// Applicable only for load balancers that support security groups.
 	SecurityGroups []SecurityGroupReference `json:"security_groups" validate:"required"`
@@ -56781,7 +58109,7 @@ type NetworkACLPrototype struct {
 	Name *string `json:"name,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// The VPC this network ACL will reside in.
@@ -57747,7 +59075,7 @@ func UnmarshalNetworkACLRuleReferenceDeleted(m map[string]json.RawMessage, resul
 
 // NetworkInterface : NetworkInterface struct
 type NetworkInterface struct {
-	// Indicates whether source IP spoofing is allowed on this instance interface.
+	// Indicates whether source IP spoofing is allowed on this instance network interface.
 	AllowIPSpoofing *bool `json:"allow_ip_spoofing" validate:"required"`
 
 	// The date and time that the instance network interface was created.
@@ -57782,7 +59110,7 @@ type NetworkInterface struct {
 	// The associated subnet.
 	Subnet *SubnetReference `json:"subnet" validate:"required"`
 
-	// The type of this instance network interface as it relates to an instance.
+	// The instance network interface type.
 	Type *string `json:"type" validate:"required"`
 }
 
@@ -57802,7 +59130,7 @@ const (
 )
 
 // Constants associated with the NetworkInterface.Type property.
-// The type of this instance network interface as it relates to an instance.
+// The instance network interface type.
 const (
 	NetworkInterfaceTypePrimaryConst   = "primary"
 	NetworkInterfaceTypeSecondaryConst = "secondary"
@@ -58096,7 +59424,7 @@ func UnmarshalNetworkInterfaceInstanceContextReferenceDeleted(m map[string]json.
 
 // NetworkInterfacePatch : NetworkInterfacePatch struct
 type NetworkInterfacePatch struct {
-	// Indicates whether source IP spoofing is allowed on this instance interface.
+	// Indicates whether source IP spoofing is allowed on this instance network interface.
 	AllowIPSpoofing *bool `json:"allow_ip_spoofing,omitempty"`
 
 	// The name for the instance network interface. The name must not be used by another network interface on the virtual
@@ -58131,7 +59459,7 @@ func (networkInterfacePatch *NetworkInterfacePatch) AsPatch() (_patch map[string
 
 // NetworkInterfacePrototype : NetworkInterfacePrototype struct
 type NetworkInterfacePrototype struct {
-	// Indicates whether source IP spoofing is allowed on this instance interface.
+	// Indicates whether source IP spoofing is allowed on this instance network interface.
 	AllowIPSpoofing *bool `json:"allow_ip_spoofing,omitempty"`
 
 	// The name for the instance network interface. The name must not be used by another network interface on the virtual
@@ -58980,7 +60308,7 @@ type PublicGatewayFloatingIPPrototype struct {
 	Name *string `json:"name,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 }
 
@@ -60396,7 +61724,7 @@ func UnmarshalResourceFilter(m map[string]json.RawMessage, result interface{}) (
 }
 
 // ResourceGroupIdentity : The resource group to use. If unspecified, the account's [default resource
-// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 // Models which "extend" this model:
 // - ResourceGroupIdentityByID
 type ResourceGroupIdentity struct {
@@ -61445,9 +62773,9 @@ type RoutingTable struct {
 	// [Direct Link](https://cloud.ibm.com/docs/dl) to this VPC.
 	//
 	// Incoming traffic will be routed according to the routing table with one exception: routes with an `action` of
-	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone`. Therefore,
-	// if an incoming packet matches a route with a `next_hop` of an internet-bound IP address or a VPN gateway connection,
-	// the packet will be dropped.
+	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone` that is
+	// able to accept traffic. Therefore, if an incoming packet matches a route with a `next_hop` of a VPN gateway
+	// connection, the packet will be dropped.
 	RouteDirectLinkIngress *bool `json:"route_direct_link_ingress" validate:"required"`
 
 	// Indicates whether this routing table is used to route traffic that originates from the internet.
@@ -61455,9 +62783,9 @@ type RoutingTable struct {
 	// Incoming traffic will be routed according to the routing table with two exceptions:
 	// - Traffic destined for IP addresses associated with public gateways will not be
 	//   subject to routes in this routing table.
-	// - Routes with an action of deliver are treated as drop unless the `next_hop` is an
-	//   IP address in a subnet in the route's `zone`. Therefore, if an incoming packet
-	//   matches a route with a `next_hop` of an internet-bound IP address or a VPN gateway
+	// - Routes with an `action` of `deliver` are treated as `drop` unless the `next_hop` is
+	//   an IP address in a subnet in the route's `zone` that is able to accept traffic.
+	//   Therefore, if an incoming packet matches a route with a `next_hop` of a VPN gateway
 	//   connection, the packet will be dropped.
 	RouteInternetIngress *bool `json:"route_internet_ingress" validate:"required"`
 
@@ -61465,18 +62793,18 @@ type RoutingTable struct {
 	// Gateway](https://cloud.ibm.com/docs/transit-gateway) to this VPC.
 	//
 	// Incoming traffic will be routed according to the routing table with one exception: routes with an `action` of
-	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone`. Therefore,
-	// if an incoming packet matches a route with a `next_hop` of an internet-bound IP address or a VPN gateway connection,
-	// the packet will be dropped.
+	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone` that is
+	// able to accept traffic. Therefore, if an incoming packet matches a route with a `next_hop` of a VPN gateway
+	// connection, the packet will be dropped.
 	RouteTransitGatewayIngress *bool `json:"route_transit_gateway_ingress" validate:"required"`
 
 	// Indicates whether this routing table is used to route traffic that originates from subnets in other zones in this
 	// VPC.
 	//
 	// Incoming traffic will be routed according to the routing table with one exception: routes with an `action` of
-	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone`. Therefore,
-	// if an incoming packet matches a route with a `next_hop` of an internet-bound IP address or a VPN gateway connection,
-	// the packet will be dropped.
+	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone` that is
+	// able to accept traffic. Therefore, if an incoming packet matches a route with a `next_hop` of a VPN gateway
+	// connection, the packet will be dropped.
 	RouteVPCZoneIngress *bool `json:"route_vpc_zone_ingress" validate:"required"`
 
 	// The routes for this routing table.
@@ -61715,9 +63043,9 @@ type RoutingTablePatch struct {
 	// `false` deselects this routing table.
 	//
 	// Incoming traffic will be routed according to the routing table with one exception: routes with an `action` of
-	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone`. Therefore,
-	// if an incoming packet matches a route with a `next_hop` of an internet-bound IP address or a VPN gateway connection,
-	// the packet will be dropped.
+	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone` that is
+	// able to accept traffic. Therefore, if an incoming packet matches a route with a `next_hop` of a VPN gateway
+	// connection, the packet will be dropped.
 	RouteDirectLinkIngress *bool `json:"route_direct_link_ingress,omitempty"`
 
 	// Indicates whether this routing table is used to route traffic that originates from the internet.  Updating to `true`
@@ -61728,9 +63056,9 @@ type RoutingTablePatch struct {
 	// -  Traffic destined for IP addresses associated with public gateways will not be subject
 	//    to routes in this routing table.
 	// -  Routes with an `action` of `deliver` are treated as `drop` unless the `next_hop` is an
-	//    IP address in a subnet in the route's `zone`. Therefore, if an incoming packet matches
-	//    a route with a `next_hop` of an internet-bound IP address or a VPN gateway connection,
-	//    the packet will be dropped.
+	//    IP address in a subnet in the route's `zone` that is able to accept traffic.
+	//    Therefore, if an incoming packet matches a route with a `next_hop` of a VPN gateway
+	//    connection, the packet will be dropped.
 	RouteInternetIngress *bool `json:"route_internet_ingress,omitempty"`
 
 	// Indicates whether this routing table is used to route traffic that originates from
@@ -61739,9 +63067,9 @@ type RoutingTablePatch struct {
 	// `true`, and no subnets are attached to this routing table. Updating to `false` deselects this routing table.
 	//
 	// Incoming traffic will be routed according to the routing table with one exception: routes with an `action` of
-	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone`. Therefore,
-	// if an incoming packet matches a route with a `next_hop` of an internet-bound IP address or a VPN gateway connection,
-	// the packet will be dropped.
+	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone` that is
+	// able to accept traffic. Therefore, if an incoming packet matches a route with a `next_hop` of a VPN gateway
+	// connection, the packet will be dropped.
 	//
 	// If [Classic Access](https://cloud.ibm.com/docs/vpc?topic=vpc-setting-up-access-to-classic-infrastructure) is enabled
 	// for this VPC, and this property is set to `true`, its incoming traffic will also be routed according to this routing
@@ -61754,9 +63082,9 @@ type RoutingTablePatch struct {
 	// routing table.
 	//
 	// Incoming traffic will be routed according to the routing table with one exception: routes with an `action` of
-	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone`. Therefore,
-	// if an incoming packet matches a route with a `next_hop` of an internet-bound IP address or a VPN gateway connection,
-	// the packet will be dropped.
+	// `deliver` are treated as `drop` unless the `next_hop` is an IP address in a subnet in the route's `zone` that is
+	// able to accept traffic. Therefore, if an incoming packet matches a route with a `next_hop` of a VPN gateway
+	// connection, the packet will be dropped.
 	RouteVPCZoneIngress *bool `json:"route_vpc_zone_ingress,omitempty"`
 }
 
@@ -63951,16 +65279,16 @@ type ShareMountTargetVirtualNetworkInterfacePrototype struct {
 	// an available address on the subnet will be automatically selected and reserved.
 	PrimaryIP VirtualNetworkInterfacePrimaryIPPrototypeIntf `json:"primary_ip,omitempty"`
 
-	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// The resource group to use for this virtual network interface. If unspecified, the
+	// share's resource group will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// The security groups to use for this virtual network interface. If unspecified, the default security group of the VPC
 	// for the subnet is used.
 	SecurityGroups []SecurityGroupIdentityIntf `json:"security_groups,omitempty"`
 
-	// The associated subnet. Required if `primary_ip` does not specify a reserved IP and
-	// `primary_ip.address` is not specified.
+	// The associated subnet. Required if `primary_ip` does not specify a reserved IP
+	// identity.
 	Subnet SubnetIdentityIntf `json:"subnet,omitempty"`
 }
 
@@ -64014,8 +65342,7 @@ type SharePatch struct {
 	// The maximum input/output operations per second (IOPS) for the file share. The value must be in the range supported
 	// by the share's size.
 	//
-	// For this property to be changed, the share `lifecycle_state` must be `stable` and the share must be in the `custom`
-	// or `defined_performance` profile family.
+	// For this property to be changed, the share `lifecycle_state` must be `stable`.
 	Iops *int64 `json:"iops,omitempty"`
 
 	// The name for this share. The name must not be used by another share in the region.
@@ -64023,17 +65350,7 @@ type SharePatch struct {
 
 	// The profile to use for this file share.
 	//
-	// The requested profile must be in the same `family`, with the following exceptions:
-	// - If the current profile family is `tiered`, the requested profile family may be
-	//   `custom` or `defined_performance`.
-	// - If the current profile family is `custom`, the requested profile family may be
-	//   `tiered` or `defined_performance`. Additionally, if requested profile family is
-	//   `tiered`, then `iops` will be reset to a value based on the specified profile and
-	//   current share size, and will become immutable.
-	// - If the current profile family is `defined_performance`, the requested profile
-	//   family may be `tiered` or `custom`. Additionally, if requested profile family is
-	//   `tiered`, then `iops` will be reset to a value based on the specified profile and
-	//   current share size, and will become immutable.
+	// The requested profile must be in the same `family`.
 	Profile ShareProfileIdentityIntf `json:"profile,omitempty"`
 
 	// The cron specification for the file share replication schedule.
@@ -64136,9 +65453,7 @@ type ShareProfile struct {
 // Constants associated with the ShareProfile.Family property.
 // The product family this share profile belongs to.
 const (
-	ShareProfileFamilyCustomConst             = "custom"
 	ShareProfileFamilyDefinedPerformanceConst = "defined_performance"
-	ShareProfileFamilyTieredConst             = "tiered"
 )
 
 // Constants associated with the ShareProfile.ResourceType property.
@@ -64503,7 +65818,7 @@ func UnmarshalShareProfileReference(m map[string]json.RawMessage, result interfa
 // - SharePrototypeShareBySize
 // - SharePrototypeShareBySourceShare
 type SharePrototype struct {
-	// The maximum input/output operations per second (IOPS) for the file share. The share must be in the `custom` or
+	// The maximum input/output operations per second (IOPS) for the file share. The share must be in the
 	// `defined_performance` profile family, and the value must be in the range supported by the share's specified size.
 	//
 	// In addition, each client accessing the share will be restricted to 48,000 IOPS.
@@ -64529,7 +65844,9 @@ type SharePrototype struct {
 	UserTags []string `json:"user_tags,omitempty"`
 
 	// The zone this file share will reside in.
-	// For a replica share, this must be a different zone in the same region as the source share.
+	//
+	// For a replica share, this must be a different zone in the same region as the
+	// source share.
 	Zone ZoneIdentityIntf `json:"zone" validate:"required"`
 
 	// The access control mode for the share:
@@ -64553,7 +65870,7 @@ type SharePrototype struct {
 	InitialOwner *ShareInitialOwner `json:"initial_owner,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// The size of the file share rounded up to the next gigabyte.
@@ -64659,7 +65976,7 @@ func UnmarshalSharePrototype(m map[string]json.RawMessage, result interface{}) (
 // subsequently added by creating a new file share with a
 // `source_share` referencing this file share.
 type SharePrototypeShareContext struct {
-	// The maximum input/output operations per second (IOPS) for the file share. The share must be in the `custom` or
+	// The maximum input/output operations per second (IOPS) for the file share. The share must be in the
 	// `defined_performance` profile family, and the value must be in the range supported by the share's specified size.
 	//
 	// In addition, each client accessing the share will be restricted to 48,000 IOPS.
@@ -64917,7 +66234,7 @@ type Snapshot struct {
 	// The name for this snapshot. The name is unique across all snapshots in the region.
 	Name *string `json:"name" validate:"required"`
 
-	// The operating system included in this image.
+	// The operating system included in this snapshot.
 	OperatingSystem *OperatingSystem `json:"operating_system,omitempty"`
 
 	// The resource group for this snapshot.
@@ -65400,7 +66717,7 @@ type SnapshotPrototype struct {
 	Name *string `json:"name,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// The [user tags](https://cloud.ibm.com/apidocs/tagging#types-of-tags) associated with this snapshot.
@@ -66075,7 +67392,7 @@ type SubnetPrototype struct {
 	PublicGateway PublicGatewayIdentityIntf `json:"public_gateway,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// The routing table to use for this subnet. If unspecified, the default routing table
@@ -68621,6 +69938,54 @@ func (options *UpdateVPCAddressPrefixOptions) SetHeaders(param map[string]string
 	return options
 }
 
+// UpdateVPCDnsResolutionBindingOptions : The UpdateVPCDnsResolutionBinding options.
+type UpdateVPCDnsResolutionBindingOptions struct {
+	// The VPC identifier.
+	VPCID *string `json:"vpc_id" validate:"required,ne="`
+
+	// The DNS resolution binding identifier.
+	ID *string `json:"id" validate:"required,ne="`
+
+	// The DNS resolution binding patch.
+	VpcdnsResolutionBindingPatch map[string]interface{} `json:"VpcdnsResolutionBinding_patch" validate:"required"`
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewUpdateVPCDnsResolutionBindingOptions : Instantiate UpdateVPCDnsResolutionBindingOptions
+func (*VpcbetaV1) NewUpdateVPCDnsResolutionBindingOptions(vpcID string, id string, vpcdnsResolutionBindingPatch map[string]interface{}) *UpdateVPCDnsResolutionBindingOptions {
+	return &UpdateVPCDnsResolutionBindingOptions{
+		VPCID:                        core.StringPtr(vpcID),
+		ID:                           core.StringPtr(id),
+		VpcdnsResolutionBindingPatch: vpcdnsResolutionBindingPatch,
+	}
+}
+
+// SetVPCID : Allow user to set VPCID
+func (_options *UpdateVPCDnsResolutionBindingOptions) SetVPCID(vpcID string) *UpdateVPCDnsResolutionBindingOptions {
+	_options.VPCID = core.StringPtr(vpcID)
+	return _options
+}
+
+// SetID : Allow user to set ID
+func (_options *UpdateVPCDnsResolutionBindingOptions) SetID(id string) *UpdateVPCDnsResolutionBindingOptions {
+	_options.ID = core.StringPtr(id)
+	return _options
+}
+
+// SetVpcdnsResolutionBindingPatch : Allow user to set VpcdnsResolutionBindingPatch
+func (_options *UpdateVPCDnsResolutionBindingOptions) SetVpcdnsResolutionBindingPatch(vpcdnsResolutionBindingPatch map[string]interface{}) *UpdateVPCDnsResolutionBindingOptions {
+	_options.VpcdnsResolutionBindingPatch = vpcdnsResolutionBindingPatch
+	return _options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *UpdateVPCDnsResolutionBindingOptions) SetHeaders(param map[string]string) *UpdateVPCDnsResolutionBindingOptions {
+	options.Headers = param
+	return options
+}
+
 // UpdateVPCOptions : The UpdateVPC options.
 type UpdateVPCOptions struct {
 	// The VPC identifier.
@@ -68628,6 +69993,10 @@ type UpdateVPCOptions struct {
 
 	// The VPC patch.
 	VPCPatch map[string]interface{} `json:"VPC_patch" validate:"required"`
+
+	// If present, the request will fail if the specified ETag value does not match the resource's current ETag value.
+	// Required if the request body includes an array.
+	IfMatch *string `json:"If-Match,omitempty"`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -68650,6 +70019,12 @@ func (_options *UpdateVPCOptions) SetID(id string) *UpdateVPCOptions {
 // SetVPCPatch : Allow user to set VPCPatch
 func (_options *UpdateVPCOptions) SetVPCPatch(vpcPatch map[string]interface{}) *UpdateVPCOptions {
 	_options.VPCPatch = vpcPatch
+	return _options
+}
+
+// SetIfMatch : Allow user to set IfMatch
+func (_options *UpdateVPCOptions) SetIfMatch(ifMatch string) *UpdateVPCOptions {
+	_options.IfMatch = core.StringPtr(ifMatch)
 	return _options
 }
 
@@ -69064,6 +70439,25 @@ type VPC struct {
 	// default.
 	DefaultSecurityGroup *SecurityGroupReference `json:"default_security_group" validate:"required"`
 
+	// The DNS configuration for this VPC.
+	Dns *Vpcdns `json:"dns" validate:"required"`
+
+	// The reasons for the current `health_state` (if any).
+	//
+	// The enumerated reason code values for this property will expand in the future. When processing this property, check
+	// for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
+	// unexpected reason code was encountered.
+	HealthReasons []VPCHealthReason `json:"health_reasons" validate:"required"`
+
+	// The health of this resource.
+	// - `ok`: No abnormal behavior detected
+	// - `degraded`: Experiencing compromised performance, capacity, or connectivity
+	// - `faulted`: Completely unreachable, inoperative, or otherwise entirely incapacitated
+	// - `inapplicable`: The health state does not apply because of the current lifecycle state. A resource with a
+	// lifecycle state of `failed` or `deleting` will have a health state of `inapplicable`. A `pending` resource may also
+	// have this state.
+	HealthState *string `json:"health_state" validate:"required"`
+
 	// The URL for this VPC.
 	Href *string `json:"href" validate:"required"`
 
@@ -69082,6 +70476,21 @@ type VPC struct {
 	// The status of this VPC.
 	Status *string `json:"status" validate:"required"`
 }
+
+// Constants associated with the VPC.HealthState property.
+// The health of this resource.
+// - `ok`: No abnormal behavior detected
+// - `degraded`: Experiencing compromised performance, capacity, or connectivity
+// - `faulted`: Completely unreachable, inoperative, or otherwise entirely incapacitated
+// - `inapplicable`: The health state does not apply because of the current lifecycle state. A resource with a lifecycle
+// state of `failed` or `deleting` will have a health state of `inapplicable`. A `pending` resource may also have this
+// state.
+const (
+	VPCHealthStateDegradedConst     = "degraded"
+	VPCHealthStateFaultedConst      = "faulted"
+	VPCHealthStateInapplicableConst = "inapplicable"
+	VPCHealthStateOkConst           = "ok"
+)
 
 // Constants associated with the VPC.ResourceType property.
 // The resource type.
@@ -69126,6 +70535,18 @@ func UnmarshalVPC(m map[string]json.RawMessage, result interface{}) (err error) 
 		return
 	}
 	err = core.UnmarshalModel(m, "default_security_group", &obj.DefaultSecurityGroup, UnmarshalSecurityGroupReference)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "dns", &obj.Dns, UnmarshalVpcdns)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "health_reasons", &obj.HealthReasons, UnmarshalVPCHealthReason)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "health_state", &obj.HealthState)
 	if err != nil {
 		return
 	}
@@ -69273,6 +70694,629 @@ func UnmarshalVPCCollectionNext(m map[string]json.RawMessage, result interface{}
 	return
 }
 
+// Vpcdns : The DNS configuration for this VPC.
+type Vpcdns struct {
+	// Indicates whether this VPC is enabled as a DNS name resolution hub.
+	EnableHub *bool `json:"enable_hub" validate:"required"`
+
+	// The number of DNS resolution bindings for this VPC.
+	ResolutionBindingCount *int64 `json:"resolution_binding_count" validate:"required"`
+
+	// The DNS resolver configuration for the VPC.
+	Resolver VpcdnsResolverIntf `json:"resolver" validate:"required"`
+}
+
+// UnmarshalVpcdns unmarshals an instance of Vpcdns from the specified map of raw messages.
+func UnmarshalVpcdns(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(Vpcdns)
+	err = core.UnmarshalPrimitive(m, "enable_hub", &obj.EnableHub)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "resolution_binding_count", &obj.ResolutionBindingCount)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "resolver", &obj.Resolver, UnmarshalVpcdnsResolver)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VpcdnsPatch : The DNS configuration for this VPC.
+type VpcdnsPatch struct {
+	// Indicates whether this VPC is enabled as a DNS name resolution hub.
+	//
+	// Updating the value to `true` requires `allow_dns_resolution_binding` to be `true` for all endpoint gateways residing
+	// in this VPC.
+	//
+	// Changing the value requires `dns.resolution_binding_count` to be zero.
+	EnableHub *bool `json:"enable_hub,omitempty"`
+
+	Resolver *VpcdnsResolverPatch `json:"resolver,omitempty"`
+}
+
+// UnmarshalVpcdnsPatch unmarshals an instance of VpcdnsPatch from the specified map of raw messages.
+func UnmarshalVpcdnsPatch(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VpcdnsPatch)
+	err = core.UnmarshalPrimitive(m, "enable_hub", &obj.EnableHub)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "resolver", &obj.Resolver, UnmarshalVpcdnsResolverPatch)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VpcdnsPrototype : The DNS configuration for this VPC.
+//
+// If unspecified, the system will assign DNS servers capable of resolving hosts and endpoint gateways within this VPC,
+// and hosts on the internet.
+type VpcdnsPrototype struct {
+	// Indicates whether this VPC is enabled as a DNS name resolution hub.
+	EnableHub *bool `json:"enable_hub,omitempty"`
+
+	Resolver VpcdnsResolverPrototypeIntf `json:"resolver,omitempty"`
+}
+
+// UnmarshalVpcdnsPrototype unmarshals an instance of VpcdnsPrototype from the specified map of raw messages.
+func UnmarshalVpcdnsPrototype(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VpcdnsPrototype)
+	err = core.UnmarshalPrimitive(m, "enable_hub", &obj.EnableHub)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "resolver", &obj.Resolver, UnmarshalVpcdnsResolverPrototype)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VpcdnsResolutionBinding : VpcdnsResolutionBinding struct
+type VpcdnsResolutionBinding struct {
+	// The date and time that the DNS resolution binding was created.
+	CreatedAt *strfmt.DateTime `json:"created_at" validate:"required"`
+
+	// The endpoint gateways that have `allow_dns_resolution_binding` set to `true` and reside in the VPC that has
+	// `dns.enable_hub` set to `false`.
+	//
+	// The endpoint gateways may be remote and therefore may not be directly retrievable.
+	EndpointGateways []EndpointGatewayReferenceRemote `json:"endpoint_gateways" validate:"required"`
+
+	// The URL for this DNS resolution binding.
+	Href *string `json:"href" validate:"required"`
+
+	// The unique identifier for this DNS resolution binding.
+	ID *string `json:"id" validate:"required"`
+
+	// The lifecycle state of the DNS resolution binding.
+	LifecycleState *string `json:"lifecycle_state" validate:"required"`
+
+	// The name for this DNS resolution binding. The name is unique across all DNS resolution bindings for the VPC.
+	Name *string `json:"name" validate:"required"`
+
+	// The resource type.
+	ResourceType *string `json:"resource_type" validate:"required"`
+
+	// The VPC bound to for DNS resolution.
+	//
+	// The VPC may be remote and therefore may not be directly retrievable.
+	VPC *VPCReferenceRemote `json:"vpc" validate:"required"`
+}
+
+// Constants associated with the VpcdnsResolutionBinding.LifecycleState property.
+// The lifecycle state of the DNS resolution binding.
+const (
+	VpcdnsResolutionBindingLifecycleStateDeletingConst  = "deleting"
+	VpcdnsResolutionBindingLifecycleStateFailedConst    = "failed"
+	VpcdnsResolutionBindingLifecycleStatePendingConst   = "pending"
+	VpcdnsResolutionBindingLifecycleStateStableConst    = "stable"
+	VpcdnsResolutionBindingLifecycleStateSuspendedConst = "suspended"
+	VpcdnsResolutionBindingLifecycleStateUpdatingConst  = "updating"
+	VpcdnsResolutionBindingLifecycleStateWaitingConst   = "waiting"
+)
+
+// Constants associated with the VpcdnsResolutionBinding.ResourceType property.
+// The resource type.
+const (
+	VpcdnsResolutionBindingResourceTypeVPCDnsResolutionBindingConst = "vpc_dns_resolution_binding"
+)
+
+// UnmarshalVpcdnsResolutionBinding unmarshals an instance of VpcdnsResolutionBinding from the specified map of raw messages.
+func UnmarshalVpcdnsResolutionBinding(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VpcdnsResolutionBinding)
+	err = core.UnmarshalPrimitive(m, "created_at", &obj.CreatedAt)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "endpoint_gateways", &obj.EndpointGateways, UnmarshalEndpointGatewayReferenceRemote)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "lifecycle_state", &obj.LifecycleState)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "resource_type", &obj.ResourceType)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "vpc", &obj.VPC, UnmarshalVPCReferenceRemote)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VpcdnsResolutionBindingCollection : VpcdnsResolutionBindingCollection struct
+type VpcdnsResolutionBindingCollection struct {
+	// Collection of DNS resolution bindings for this VPC.
+	DnsResolutionBindings []VpcdnsResolutionBinding `json:"dns_resolution_bindings" validate:"required"`
+
+	// A link to the first page of resources.
+	First *VpcdnsResolutionBindingCollectionFirst `json:"first" validate:"required"`
+
+	// The maximum number of resources that can be returned by the request.
+	Limit *int64 `json:"limit" validate:"required"`
+
+	// A link to the next page of resources. This property is present for all pages
+	// except the last page.
+	Next *VpcdnsResolutionBindingCollectionNext `json:"next,omitempty"`
+
+	// The total number of resources across all pages.
+	TotalCount *int64 `json:"total_count" validate:"required"`
+}
+
+// UnmarshalVpcdnsResolutionBindingCollection unmarshals an instance of VpcdnsResolutionBindingCollection from the specified map of raw messages.
+func UnmarshalVpcdnsResolutionBindingCollection(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VpcdnsResolutionBindingCollection)
+	err = core.UnmarshalModel(m, "dns_resolution_bindings", &obj.DnsResolutionBindings, UnmarshalVpcdnsResolutionBinding)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "first", &obj.First, UnmarshalVpcdnsResolutionBindingCollectionFirst)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "limit", &obj.Limit)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "next", &obj.Next, UnmarshalVpcdnsResolutionBindingCollectionNext)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "total_count", &obj.TotalCount)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// Retrieve the value to be passed to a request to access the next page of results
+func (resp *VpcdnsResolutionBindingCollection) GetNextStart() (*string, error) {
+	if core.IsNil(resp.Next) {
+		return nil, nil
+	}
+	start, err := core.GetQueryParam(resp.Next.Href, "start")
+	if err != nil || start == nil {
+		return nil, err
+	}
+	return start, nil
+}
+
+// VpcdnsResolutionBindingPatch : VpcdnsResolutionBindingPatch struct
+type VpcdnsResolutionBindingPatch struct {
+	// The name for this DNS resolution binding. The name must not be used by another DNS resolution binding for the VPC.
+	Name *string `json:"name,omitempty"`
+}
+
+// UnmarshalVpcdnsResolutionBindingPatch unmarshals an instance of VpcdnsResolutionBindingPatch from the specified map of raw messages.
+func UnmarshalVpcdnsResolutionBindingPatch(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VpcdnsResolutionBindingPatch)
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// AsPatch returns a generic map representation of the VpcdnsResolutionBindingPatch
+func (vpcdnsResolutionBindingPatch *VpcdnsResolutionBindingPatch) AsPatch() (_patch map[string]interface{}, err error) {
+	var jsonData []byte
+	jsonData, err = json.Marshal(vpcdnsResolutionBindingPatch)
+	if err == nil {
+		err = json.Unmarshal(jsonData, &_patch)
+	}
+	return
+}
+
+// VpcdnsResolver : VpcdnsResolver struct
+// Models which "extend" this model:
+// - VpcdnsResolverTypeDelegated
+// - VpcdnsResolverTypeManual
+// - VpcdnsResolverTypeSystem
+type VpcdnsResolver struct {
+	// The DNS servers for this VPC. The servers are populated:
+	//
+	// - by the system when `dns.resolver.type` is `system`
+	// - using the DNS servers in `dns.resolver.vpc` when `dns.resolver.type` is `delegated`
+	// - using `dns.resolver.manual_servers` when the `dns.resolver.type` is `manual`.
+	Servers []DnsServer `json:"servers" validate:"required"`
+
+	// The type of the DNS resolver used for the VPC.
+	//
+	// - `delegated`: DNS server addresses are provided by the DNS resolver of the VPC
+	//                specified in `dns.resolver.vpc`.
+	// - `manual`: DNS server addresses are specified in `dns.resolver.manual_servers`.
+	// - `system`: DNS server addresses are provided by the system.
+	Type *string `json:"type" validate:"required"`
+
+	// The VPC whose DNS resolver provides the DNS server addresses for this VPC.
+	//
+	// The VPC may be remote and therefore may not be directly retrievable.
+	VPC *VPCReferenceDnsResolverContext `json:"vpc,omitempty"`
+
+	// The manually specified DNS servers for this VPC.
+	//
+	// If the DNS servers have `zone_affinity`, the DHCP [Domain Name Server
+	// Option](https://datatracker.ietf.org/doc/html/rfc2132#section-3.8) for a zone will list the DNS server with the
+	// affinity for that zone first, followed by the unique DNS servers from other zones.
+	//
+	// If the DNS servers do not have `zone_affinity`, the DHCP [Domain Name Server
+	// Option](https://datatracker.ietf.org/doc/html/rfc2132#section-3.8) for each zone will list all the manual DNS
+	// servers in the order specified.
+	ManualServers []DnsServer `json:"manual_servers,omitempty"`
+
+	// The configuration of the system DNS resolver for this VPC.
+	//
+	// - `custom_resolver`: A custom DNS resolver is configured for this VPC.
+	//
+	// - `private_resolver`: A private DNS resolver is configured for this VPC. Applicable when
+	//   the VPC has either or both of the following:
+	//
+	//     - at least one endpoint gateway residing in it
+	//     - a [DNS Services](https://cloud.ibm.com/docs/dns-svcs) private zone configured for it
+	//
+	// - `default`: The provider default DNS resolvers are configured for this VPC.
+	//
+	//   This system DNS resolver configuration is used when the VPC has:
+	//
+	//   - no custom DNS resolver configured for it, and
+	//   - no endpoint gateways residing in it, and
+	//   - no [DNS Services](https://cloud.ibm.com/docs/dns-svcs) private zone configured for it.
+	Configuration *string `json:"configuration,omitempty"`
+}
+
+// Constants associated with the VpcdnsResolver.Type property.
+// The type of the DNS resolver used for the VPC.
+//
+//   - `delegated`: DNS server addresses are provided by the DNS resolver of the VPC
+//     specified in `dns.resolver.vpc`.
+//   - `manual`: DNS server addresses are specified in `dns.resolver.manual_servers`.
+//   - `system`: DNS server addresses are provided by the system.
+const (
+	VpcdnsResolverTypeDelegatedConst = "delegated"
+	VpcdnsResolverTypeManualConst    = "manual"
+	VpcdnsResolverTypeSystemConst    = "system"
+)
+
+// Constants associated with the VpcdnsResolver.Configuration property.
+// The configuration of the system DNS resolver for this VPC.
+//
+// - `custom_resolver`: A custom DNS resolver is configured for this VPC.
+//
+//   - `private_resolver`: A private DNS resolver is configured for this VPC. Applicable when
+//     the VPC has either or both of the following:
+//
+//   - at least one endpoint gateway residing in it
+//
+//   - a [DNS Services](https://cloud.ibm.com/docs/dns-svcs) private zone configured for it
+//
+// - `default`: The provider default DNS resolvers are configured for this VPC.
+//
+//	This system DNS resolver configuration is used when the VPC has:
+//
+//	- no custom DNS resolver configured for it, and
+//	- no endpoint gateways residing in it, and
+//	- no [DNS Services](https://cloud.ibm.com/docs/dns-svcs) private zone configured for it.
+const (
+	VpcdnsResolverConfigurationCustomResolverConst  = "custom_resolver"
+	VpcdnsResolverConfigurationDefaultConst         = "default"
+	VpcdnsResolverConfigurationPrivateResolverConst = "private_resolver"
+)
+
+func (*VpcdnsResolver) isaVpcdnsResolver() bool {
+	return true
+}
+
+type VpcdnsResolverIntf interface {
+	isaVpcdnsResolver() bool
+}
+
+// UnmarshalVpcdnsResolver unmarshals an instance of VpcdnsResolver from the specified map of raw messages.
+func UnmarshalVpcdnsResolver(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VpcdnsResolver)
+	err = core.UnmarshalModel(m, "servers", &obj.Servers, UnmarshalDnsServer)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "vpc", &obj.VPC, UnmarshalVPCReferenceDnsResolverContext)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "manual_servers", &obj.ManualServers, UnmarshalDnsServer)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "configuration", &obj.Configuration)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VpcdnsResolverPatch : VpcdnsResolverPatch struct
+type VpcdnsResolverPatch struct {
+	// The DNS servers to use for this VPC, replacing any existing servers. All the DNS servers must either:
+	//
+	// - have a unique `zone_affinity`, or
+	// - not have a `zone_affinity`.
+	//
+	// If `zone_affinity` is specified, exactly one DNS server must be specified for each zone in the region. The DHCP
+	// [Domain Name Server Option](https://datatracker.ietf.org/doc/html/rfc2132#section-3.8) for a zone will list this DNS
+	// server first, followed by unique DNS servers from other zones if available.
+	//
+	// If `zone_affinity` is not specified, the DHCP [Domain Name Server
+	// Option](https://datatracker.ietf.org/doc/html/rfc2132#section-3.8) for each zone will list all the manual DNS
+	// servers in the order specified.
+	//
+	// `dns.resolver.manual_servers` must be set if and only if `dns.resolver.type` is `manual`.
+	ManualServers []DnsServerPrototype `json:"manual_servers,omitempty"`
+
+	// The type of the DNS resolver to use.
+	//
+	// - `delegated`: DNS server addresses will be provided by the resolver for the VPC
+	//                specified in `dns.resolver.vpc`. Requires `dns.enable_hub` to be
+	//                `false`.
+	// - `manual`: DNS server addresses are specified in `dns.resolver.manual_servers`.
+	// - `system`: DNS server addresses will be provided by the system and depend on the
+	//             configuration.
+	//
+	// Updating from `manual` requires `dns.resolver.manual_servers` to be specified as
+	// `null`.
+	//
+	// Updating to `manual` requires `dns.resolver.manual_servers` to be specified and not empty.
+	//
+	// Updating from `delegated` requires `dns.resolver.vpc` to be specified as `null`.
+	Type *string `json:"type,omitempty"`
+
+	// The VPC to provide DNS server addresses for this VPC.  The specified VPC must be configured
+	// with a [DNS Services](https://cloud.ibm.com/docs/dns-svcs) custom resolver and must be in
+	// one of this VPC's DNS resolution bindings.
+	//
+	// Specify `null` to remove an existing VPC.
+	//
+	// This property must be set if and only if `dns.resolver.type` is `delegated`.
+	VPC VpcdnsResolverVPCPatchIntf `json:"vpc,omitempty"`
+}
+
+// Constants associated with the VpcdnsResolverPatch.Type property.
+// The type of the DNS resolver to use.
+//
+//   - `delegated`: DNS server addresses will be provided by the resolver for the VPC
+//     specified in `dns.resolver.vpc`. Requires `dns.enable_hub` to be
+//     `false`.
+//   - `manual`: DNS server addresses are specified in `dns.resolver.manual_servers`.
+//   - `system`: DNS server addresses will be provided by the system and depend on the
+//     configuration.
+//
+// Updating from `manual` requires `dns.resolver.manual_servers` to be specified as
+// `null`.
+//
+// Updating to `manual` requires `dns.resolver.manual_servers` to be specified and not empty.
+//
+// Updating from `delegated` requires `dns.resolver.vpc` to be specified as `null`.
+const (
+	VpcdnsResolverPatchTypeDelegatedConst = "delegated"
+	VpcdnsResolverPatchTypeManualConst    = "manual"
+	VpcdnsResolverPatchTypeSystemConst    = "system"
+)
+
+// UnmarshalVpcdnsResolverPatch unmarshals an instance of VpcdnsResolverPatch from the specified map of raw messages.
+func UnmarshalVpcdnsResolverPatch(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VpcdnsResolverPatch)
+	err = core.UnmarshalModel(m, "manual_servers", &obj.ManualServers, UnmarshalDnsServerPrototype)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "vpc", &obj.VPC, UnmarshalVpcdnsResolverVPCPatch)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VpcdnsResolverPrototype : VpcdnsResolverPrototype struct
+// Models which "extend" this model:
+// - VpcdnsResolverPrototypeVpcdnsResolverTypeManualPrototype
+// - VpcdnsResolverPrototypeVpcdnsResolverTypeSystemPrototype
+type VpcdnsResolverPrototype struct {
+	// The type of the DNS resolver to use.
+	//
+	// - `manual`: DNS server addresses are specified in `dns.resolver.manual_servers`.
+	// - `system`: DNS server addresses will be provided by the system and depend on the
+	//             configuration.
+	Type *string `json:"type,omitempty"`
+
+	// The DNS servers to use for this VPC. All the DNS servers must either:
+	//
+	// - have a unique `zone_affinity`, or
+	// - not have a `zone_affinity`.
+	//
+	// If `zone_affinity` is specified, exactly one DNS server must be specified for each zone in the region. The DHCP
+	// [Domain Name Server Option](https://datatracker.ietf.org/doc/html/rfc2132#section-3.8) for a zone will list this DNS
+	// server first, followed by unique DNS servers from other zones if available.
+	//
+	// If `zone_affinity` is not specified, the DHCP [Domain Name Server
+	// Option](https://datatracker.ietf.org/doc/html/rfc2132#section-3.8) for each zone will list all the manual DNS
+	// servers in the order specified.
+	ManualServers []DnsServerPrototype `json:"manual_servers,omitempty"`
+}
+
+// Constants associated with the VpcdnsResolverPrototype.Type property.
+// The type of the DNS resolver to use.
+//
+//   - `manual`: DNS server addresses are specified in `dns.resolver.manual_servers`.
+//   - `system`: DNS server addresses will be provided by the system and depend on the
+//     configuration.
+const (
+	VpcdnsResolverPrototypeTypeManualConst = "manual"
+	VpcdnsResolverPrototypeTypeSystemConst = "system"
+)
+
+func (*VpcdnsResolverPrototype) isaVpcdnsResolverPrototype() bool {
+	return true
+}
+
+type VpcdnsResolverPrototypeIntf interface {
+	isaVpcdnsResolverPrototype() bool
+}
+
+// UnmarshalVpcdnsResolverPrototype unmarshals an instance of VpcdnsResolverPrototype from the specified map of raw messages.
+func UnmarshalVpcdnsResolverPrototype(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VpcdnsResolverPrototype)
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "manual_servers", &obj.ManualServers, UnmarshalDnsServerPrototype)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VpcdnsResolverVPCPatch : The VPC to provide DNS server addresses for this VPC.  The specified VPC must be configured with a [DNS
+// Services](https://cloud.ibm.com/docs/dns-svcs) custom resolver and must be in one of this VPC's DNS resolution
+// bindings.
+//
+// Specify `null` to remove an existing VPC.
+//
+// This property must be set if and only if `dns.resolver.type` is `delegated`.
+// Models which "extend" this model:
+// - VpcdnsResolverVPCPatchVPCIdentityByID
+// - VpcdnsResolverVPCPatchVPCIdentityByCRN
+// - VpcdnsResolverVPCPatchVPCIdentityByHref
+type VpcdnsResolverVPCPatch struct {
+	// The unique identifier for this VPC.
+	ID *string `json:"id,omitempty"`
+
+	// The CRN for this VPC.
+	CRN *string `json:"crn,omitempty"`
+
+	// The URL for this VPC.
+	Href *string `json:"href,omitempty"`
+}
+
+func (*VpcdnsResolverVPCPatch) isaVpcdnsResolverVPCPatch() bool {
+	return true
+}
+
+type VpcdnsResolverVPCPatchIntf interface {
+	isaVpcdnsResolverVPCPatch() bool
+}
+
+// UnmarshalVpcdnsResolverVPCPatch unmarshals an instance of VpcdnsResolverVPCPatch from the specified map of raw messages.
+func UnmarshalVpcdnsResolverVPCPatch(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VpcdnsResolverVPCPatch)
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VPCHealthReason : VPCHealthReason struct
+type VPCHealthReason struct {
+	// A snake case string succinctly identifying the reason for this health state.
+	Code *string `json:"code" validate:"required"`
+
+	// An explanation of the reason for this health state.
+	Message *string `json:"message" validate:"required"`
+
+	// Link to documentation about the reason for this health state.
+	MoreInfo *string `json:"more_info,omitempty"`
+}
+
+// Constants associated with the VPCHealthReason.Code property.
+// A snake case string succinctly identifying the reason for this health state.
+const (
+	VPCHealthReasonCodeDnsResolutionBindingFailedConst = "dns_resolution_binding_failed"
+	VPCHealthReasonCodeInternalErrorConst              = "internal_error"
+)
+
+// UnmarshalVPCHealthReason unmarshals an instance of VPCHealthReason from the specified map of raw messages.
+func UnmarshalVPCHealthReason(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VPCHealthReason)
+	err = core.UnmarshalPrimitive(m, "code", &obj.Code)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "message", &obj.Message)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // VPCIdentity : Identifies a VPC by a unique property.
 // Models which "extend" this model:
 // - VPCIdentityByID
@@ -69318,6 +71362,9 @@ func UnmarshalVPCIdentity(m map[string]json.RawMessage, result interface{}) (err
 
 // VPCPatch : VPCPatch struct
 type VPCPatch struct {
+	// The DNS configuration for this VPC.
+	Dns *VpcdnsPatch `json:"dns,omitempty"`
+
 	// The name for this VPC. The name must not be used by another VPC in the region.
 	Name *string `json:"name,omitempty"`
 }
@@ -69325,6 +71372,10 @@ type VPCPatch struct {
 // UnmarshalVPCPatch unmarshals an instance of VPCPatch from the specified map of raw messages.
 func UnmarshalVPCPatch(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(VPCPatch)
+	err = core.UnmarshalModel(m, "dns", &obj.Dns, UnmarshalVpcdnsPatch)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
 	if err != nil {
 		return
@@ -69402,6 +71453,75 @@ func UnmarshalVPCReference(m map[string]json.RawMessage, result interface{}) (er
 	return
 }
 
+// VPCReferenceDnsResolverContext : A VPC whose DNS resolver is delegated to provide DNS servers for this VPC.
+//
+// The VPC may be remote and therefore may not be directly retrievable.
+type VPCReferenceDnsResolverContext struct {
+	// The CRN for this VPC.
+	CRN *string `json:"crn" validate:"required"`
+
+	// If present, this property indicates the referenced resource has been deleted, and provides
+	// some supplementary information.
+	Deleted *VPCReferenceDnsResolverContextDeleted `json:"deleted,omitempty"`
+
+	// The URL for this VPC.
+	Href *string `json:"href" validate:"required"`
+
+	// The unique identifier for this VPC.
+	ID *string `json:"id" validate:"required"`
+
+	// The name for this VPC. The name is unique across all VPCs in the region.
+	Name *string `json:"name" validate:"required"`
+
+	// If present, this property indicates that the resource associated with this reference
+	// is remote and therefore may not be directly retrievable.
+	Remote *VPCRemote `json:"remote,omitempty"`
+
+	// The resource type.
+	ResourceType *string `json:"resource_type" validate:"required"`
+}
+
+// Constants associated with the VPCReferenceDnsResolverContext.ResourceType property.
+// The resource type.
+const (
+	VPCReferenceDnsResolverContextResourceTypeVPCConst = "vpc"
+)
+
+// UnmarshalVPCReferenceDnsResolverContext unmarshals an instance of VPCReferenceDnsResolverContext from the specified map of raw messages.
+func UnmarshalVPCReferenceDnsResolverContext(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VPCReferenceDnsResolverContext)
+	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "deleted", &obj.Deleted, UnmarshalVPCReferenceDnsResolverContextDeleted)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "remote", &obj.Remote, UnmarshalVPCRemote)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "resource_type", &obj.ResourceType)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // VPCReferenceDeleted : If present, this property indicates the referenced resource has been deleted, and provides some supplementary
 // information.
 type VPCReferenceDeleted struct {
@@ -69413,6 +71533,110 @@ type VPCReferenceDeleted struct {
 func UnmarshalVPCReferenceDeleted(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(VPCReferenceDeleted)
 	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VPCReferenceDnsResolverContextDeleted : If present, this property indicates the referenced resource has been deleted, and provides some supplementary
+// information.
+type VPCReferenceDnsResolverContextDeleted struct {
+	// Link to documentation about deleted resources.
+	MoreInfo *string `json:"more_info" validate:"required"`
+}
+
+// UnmarshalVPCReferenceDnsResolverContextDeleted unmarshals an instance of VPCReferenceDnsResolverContextDeleted from the specified map of raw messages.
+func UnmarshalVPCReferenceDnsResolverContextDeleted(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VPCReferenceDnsResolverContextDeleted)
+	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VPCReferenceRemote : VPCReferenceRemote struct
+type VPCReferenceRemote struct {
+	// The CRN for this VPC.
+	CRN *string `json:"crn" validate:"required"`
+
+	// The URL for this VPC.
+	Href *string `json:"href" validate:"required"`
+
+	// The unique identifier for this VPC.
+	ID *string `json:"id" validate:"required"`
+
+	// The name for this VPC. The name is unique across all VPCs in the region.
+	Name *string `json:"name" validate:"required"`
+
+	// If present, this property indicates that the resource associated with this reference
+	// is remote and therefore may not be directly retrievable.
+	Remote *VPCRemote `json:"remote,omitempty"`
+
+	// The resource type.
+	ResourceType *string `json:"resource_type" validate:"required"`
+}
+
+// Constants associated with the VPCReferenceRemote.ResourceType property.
+// The resource type.
+const (
+	VPCReferenceRemoteResourceTypeVPCConst = "vpc"
+)
+
+// UnmarshalVPCReferenceRemote unmarshals an instance of VPCReferenceRemote from the specified map of raw messages.
+func UnmarshalVPCReferenceRemote(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VPCReferenceRemote)
+	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "remote", &obj.Remote, UnmarshalVPCRemote)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "resource_type", &obj.ResourceType)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VPCRemote : If present, this property indicates that the resource associated with this reference is remote and therefore may not
+// be directly retrievable.
+type VPCRemote struct {
+	// If present, this property indicates that the referenced resource is remote to this
+	// account, and identifies the owning account.
+	Account *AccountReference `json:"account,omitempty"`
+
+	// If present, this property indicates that the referenced resource is remote to this
+	// region, and identifies the native region.
+	Region *RegionReference `json:"region,omitempty"`
+}
+
+// UnmarshalVPCRemote unmarshals an instance of VPCRemote from the specified map of raw messages.
+func UnmarshalVPCRemote(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VPCRemote)
+	err = core.UnmarshalModel(m, "account", &obj.Account, UnmarshalAccountReference)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "region", &obj.Region, UnmarshalRegionReference)
 	if err != nil {
 		return
 	}
@@ -69434,11 +71658,43 @@ type VPNGateway struct {
 	// The VPN gateway's CRN.
 	CRN *string `json:"crn" validate:"required"`
 
+	// The reasons for the current VPN gateway health_state (if any):
+	// - `cannot_create_vpc_route`: VPN cannot create route (check for conflict)
+	// - `cannot_reserve_ip_address`: IP address exhaustion (release addresses on the VPN's
+	//   subnet)
+	// - `internal_error`: Internal error (contact IBM support)
+	//
+	// The enumerated reason code values for this property will expand in the future. When processing this property, check
+	// for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
+	// unexpected reason code was encountered.
+	HealthReasons []VPNGatewayHealthReason `json:"health_reasons" validate:"required"`
+
+	// The health of this resource.
+	// - `ok`: No abnormal behavior detected
+	// - `degraded`: Experiencing compromised performance, capacity, or connectivity
+	// - `faulted`: Completely unreachable, inoperative, or otherwise entirely incapacitated
+	// - `inapplicable`: The health state does not apply because of the current lifecycle state. A resource with a
+	// lifecycle state of `failed` or `deleting` will have a health state of `inapplicable`. A `pending` resource may also
+	// have this state.
+	HealthState *string `json:"health_state" validate:"required"`
+
 	// The VPN gateway's canonical URL.
 	Href *string `json:"href" validate:"required"`
 
 	// The unique identifier for this VPN gateway.
 	ID *string `json:"id" validate:"required"`
+
+	// The reasons for the current VPN gateway lifecycle_state (if any):
+	// - `resource_suspended_by_provider`: The resource has been suspended (contact IBM
+	//   support)
+	//
+	// The enumerated reason code values for this property will expand in the future. When processing this property, check
+	// for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
+	// unexpected reason code was encountered.
+	LifecycleReasons []VPNGatewayLifecycleReason `json:"lifecycle_reasons" validate:"required"`
+
+	// The lifecycle state of the VPN gateway.
+	LifecycleState *string `json:"lifecycle_state" validate:"required"`
 
 	// Collection of VPN gateway members.
 	Members []VPNGatewayMember `json:"members" validate:"required"`
@@ -69452,9 +71708,6 @@ type VPNGateway struct {
 	// The resource type.
 	ResourceType *string `json:"resource_type" validate:"required"`
 
-	// The status of the VPN gateway.
-	Status *string `json:"status" validate:"required"`
-
 	Subnet *SubnetReference `json:"subnet" validate:"required"`
 
 	// The VPC this VPN gateway resides in.
@@ -69464,19 +71717,37 @@ type VPNGateway struct {
 	Mode *string `json:"mode,omitempty"`
 }
 
+// Constants associated with the VPNGateway.HealthState property.
+// The health of this resource.
+// - `ok`: No abnormal behavior detected
+// - `degraded`: Experiencing compromised performance, capacity, or connectivity
+// - `faulted`: Completely unreachable, inoperative, or otherwise entirely incapacitated
+// - `inapplicable`: The health state does not apply because of the current lifecycle state. A resource with a lifecycle
+// state of `failed` or `deleting` will have a health state of `inapplicable`. A `pending` resource may also have this
+// state.
+const (
+	VPNGatewayHealthStateDegradedConst     = "degraded"
+	VPNGatewayHealthStateFaultedConst      = "faulted"
+	VPNGatewayHealthStateInapplicableConst = "inapplicable"
+	VPNGatewayHealthStateOkConst           = "ok"
+)
+
+// Constants associated with the VPNGateway.LifecycleState property.
+// The lifecycle state of the VPN gateway.
+const (
+	VPNGatewayLifecycleStateDeletingConst  = "deleting"
+	VPNGatewayLifecycleStateFailedConst    = "failed"
+	VPNGatewayLifecycleStatePendingConst   = "pending"
+	VPNGatewayLifecycleStateStableConst    = "stable"
+	VPNGatewayLifecycleStateSuspendedConst = "suspended"
+	VPNGatewayLifecycleStateUpdatingConst  = "updating"
+	VPNGatewayLifecycleStateWaitingConst   = "waiting"
+)
+
 // Constants associated with the VPNGateway.ResourceType property.
 // The resource type.
 const (
 	VPNGatewayResourceTypeVPNGatewayConst = "vpn_gateway"
-)
-
-// Constants associated with the VPNGateway.Status property.
-// The status of the VPN gateway.
-const (
-	VPNGatewayStatusAvailableConst = "available"
-	VPNGatewayStatusDeletingConst  = "deleting"
-	VPNGatewayStatusFailedConst    = "failed"
-	VPNGatewayStatusPendingConst   = "pending"
 )
 
 // Constants associated with the VPNGateway.Mode property.
@@ -69508,11 +71779,27 @@ func UnmarshalVPNGateway(m map[string]json.RawMessage, result interface{}) (err 
 	if err != nil {
 		return
 	}
+	err = core.UnmarshalModel(m, "health_reasons", &obj.HealthReasons, UnmarshalVPNGatewayHealthReason)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "health_state", &obj.HealthState)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
 	if err != nil {
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "lifecycle_reasons", &obj.LifecycleReasons, UnmarshalVPNGatewayLifecycleReason)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "lifecycle_state", &obj.LifecycleState)
 	if err != nil {
 		return
 	}
@@ -69529,10 +71816,6 @@ func UnmarshalVPNGateway(m map[string]json.RawMessage, result interface{}) (err 
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "resource_type", &obj.ResourceType)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "status", &obj.Status)
 	if err != nil {
 		return
 	}
@@ -69693,6 +71976,27 @@ type VPNGatewayConnection struct {
 	// The status of a VPN gateway connection.
 	Status *string `json:"status" validate:"required"`
 
+	// The reasons for the current VPN gateway connection status (if any):
+	// - `cannot_authenticate_connection`: Failed to authenticate a connection because of
+	//   mismatched IKE ID and PSK (check IKE ID and PSK in peer VPN configuration)
+	// - `internal_error`: Internal error (contact IBM support)
+	// - `ike_policy_mismatch`: None of the proposed IKE crypto suites was acceptable (check
+	//    the IKE policies on both sides of the VPN)
+	// - `ike_v1_id_local_remote_cidr_mismatch`: Invalid IKE ID or mismatched local CIDRs and
+	//   remote CIDRs in IKE V1 (check the IKE ID or the local CIDRs and remote CIDRs in IKE
+	//   V1 configuration)
+	// - `ike_v2_local_remote_cidr_mismatch`: Mismatched local CIDRs and remote CIDRs in IKE
+	//   V2 (check the local CIDRs and remote CIDRs in IKE V2 configuration)
+	// - `ipsec_policy_mismatch`: None of the proposed IPsec crypto suites was acceptable
+	//   (check the IPsec policies on both sides of the VPN)
+	// - `peer_not_responding`: No response from peer (check network ACL configuration, peer
+	//   availability, and on-premise firewall configuration)
+	//
+	// The enumerated reason code values for this property will expand in the future. When processing this property, check
+	// for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
+	// unexpected reason code was encountered.
+	StatusReasons []VPNGatewayConnectionStatusReason `json:"status_reasons" validate:"required"`
+
 	// Routing protocols are disabled for this VPN gateway connection.
 	RoutingProtocol *string `json:"routing_protocol,omitempty"`
 
@@ -69802,6 +72106,10 @@ func UnmarshalVPNGatewayConnection(m map[string]json.RawMessage, result interfac
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "status", &obj.Status)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "status_reasons", &obj.StatusReasons, UnmarshalVPNGatewayConnectionStatusReason)
 	if err != nil {
 		return
 	}
@@ -70411,6 +72719,27 @@ type VPNGatewayConnectionStaticRouteModeTunnel struct {
 
 	// The status of the VPN Tunnel.
 	Status *string `json:"status" validate:"required"`
+
+	// The reasons for the current VPN gateway connection tunnels status (if any):
+	// - `cannot_authenticate_connection`: Failed to authenticate a connection because of
+	//   mismatched IKE ID and PSK (check IKE ID and PSK in peer VPN configuration)
+	// - `internal_error`: Internal error (contact IBM support)
+	// - `ike_policy_mismatch`: None of the proposed IKE crypto suites was acceptable (check
+	//    the IKE policies on both sides of the VPN)
+	// - `ike_v1_id_local_remote_cidr_mismatch`: Invalid IKE ID or mismatched local CIDRs and
+	//   remote CIDRs in IKE V1 (check the IKE ID or the local CIDRs and remote CIDRs in IKE
+	//   V1 configuration)
+	// - `ike_v2_local_remote_cidr_mismatch`: Mismatched local CIDRs and remote CIDRs in IKE
+	//   V2 (check the local CIDRs and remote CIDRs in IKE V2 configuration)
+	// - `ipsec_policy_mismatch`: None of the proposed IPsec crypto suites was acceptable
+	//   (check the IPsec policies on both sides of the VPN)
+	// - `peer_not_responding`: No response from peer (check network ACL configuration, peer
+	//   availability, and on-premise firewall configuration)
+	//
+	// The enumerated reason code values for this property will expand in the future. When processing this property, check
+	// for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
+	// unexpected reason code was encountered.
+	StatusReasons []VPNGatewayConnectionTunnelStatusReason `json:"status_reasons" validate:"required"`
 }
 
 // Constants associated with the VPNGatewayConnectionStaticRouteModeTunnel.Status property.
@@ -70431,12 +72760,209 @@ func UnmarshalVPNGatewayConnectionStaticRouteModeTunnel(m map[string]json.RawMes
 	if err != nil {
 		return
 	}
+	err = core.UnmarshalModel(m, "status_reasons", &obj.StatusReasons, UnmarshalVPNGatewayConnectionTunnelStatusReason)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VPNGatewayConnectionStatusReason : VPNGatewayConnectionStatusReason struct
+type VPNGatewayConnectionStatusReason struct {
+	// A snake case string succinctly identifying the status reason.
+	Code *string `json:"code" validate:"required"`
+
+	// An explanation of the reason for this VPN gateway connection's status.
+	Message *string `json:"message" validate:"required"`
+
+	// Link to documentation about this status reason.
+	MoreInfo *string `json:"more_info,omitempty"`
+}
+
+// Constants associated with the VPNGatewayConnectionStatusReason.Code property.
+// A snake case string succinctly identifying the status reason.
+const (
+	VPNGatewayConnectionStatusReasonCodeCannotAuthenticateConnectionConst   = "cannot_authenticate_connection"
+	VPNGatewayConnectionStatusReasonCodeIkePolicyMismatchConst              = "ike_policy_mismatch"
+	VPNGatewayConnectionStatusReasonCodeIkeV1IDLocalRemoteCIDRMismatchConst = "ike_v1_id_local_remote_cidr_mismatch"
+	VPNGatewayConnectionStatusReasonCodeIkeV2LocalRemoteCIDRMismatchConst   = "ike_v2_local_remote_cidr_mismatch"
+	VPNGatewayConnectionStatusReasonCodeInternalErrorConst                  = "internal_error"
+	VPNGatewayConnectionStatusReasonCodeIpsecPolicyMismatchConst            = "ipsec_policy_mismatch"
+	VPNGatewayConnectionStatusReasonCodePeerNotRespondingConst              = "peer_not_responding"
+)
+
+// UnmarshalVPNGatewayConnectionStatusReason unmarshals an instance of VPNGatewayConnectionStatusReason from the specified map of raw messages.
+func UnmarshalVPNGatewayConnectionStatusReason(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VPNGatewayConnectionStatusReason)
+	err = core.UnmarshalPrimitive(m, "code", &obj.Code)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "message", &obj.Message)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VPNGatewayConnectionTunnelStatusReason : VPNGatewayConnectionTunnelStatusReason struct
+type VPNGatewayConnectionTunnelStatusReason struct {
+	// A snake case string succinctly identifying the status reason.
+	Code *string `json:"code" validate:"required"`
+
+	// An explanation of the reason for this VPN gateway connection tunnel's status.
+	Message *string `json:"message" validate:"required"`
+
+	// Link to documentation about this status reason.
+	MoreInfo *string `json:"more_info,omitempty"`
+}
+
+// Constants associated with the VPNGatewayConnectionTunnelStatusReason.Code property.
+// A snake case string succinctly identifying the status reason.
+const (
+	VPNGatewayConnectionTunnelStatusReasonCodeCannotAuthenticateConnectionConst   = "cannot_authenticate_connection"
+	VPNGatewayConnectionTunnelStatusReasonCodeIkePolicyMismatchConst              = "ike_policy_mismatch"
+	VPNGatewayConnectionTunnelStatusReasonCodeIkeV1IDLocalRemoteCIDRMismatchConst = "ike_v1_id_local_remote_cidr_mismatch"
+	VPNGatewayConnectionTunnelStatusReasonCodeIkeV2LocalRemoteCIDRMismatchConst   = "ike_v2_local_remote_cidr_mismatch"
+	VPNGatewayConnectionTunnelStatusReasonCodeInternalErrorConst                  = "internal_error"
+	VPNGatewayConnectionTunnelStatusReasonCodeIpsecPolicyMismatchConst            = "ipsec_policy_mismatch"
+	VPNGatewayConnectionTunnelStatusReasonCodePeerNotRespondingConst              = "peer_not_responding"
+)
+
+// UnmarshalVPNGatewayConnectionTunnelStatusReason unmarshals an instance of VPNGatewayConnectionTunnelStatusReason from the specified map of raw messages.
+func UnmarshalVPNGatewayConnectionTunnelStatusReason(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VPNGatewayConnectionTunnelStatusReason)
+	err = core.UnmarshalPrimitive(m, "code", &obj.Code)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "message", &obj.Message)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VPNGatewayHealthReason : VPNGatewayHealthReason struct
+type VPNGatewayHealthReason struct {
+	// A snake case string succinctly identifying the reason for this health state.
+	Code *string `json:"code" validate:"required"`
+
+	// An explanation of the reason for this health state.
+	Message *string `json:"message" validate:"required"`
+
+	// Link to documentation about the reason for this health state.
+	MoreInfo *string `json:"more_info,omitempty"`
+}
+
+// Constants associated with the VPNGatewayHealthReason.Code property.
+// A snake case string succinctly identifying the reason for this health state.
+const (
+	VPNGatewayHealthReasonCodeCannotCreateVPCRouteConst   = "cannot_create_vpc_route"
+	VPNGatewayHealthReasonCodeCannotReserveIPAddressConst = "cannot_reserve_ip_address"
+	VPNGatewayHealthReasonCodeInternalErrorConst          = "internal_error"
+)
+
+// UnmarshalVPNGatewayHealthReason unmarshals an instance of VPNGatewayHealthReason from the specified map of raw messages.
+func UnmarshalVPNGatewayHealthReason(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VPNGatewayHealthReason)
+	err = core.UnmarshalPrimitive(m, "code", &obj.Code)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "message", &obj.Message)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VPNGatewayLifecycleReason : VPNGatewayLifecycleReason struct
+type VPNGatewayLifecycleReason struct {
+	// A snake case string succinctly identifying the reason for this lifecycle state.
+	Code *string `json:"code" validate:"required"`
+
+	// An explanation of the reason for this lifecycle state.
+	Message *string `json:"message" validate:"required"`
+
+	// Link to documentation about the reason for this lifecycle state.
+	MoreInfo *string `json:"more_info,omitempty"`
+}
+
+// Constants associated with the VPNGatewayLifecycleReason.Code property.
+// A snake case string succinctly identifying the reason for this lifecycle state.
+const (
+	VPNGatewayLifecycleReasonCodeResourceSuspendedByProviderConst = "resource_suspended_by_provider"
+)
+
+// UnmarshalVPNGatewayLifecycleReason unmarshals an instance of VPNGatewayLifecycleReason from the specified map of raw messages.
+func UnmarshalVPNGatewayLifecycleReason(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VPNGatewayLifecycleReason)
+	err = core.UnmarshalPrimitive(m, "code", &obj.Code)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "message", &obj.Message)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
+	if err != nil {
+		return
+	}
 	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
 // VPNGatewayMember : VPNGatewayMember struct
 type VPNGatewayMember struct {
+	// The reasons for the current VPN gateway member health_state (if any):
+	// - `cannot_reserve_ip_address`: IP address exhaustion (release addresses on the VPN's
+	//   subnet)
+	// - `internal_error`: Internal error (contact IBM support)
+	//
+	// The enumerated reason code values for this property will expand in the future. When processing this property, check
+	// for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
+	// unexpected reason code was encountered.
+	HealthReasons []VPNGatewayMemberHealthReason `json:"health_reasons" validate:"required"`
+
+	// The health of this resource.
+	// - `ok`: No abnormal behavior detected
+	// - `degraded`: Experiencing compromised performance, capacity, or connectivity
+	// - `faulted`: Completely unreachable, inoperative, or otherwise entirely incapacitated
+	// - `inapplicable`: The health state does not apply because of the current lifecycle state. A resource with a
+	// lifecycle state of `failed` or `deleting` will have a health state of `inapplicable`. A `pending` resource may also
+	// have this state.
+	HealthState *string `json:"health_state" validate:"required"`
+
+	// The reasons for the current VPN gateway member lifecycle_state (if any):
+	// - `resource_suspended_by_provider`: The resource has been suspended (contact IBM
+	//   support)
+	//
+	// The enumerated reason code values for this property will expand in the future. When processing this property, check
+	// for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
+	// unexpected reason code was encountered.
+	LifecycleReasons []VPNGatewayMemberLifecycleReason `json:"lifecycle_reasons" validate:"required"`
+
+	// The lifecycle state of the VPN gateway member.
+	LifecycleState *string `json:"lifecycle_state" validate:"required"`
+
 	// The reserved IP address assigned to the VPN gateway member.
 	//
 	// This property will be present only when the VPN gateway status is `available`.
@@ -70447,10 +72973,34 @@ type VPNGatewayMember struct {
 
 	// The high availability role assigned to the VPN gateway member.
 	Role *string `json:"role" validate:"required"`
-
-	// The status of the VPN gateway member.
-	Status *string `json:"status" validate:"required"`
 }
+
+// Constants associated with the VPNGatewayMember.HealthState property.
+// The health of this resource.
+// - `ok`: No abnormal behavior detected
+// - `degraded`: Experiencing compromised performance, capacity, or connectivity
+// - `faulted`: Completely unreachable, inoperative, or otherwise entirely incapacitated
+// - `inapplicable`: The health state does not apply because of the current lifecycle state. A resource with a lifecycle
+// state of `failed` or `deleting` will have a health state of `inapplicable`. A `pending` resource may also have this
+// state.
+const (
+	VPNGatewayMemberHealthStateDegradedConst     = "degraded"
+	VPNGatewayMemberHealthStateFaultedConst      = "faulted"
+	VPNGatewayMemberHealthStateInapplicableConst = "inapplicable"
+	VPNGatewayMemberHealthStateOkConst           = "ok"
+)
+
+// Constants associated with the VPNGatewayMember.LifecycleState property.
+// The lifecycle state of the VPN gateway member.
+const (
+	VPNGatewayMemberLifecycleStateDeletingConst  = "deleting"
+	VPNGatewayMemberLifecycleStateFailedConst    = "failed"
+	VPNGatewayMemberLifecycleStatePendingConst   = "pending"
+	VPNGatewayMemberLifecycleStateStableConst    = "stable"
+	VPNGatewayMemberLifecycleStateSuspendedConst = "suspended"
+	VPNGatewayMemberLifecycleStateUpdatingConst  = "updating"
+	VPNGatewayMemberLifecycleStateWaitingConst   = "waiting"
+)
 
 // Constants associated with the VPNGatewayMember.Role property.
 // The high availability role assigned to the VPN gateway member.
@@ -70459,18 +73009,25 @@ const (
 	VPNGatewayMemberRoleStandbyConst = "standby"
 )
 
-// Constants associated with the VPNGatewayMember.Status property.
-// The status of the VPN gateway member.
-const (
-	VPNGatewayMemberStatusAvailableConst = "available"
-	VPNGatewayMemberStatusDeletingConst  = "deleting"
-	VPNGatewayMemberStatusFailedConst    = "failed"
-	VPNGatewayMemberStatusPendingConst   = "pending"
-)
-
 // UnmarshalVPNGatewayMember unmarshals an instance of VPNGatewayMember from the specified map of raw messages.
 func UnmarshalVPNGatewayMember(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(VPNGatewayMember)
+	err = core.UnmarshalModel(m, "health_reasons", &obj.HealthReasons, UnmarshalVPNGatewayMemberHealthReason)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "health_state", &obj.HealthState)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "lifecycle_reasons", &obj.LifecycleReasons, UnmarshalVPNGatewayMemberLifecycleReason)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "lifecycle_state", &obj.LifecycleState)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalModel(m, "private_ip", &obj.PrivateIP, UnmarshalReservedIPReference)
 	if err != nil {
 		return
@@ -70483,7 +73040,78 @@ func UnmarshalVPNGatewayMember(m map[string]json.RawMessage, result interface{})
 	if err != nil {
 		return
 	}
-	err = core.UnmarshalPrimitive(m, "status", &obj.Status)
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VPNGatewayMemberHealthReason : VPNGatewayMemberHealthReason struct
+type VPNGatewayMemberHealthReason struct {
+	// A snake case string succinctly identifying the reason for this health state.
+	Code *string `json:"code" validate:"required"`
+
+	// An explanation of the reason for this health state.
+	Message *string `json:"message" validate:"required"`
+
+	// Link to documentation about the reason for this health state.
+	MoreInfo *string `json:"more_info,omitempty"`
+}
+
+// Constants associated with the VPNGatewayMemberHealthReason.Code property.
+// A snake case string succinctly identifying the reason for this health state.
+const (
+	VPNGatewayMemberHealthReasonCodeCannotReserveIPAddressConst = "cannot_reserve_ip_address"
+	VPNGatewayMemberHealthReasonCodeInternalErrorConst          = "internal_error"
+)
+
+// UnmarshalVPNGatewayMemberHealthReason unmarshals an instance of VPNGatewayMemberHealthReason from the specified map of raw messages.
+func UnmarshalVPNGatewayMemberHealthReason(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VPNGatewayMemberHealthReason)
+	err = core.UnmarshalPrimitive(m, "code", &obj.Code)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "message", &obj.Message)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VPNGatewayMemberLifecycleReason : VPNGatewayMemberLifecycleReason struct
+type VPNGatewayMemberLifecycleReason struct {
+	// A snake case string succinctly identifying the reason for this lifecycle state.
+	Code *string `json:"code" validate:"required"`
+
+	// An explanation of the reason for this lifecycle state.
+	Message *string `json:"message" validate:"required"`
+
+	// Link to documentation about the reason for this lifecycle state.
+	MoreInfo *string `json:"more_info,omitempty"`
+}
+
+// Constants associated with the VPNGatewayMemberLifecycleReason.Code property.
+// A snake case string succinctly identifying the reason for this lifecycle state.
+const (
+	VPNGatewayMemberLifecycleReasonCodeResourceSuspendedByProviderConst = "resource_suspended_by_provider"
+)
+
+// UnmarshalVPNGatewayMemberLifecycleReason unmarshals an instance of VPNGatewayMemberLifecycleReason from the specified map of raw messages.
+func UnmarshalVPNGatewayMemberLifecycleReason(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VPNGatewayMemberLifecycleReason)
+	err = core.UnmarshalPrimitive(m, "code", &obj.Code)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "message", &obj.Message)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
 	if err != nil {
 		return
 	}
@@ -70528,7 +73156,7 @@ type VPNGatewayPrototype struct {
 	Name *string `json:"name,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// Identifies a subnet by a unique property.
@@ -70630,6 +73258,23 @@ type VPNServer struct {
 	// Indicates whether the split tunneling is enabled on this VPN server.
 	EnableSplitTunneling *bool `json:"enable_split_tunneling" validate:"required"`
 
+	// The reasons for the current VPN server health_state (if any):
+	// - `cannot_access_client_certificate`: VPN server's client certificate is inaccessible
+	//   (verify certificate exists and that IAM policies grant `VPN server for VPC` access to
+	//   `Secrets Manager`)
+	// - `cannot_access_server_certificate`: VPN server's server certificate is inaccessible
+	//   (verify certificate exists and that IAM policies grant `VPN server for VPC` access to
+	//   `Secrets Manager`)
+	// - `cannot_create_vpc_route`: VPN cannot create route (check for conflict)
+	// - `cannot_reserve_ip_address`: IP address exhaustion (release addresses on the VPN's
+	//   subnet)
+	// - `internal_error`: Internal error (contact IBM support)
+	//
+	// The enumerated reason code values for this property will expand in the future. When processing this property, check
+	// for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
+	// unexpected reason code was encountered.
+	HealthReasons []VPNServerHealthReason `json:"health_reasons" validate:"required"`
+
 	// The health of this resource.
 	// - `ok`: No abnormal behavior detected
 	// - `degraded`: Experiencing compromised performance, capacity, or connectivity
@@ -70647,6 +73292,15 @@ type VPNServer struct {
 
 	// The unique identifier for this VPN server.
 	ID *string `json:"id" validate:"required"`
+
+	// The reasons for the current VPN server lifecycle_state (if any):
+	// - `resource_suspended_by_provider`: The resource has been suspended (contact IBM
+	//   support)
+	//
+	// The enumerated reason code values for this property will expand in the future. When processing this property, check
+	// for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
+	// unexpected reason code was encountered.
+	LifecycleReasons []VPNServerLifecycleReason `json:"lifecycle_reasons" validate:"required"`
 
 	// The lifecycle state of the VPN server.
 	LifecycleState *string `json:"lifecycle_state" validate:"required"`
@@ -70762,6 +73416,10 @@ func UnmarshalVPNServer(m map[string]json.RawMessage, result interface{}) (err e
 	if err != nil {
 		return
 	}
+	err = core.UnmarshalModel(m, "health_reasons", &obj.HealthReasons, UnmarshalVPNServerHealthReason)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "health_state", &obj.HealthState)
 	if err != nil {
 		return
@@ -70775,6 +73433,10 @@ func UnmarshalVPNServer(m map[string]json.RawMessage, result interface{}) (err e
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "lifecycle_reasons", &obj.LifecycleReasons, UnmarshalVPNServerLifecycleReason)
 	if err != nil {
 		return
 	}
@@ -71279,6 +73941,84 @@ func UnmarshalVPNServerCollectionNext(m map[string]json.RawMessage, result inter
 	return
 }
 
+// VPNServerHealthReason : VPNServerHealthReason struct
+type VPNServerHealthReason struct {
+	// A snake case string succinctly identifying the reason for this health state.
+	Code *string `json:"code" validate:"required"`
+
+	// An explanation of the reason for this health state.
+	Message *string `json:"message" validate:"required"`
+
+	// Link to documentation about the reason for this health state.
+	MoreInfo *string `json:"more_info,omitempty"`
+}
+
+// Constants associated with the VPNServerHealthReason.Code property.
+// A snake case string succinctly identifying the reason for this health state.
+const (
+	VPNServerHealthReasonCodeCannotAccessClientCertificateConst = "cannot_access_client_certificate"
+	VPNServerHealthReasonCodeCannotAccessServerCertificateConst = "cannot_access_server_certificate"
+	VPNServerHealthReasonCodeCannotCreateVPCRouteConst          = "cannot_create_vpc_route"
+	VPNServerHealthReasonCodeCannotReserveIPAddressConst        = "cannot_reserve_ip_address"
+	VPNServerHealthReasonCodeInternalErrorConst                 = "internal_error"
+)
+
+// UnmarshalVPNServerHealthReason unmarshals an instance of VPNServerHealthReason from the specified map of raw messages.
+func UnmarshalVPNServerHealthReason(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VPNServerHealthReason)
+	err = core.UnmarshalPrimitive(m, "code", &obj.Code)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "message", &obj.Message)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VPNServerLifecycleReason : VPNServerLifecycleReason struct
+type VPNServerLifecycleReason struct {
+	// A snake case string succinctly identifying the reason for this lifecycle state.
+	Code *string `json:"code" validate:"required"`
+
+	// An explanation of the reason for this lifecycle state.
+	Message *string `json:"message" validate:"required"`
+
+	// Link to documentation about the reason for this lifecycle state.
+	MoreInfo *string `json:"more_info,omitempty"`
+}
+
+// Constants associated with the VPNServerLifecycleReason.Code property.
+// A snake case string succinctly identifying the reason for this lifecycle state.
+const (
+	VPNServerLifecycleReasonCodeResourceSuspendedByProviderConst = "resource_suspended_by_provider"
+)
+
+// UnmarshalVPNServerLifecycleReason unmarshals an instance of VPNServerLifecycleReason from the specified map of raw messages.
+func UnmarshalVPNServerLifecycleReason(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VPNServerLifecycleReason)
+	err = core.UnmarshalPrimitive(m, "code", &obj.Code)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "message", &obj.Message)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // VPNServerPatch : VPNServerPatch struct
 type VPNServerPatch struct {
 	// The certificate instance for this VPN server.
@@ -71426,11 +74166,37 @@ type VPNServerRoute struct {
 	// be dropped.
 	Destination *string `json:"destination" validate:"required"`
 
+	// The reasons for the current VPN server route health_state (if any):
+	// - `internal_error`: Internal error (contact IBM support)
+	//
+	// The enumerated reason code values for this property will expand in the future. When processing this property, check
+	// for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
+	// unexpected reason code was encountered.
+	HealthReasons []VPNServerRouteHealthReason `json:"health_reasons" validate:"required"`
+
+	// The health of this resource.
+	// - `ok`: No abnormal behavior detected
+	// - `degraded`: Experiencing compromised performance, capacity, or connectivity
+	// - `faulted`: Completely unreachable, inoperative, or otherwise entirely incapacitated
+	// - `inapplicable`: The health state does not apply because of the current lifecycle state. A resource with a
+	// lifecycle state of `failed` or `deleting` will have a health state of `inapplicable`. A `pending` resource may also
+	// have this state.
+	HealthState *string `json:"health_state" validate:"required"`
+
 	// The URL for this VPN route.
 	Href *string `json:"href" validate:"required"`
 
 	// The unique identifier for this VPN route.
 	ID *string `json:"id" validate:"required"`
+
+	// The reasons for the current VPN server route lifecycle_state (if any):
+	// - `resource_suspended_by_provider`: The resource has been suspended (contact IBM
+	//   support)
+	//
+	// The enumerated reason code values for this property will expand in the future. When processing this property, check
+	// for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
+	// unexpected reason code was encountered.
+	LifecycleReasons []VPNServerRouteLifecycleReason `json:"lifecycle_reasons" validate:"required"`
 
 	// The lifecycle state of the VPN route.
 	LifecycleState *string `json:"lifecycle_state" validate:"required"`
@@ -71455,6 +74221,21 @@ const (
 	VPNServerRouteActionDeliverConst   = "deliver"
 	VPNServerRouteActionDropConst      = "drop"
 	VPNServerRouteActionTranslateConst = "translate"
+)
+
+// Constants associated with the VPNServerRoute.HealthState property.
+// The health of this resource.
+// - `ok`: No abnormal behavior detected
+// - `degraded`: Experiencing compromised performance, capacity, or connectivity
+// - `faulted`: Completely unreachable, inoperative, or otherwise entirely incapacitated
+// - `inapplicable`: The health state does not apply because of the current lifecycle state. A resource with a lifecycle
+// state of `failed` or `deleting` will have a health state of `inapplicable`. A `pending` resource may also have this
+// state.
+const (
+	VPNServerRouteHealthStateDegradedConst     = "degraded"
+	VPNServerRouteHealthStateFaultedConst      = "faulted"
+	VPNServerRouteHealthStateInapplicableConst = "inapplicable"
+	VPNServerRouteHealthStateOkConst           = "ok"
 )
 
 // Constants associated with the VPNServerRoute.LifecycleState property.
@@ -71490,11 +74271,23 @@ func UnmarshalVPNServerRoute(m map[string]json.RawMessage, result interface{}) (
 	if err != nil {
 		return
 	}
+	err = core.UnmarshalModel(m, "health_reasons", &obj.HealthReasons, UnmarshalVPNServerRouteHealthReason)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "health_state", &obj.HealthState)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
 	if err != nil {
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "lifecycle_reasons", &obj.LifecycleReasons, UnmarshalVPNServerRouteLifecycleReason)
 	if err != nil {
 		return
 	}
@@ -71599,6 +74392,80 @@ type VPNServerRouteCollectionNext struct {
 func UnmarshalVPNServerRouteCollectionNext(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(VPNServerRouteCollectionNext)
 	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VPNServerRouteHealthReason : VPNServerRouteHealthReason struct
+type VPNServerRouteHealthReason struct {
+	// A snake case string succinctly identifying the reason for this health state.
+	Code *string `json:"code" validate:"required"`
+
+	// An explanation of the reason for this health state.
+	Message *string `json:"message" validate:"required"`
+
+	// Link to documentation about the reason for this health state.
+	MoreInfo *string `json:"more_info,omitempty"`
+}
+
+// Constants associated with the VPNServerRouteHealthReason.Code property.
+// A snake case string succinctly identifying the reason for this health state.
+const (
+	VPNServerRouteHealthReasonCodeInternalErrorConst = "internal_error"
+)
+
+// UnmarshalVPNServerRouteHealthReason unmarshals an instance of VPNServerRouteHealthReason from the specified map of raw messages.
+func UnmarshalVPNServerRouteHealthReason(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VPNServerRouteHealthReason)
+	err = core.UnmarshalPrimitive(m, "code", &obj.Code)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "message", &obj.Message)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VPNServerRouteLifecycleReason : VPNServerRouteLifecycleReason struct
+type VPNServerRouteLifecycleReason struct {
+	// A snake case string succinctly identifying the reason for this lifecycle state.
+	Code *string `json:"code" validate:"required"`
+
+	// An explanation of the reason for this lifecycle state.
+	Message *string `json:"message" validate:"required"`
+
+	// Link to documentation about the reason for this lifecycle state.
+	MoreInfo *string `json:"more_info,omitempty"`
+}
+
+// Constants associated with the VPNServerRouteLifecycleReason.Code property.
+// A snake case string succinctly identifying the reason for this lifecycle state.
+const (
+	VPNServerRouteLifecycleReasonCodeResourceSuspendedByProviderConst = "resource_suspended_by_provider"
+)
+
+// UnmarshalVPNServerRouteLifecycleReason unmarshals an instance of VPNServerRouteLifecycleReason from the specified map of raw messages.
+func UnmarshalVPNServerRouteLifecycleReason(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VPNServerRouteLifecycleReason)
+	err = core.UnmarshalPrimitive(m, "code", &obj.Code)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "message", &obj.Message)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
 	if err != nil {
 		return
 	}
@@ -71954,10 +74821,6 @@ type VirtualNetworkInterfaceReferenceAttachmentContext struct {
 	// The CRN for this virtual network interface.
 	CRN *string `json:"crn" validate:"required"`
 
-	// If present, this property indicates the referenced resource has been deleted, and provides
-	// some supplementary information.
-	Deleted *VirtualNetworkInterfaceReferenceAttachmentContextDeleted `json:"deleted,omitempty"`
-
 	// The URL for this virtual network interface.
 	Href *string `json:"href" validate:"required"`
 
@@ -71984,10 +74847,6 @@ func UnmarshalVirtualNetworkInterfaceReferenceAttachmentContext(m map[string]jso
 	if err != nil {
 		return
 	}
-	err = core.UnmarshalModel(m, "deleted", &obj.Deleted, UnmarshalVirtualNetworkInterfaceReferenceAttachmentContextDeleted)
-	if err != nil {
-		return
-	}
 	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
 	if err != nil {
 		return
@@ -72008,24 +74867,6 @@ func UnmarshalVirtualNetworkInterfaceReferenceAttachmentContext(m map[string]jso
 	return
 }
 
-// VirtualNetworkInterfaceReferenceAttachmentContextDeleted : If present, this property indicates the referenced resource has been deleted, and provides some supplementary
-// information.
-type VirtualNetworkInterfaceReferenceAttachmentContextDeleted struct {
-	// Link to documentation about deleted resources.
-	MoreInfo *string `json:"more_info" validate:"required"`
-}
-
-// UnmarshalVirtualNetworkInterfaceReferenceAttachmentContextDeleted unmarshals an instance of VirtualNetworkInterfaceReferenceAttachmentContextDeleted from the specified map of raw messages.
-func UnmarshalVirtualNetworkInterfaceReferenceAttachmentContextDeleted(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(VirtualNetworkInterfaceReferenceAttachmentContextDeleted)
-	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
-	if err != nil {
-		return
-	}
-	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
-	return
-}
-
 // VirtualNetworkInterfaceReferenceDeleted : If present, this property indicates the referenced resource has been deleted, and provides some supplementary
 // information.
 type VirtualNetworkInterfaceReferenceDeleted struct {
@@ -72036,24 +74877,6 @@ type VirtualNetworkInterfaceReferenceDeleted struct {
 // UnmarshalVirtualNetworkInterfaceReferenceDeleted unmarshals an instance of VirtualNetworkInterfaceReferenceDeleted from the specified map of raw messages.
 func UnmarshalVirtualNetworkInterfaceReferenceDeleted(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(VirtualNetworkInterfaceReferenceDeleted)
-	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
-	if err != nil {
-		return
-	}
-	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
-	return
-}
-
-// VirtualNetworkInterfaceReferenceReservedIPTargetContextDeleted : If present, this property indicates the referenced resource has been deleted, and provides some supplementary
-// information.
-type VirtualNetworkInterfaceReferenceReservedIPTargetContextDeleted struct {
-	// Link to documentation about deleted resources.
-	MoreInfo *string `json:"more_info" validate:"required"`
-}
-
-// UnmarshalVirtualNetworkInterfaceReferenceReservedIPTargetContextDeleted unmarshals an instance of VirtualNetworkInterfaceReferenceReservedIPTargetContextDeleted from the specified map of raw messages.
-func UnmarshalVirtualNetworkInterfaceReferenceReservedIPTargetContextDeleted(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(VirtualNetworkInterfaceReferenceReservedIPTargetContextDeleted)
 	err = core.UnmarshalPrimitive(m, "more_info", &obj.MoreInfo)
 	if err != nil {
 		return
@@ -73461,7 +76284,7 @@ type VolumePrototype struct {
 	Profile VolumeProfileIdentityIntf `json:"profile" validate:"required"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// The [user tags](https://cloud.ibm.com/apidocs/tagging#types-of-tags) associated with this volume.
@@ -73914,6 +76737,40 @@ func UnmarshalVolumeStatusReason(m map[string]json.RawMessage, result interface{
 	return
 }
 
+// VpcdnsResolutionBindingCollectionFirst : A link to the first page of resources.
+type VpcdnsResolutionBindingCollectionFirst struct {
+	// The URL for a page of resources.
+	Href *string `json:"href" validate:"required"`
+}
+
+// UnmarshalVpcdnsResolutionBindingCollectionFirst unmarshals an instance of VpcdnsResolutionBindingCollectionFirst from the specified map of raw messages.
+func UnmarshalVpcdnsResolutionBindingCollectionFirst(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VpcdnsResolutionBindingCollectionFirst)
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VpcdnsResolutionBindingCollectionNext : A link to the next page of resources. This property is present for all pages except the last page.
+type VpcdnsResolutionBindingCollectionNext struct {
+	// The URL for a page of resources.
+	Href *string `json:"href" validate:"required"`
+}
+
+// UnmarshalVpcdnsResolutionBindingCollectionNext unmarshals an instance of VpcdnsResolutionBindingCollectionNext from the specified map of raw messages.
+func UnmarshalVpcdnsResolutionBindingCollectionNext(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VpcdnsResolutionBindingCollectionNext)
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // Zone : Zone struct
 type Zone struct {
 	// The URL for this zone.
@@ -74108,6 +76965,116 @@ func UnmarshalBackupPolicyJobSourceVolumeReference(m map[string]json.RawMessage,
 	return
 }
 
+// BackupPolicyScopePrototypeEnterpriseIdentity : Identifies an enterprise by a unique property.
+// Models which "extend" this model:
+// - BackupPolicyScopePrototypeEnterpriseIdentityEnterpriseIdentityByCRN
+// This model "extends" BackupPolicyScopePrototype
+type BackupPolicyScopePrototypeEnterpriseIdentity struct {
+	// The CRN for this enterprise.
+	CRN *string `json:"crn,omitempty"`
+}
+
+func (*BackupPolicyScopePrototypeEnterpriseIdentity) isaBackupPolicyScopePrototypeEnterpriseIdentity() bool {
+	return true
+}
+
+type BackupPolicyScopePrototypeEnterpriseIdentityIntf interface {
+	BackupPolicyScopePrototypeIntf
+	isaBackupPolicyScopePrototypeEnterpriseIdentity() bool
+}
+
+func (*BackupPolicyScopePrototypeEnterpriseIdentity) isaBackupPolicyScopePrototype() bool {
+	return true
+}
+
+// UnmarshalBackupPolicyScopePrototypeEnterpriseIdentity unmarshals an instance of BackupPolicyScopePrototypeEnterpriseIdentity from the specified map of raw messages.
+func UnmarshalBackupPolicyScopePrototypeEnterpriseIdentity(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(BackupPolicyScopePrototypeEnterpriseIdentity)
+	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// BackupPolicyScopeAccountReference : BackupPolicyScopeAccountReference struct
+// This model "extends" BackupPolicyScope
+type BackupPolicyScopeAccountReference struct {
+	// The unique identifier for this account.
+	ID *string `json:"id" validate:"required"`
+
+	// The resource type.
+	ResourceType *string `json:"resource_type" validate:"required"`
+}
+
+// Constants associated with the BackupPolicyScopeAccountReference.ResourceType property.
+// The resource type.
+const (
+	BackupPolicyScopeAccountReferenceResourceTypeAccountConst = "account"
+)
+
+func (*BackupPolicyScopeAccountReference) isaBackupPolicyScope() bool {
+	return true
+}
+
+// UnmarshalBackupPolicyScopeAccountReference unmarshals an instance of BackupPolicyScopeAccountReference from the specified map of raw messages.
+func UnmarshalBackupPolicyScopeAccountReference(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(BackupPolicyScopeAccountReference)
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "resource_type", &obj.ResourceType)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// BackupPolicyScopeEnterpriseReference : BackupPolicyScopeEnterpriseReference struct
+// This model "extends" BackupPolicyScope
+type BackupPolicyScopeEnterpriseReference struct {
+	// The CRN for this enterprise.
+	CRN *string `json:"crn" validate:"required"`
+
+	// The unique identifier for this enterprise.
+	ID *string `json:"id" validate:"required"`
+
+	// The resource type.
+	ResourceType *string `json:"resource_type" validate:"required"`
+}
+
+// Constants associated with the BackupPolicyScopeEnterpriseReference.ResourceType property.
+// The resource type.
+const (
+	BackupPolicyScopeEnterpriseReferenceResourceTypeEnterpriseConst = "enterprise"
+)
+
+func (*BackupPolicyScopeEnterpriseReference) isaBackupPolicyScope() bool {
+	return true
+}
+
+// UnmarshalBackupPolicyScopeEnterpriseReference unmarshals an instance of BackupPolicyScopeEnterpriseReference from the specified map of raw messages.
+func UnmarshalBackupPolicyScopeEnterpriseReference(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(BackupPolicyScopeEnterpriseReference)
+	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "resource_type", &obj.ResourceType)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // BareMetalServerBootTargetBareMetalServerDiskReference : BareMetalServerBootTargetBareMetalServerDiskReference struct
 // This model "extends" BareMetalServerBootTarget
 type BareMetalServerBootTargetBareMetalServerDiskReference struct {
@@ -74267,7 +77234,7 @@ type BareMetalServerNetworkInterfaceByHiperSocket struct {
 	// The associated subnet.
 	Subnet *SubnetReference `json:"subnet" validate:"required"`
 
-	// The type of this bare metal server network interface.
+	// The bare metal server network interface type.
 	Type *string `json:"type" validate:"required"`
 
 	// - `hipersocket`: a virtual network device that provides high-speed TCP/IP connectivity
@@ -74291,7 +77258,7 @@ const (
 )
 
 // Constants associated with the BareMetalServerNetworkInterfaceByHiperSocket.Type property.
-// The type of this bare metal server network interface.
+// The bare metal server network interface type.
 const (
 	BareMetalServerNetworkInterfaceByHiperSocketTypePrimaryConst   = "primary"
 	BareMetalServerNetworkInterfaceByHiperSocketTypeSecondaryConst = "secondary"
@@ -74432,17 +77399,17 @@ type BareMetalServerNetworkInterfaceByPci struct {
 	// The associated subnet.
 	Subnet *SubnetReference `json:"subnet" validate:"required"`
 
-	// The type of this bare metal server network interface.
+	// The bare metal server network interface type.
 	Type *string `json:"type" validate:"required"`
 
-	// Indicates what VLAN IDs (for VLAN type only) can use this physical (PCI type) interface.
+	// The VLAN IDs allowed for `vlan` interfaces using this PCI interface.
 	AllowedVlans []int64 `json:"allowed_vlans" validate:"required"`
 
 	// - `pci`: a physical PCI device which can only be created or deleted when the bare metal
 	//   server is stopped
 	//   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 	//     to use the PCI interface
-	//   - Cannot directly use an IEEE 802.1q VLAN tag.
+	//   - Cannot directly use an IEEE 802.1Q tag.
 	InterfaceType *string `json:"interface_type" validate:"required"`
 }
 
@@ -74462,7 +77429,7 @@ const (
 )
 
 // Constants associated with the BareMetalServerNetworkInterfaceByPci.Type property.
-// The type of this bare metal server network interface.
+// The bare metal server network interface type.
 const (
 	BareMetalServerNetworkInterfaceByPciTypePrimaryConst   = "primary"
 	BareMetalServerNetworkInterfaceByPciTypeSecondaryConst = "secondary"
@@ -74473,7 +77440,7 @@ const (
 //     server is stopped
 //   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 //     to use the PCI interface
-//   - Cannot directly use an IEEE 802.1q VLAN tag.
+//   - Cannot directly use an IEEE 802.1Q tag.
 const (
 	BareMetalServerNetworkInterfaceByPciInterfaceTypePciConst = "pci"
 )
@@ -74610,22 +77577,29 @@ type BareMetalServerNetworkInterfaceByVlan struct {
 	// The associated subnet.
 	Subnet *SubnetReference `json:"subnet" validate:"required"`
 
-	// The type of this bare metal server network interface.
+	// The bare metal server network interface type.
 	Type *string `json:"type" validate:"required"`
 
-	// Indicates if the interface can float to any other server within the same
-	// `resource_group`. The interface will float automatically if the network detects a GARP or RARP on another bare metal
-	// server in the resource group.  Applies only to `vlan` type interfaces.
+	// Indicates if the data path for the network interface can float to another bare metal server. Can only be `true` for
+	// network interfaces with an `interface_type` of `vlan`.
+	//
+	// If `true`, and the network detects traffic for this data path on another bare metal server in the resource group,
+	// the network interface will be automatically deleted from this bare metal server and a new network interface with the
+	// same `id`, `name` and `vlan` will be created on the other bare metal server.
+	//
+	// For the data path to float, the other bare metal server must be in the same
+	// `resource_group`, and must have a network interface with `interface_type` of `pci` with `allowed_vlans` including
+	// this network interface's `vlan`.
 	AllowInterfaceToFloat *bool `json:"allow_interface_to_float" validate:"required"`
 
 	// - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its array
 	//    of `allowed_vlans`.
-	//   - Must use an IEEE 802.1q tag.
+	//   - Must use an IEEE 802.1Q tag.
 	//   - Has its own security groups and does not inherit those of the PCI device through
 	//     which traffic flows.
 	InterfaceType *string `json:"interface_type" validate:"required"`
 
-	// Indicates the 802.1Q VLAN ID tag that must be used for all traffic on this interface.
+	// The VLAN ID used in the IEEE 802.1Q tag present in all traffic on this interface.
 	Vlan *int64 `json:"vlan" validate:"required"`
 }
 
@@ -74645,7 +77619,7 @@ const (
 )
 
 // Constants associated with the BareMetalServerNetworkInterfaceByVlan.Type property.
-// The type of this bare metal server network interface.
+// The bare metal server network interface type.
 const (
 	BareMetalServerNetworkInterfaceByVlanTypePrimaryConst   = "primary"
 	BareMetalServerNetworkInterfaceByVlanTypeSecondaryConst = "secondary"
@@ -74654,7 +77628,7 @@ const (
 // Constants associated with the BareMetalServerNetworkInterfaceByVlan.InterfaceType property.
 //   - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its array
 //     of `allowed_vlans`.
-//   - Must use an IEEE 802.1q tag.
+//   - Must use an IEEE 802.1Q tag.
 //   - Has its own security groups and does not inherit those of the PCI device through
 //     which traffic flows.
 const (
@@ -74879,14 +77853,14 @@ type BareMetalServerNetworkInterfacePrototypeBareMetalServerNetworkInterfaceByPc
 	// The associated subnet.
 	Subnet SubnetIdentityIntf `json:"subnet" validate:"required"`
 
-	// Indicates what VLAN IDs (for VLAN type only) can use this physical (PCI type) interface.
+	// The VLAN IDs to allow for `vlan` interfaces using this PCI interface.
 	AllowedVlans []int64 `json:"allowed_vlans,omitempty"`
 
 	// - `pci`: a physical PCI device which can only be created or deleted when the bare metal
 	//   server is stopped
 	//   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 	//     to use the PCI interface
-	//   - Cannot directly use an IEEE 802.1q VLAN tag.
+	//   - Cannot directly use an IEEE 802.1Q tag.
 	//   - Not supported on bare metal servers with a `cpu.architecture` of `s390x`.
 	InterfaceType *string `json:"interface_type" validate:"required"`
 }
@@ -74896,7 +77870,7 @@ type BareMetalServerNetworkInterfacePrototypeBareMetalServerNetworkInterfaceByPc
 //     server is stopped
 //   - Has an `allowed_vlans` property which controls the VLANs that will be permitted
 //     to use the PCI interface
-//   - Cannot directly use an IEEE 802.1q VLAN tag.
+//   - Cannot directly use an IEEE 802.1Q tag.
 //   - Not supported on bare metal servers with a `cpu.architecture` of `s390x`.
 const (
 	BareMetalServerNetworkInterfacePrototypeBareMetalServerNetworkInterfaceByPciPrototypeInterfaceTypePciConst = "pci"
@@ -74991,27 +77965,34 @@ type BareMetalServerNetworkInterfacePrototypeBareMetalServerNetworkInterfaceByVl
 	// The associated subnet.
 	Subnet SubnetIdentityIntf `json:"subnet" validate:"required"`
 
-	// Indicates if the interface can float to any other server within the same
-	// `resource_group`. The interface will float automatically if the network detects a GARP or RARP on another bare metal
-	// server in the resource group.  Applies only to `vlan` type interfaces.
+	// Indicates if the data path for the network interface can float to another bare metal server. Can only be `true` for
+	// network interfaces with an `interface_type` of `vlan`.
+	//
+	// If `true`, and the network detects traffic for this data path on another bare metal server in the resource group,
+	// the network interface will be automatically deleted from this bare metal server and a new network interface with the
+	// same `id`, `name` and `vlan` will be created on the other bare metal server.
+	//
+	// For the data path to float, the other bare metal server must be in the same
+	// `resource_group`, and must have a network interface with `interface_type` of `pci` with `allowed_vlans` including
+	// this network interface's `vlan`.
 	AllowInterfaceToFloat *bool `json:"allow_interface_to_float,omitempty"`
 
 	// - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its array
 	//    of `allowed_vlans`.
-	//   - Must use an IEEE 802.1q tag.
+	//   - Must use an IEEE 802.1Q tag.
 	//   - Has its own security groups and does not inherit those of the PCI device through
 	//     which traffic flows.
 	//   - Not supported on bare metal servers with a `cpu.architecture` of `s390x`.
 	InterfaceType *string `json:"interface_type" validate:"required"`
 
-	// Indicates the 802.1Q VLAN ID tag that must be used for all traffic on this interface.
+	// The VLAN ID used in the IEEE 802.1Q tag present in all traffic on this interface.
 	Vlan *int64 `json:"vlan" validate:"required"`
 }
 
 // Constants associated with the BareMetalServerNetworkInterfacePrototypeBareMetalServerNetworkInterfaceByVlanPrototype.InterfaceType property.
 //   - `vlan`: a virtual device, used through a `pci` device that has the `vlan` in its array
 //     of `allowed_vlans`.
-//   - Must use an IEEE 802.1q tag.
+//   - Must use an IEEE 802.1Q tag.
 //   - Has its own security groups and does not inherit those of the PCI device through
 //     which traffic flows.
 //   - Not supported on bare metal servers with a `cpu.architecture` of `s390x`.
@@ -76176,99 +79157,6 @@ func UnmarshalBareMetalServerProfileNetworkInterfaceCountRange(m map[string]json
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
-	if err != nil {
-		return
-	}
-	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
-	return
-}
-
-// BareMetalServerPrototypeVPCVPCIdentityByCRN : BareMetalServerPrototypeVPCVPCIdentityByCRN struct
-// This model "extends" BareMetalServerPrototypeVPC
-type BareMetalServerPrototypeVPCVPCIdentityByCRN struct {
-	// The CRN for this VPC.
-	CRN *string `json:"crn" validate:"required"`
-}
-
-// NewBareMetalServerPrototypeVPCVPCIdentityByCRN : Instantiate BareMetalServerPrototypeVPCVPCIdentityByCRN (Generic Model Constructor)
-func (*VpcbetaV1) NewBareMetalServerPrototypeVPCVPCIdentityByCRN(crn string) (_model *BareMetalServerPrototypeVPCVPCIdentityByCRN, err error) {
-	_model = &BareMetalServerPrototypeVPCVPCIdentityByCRN{
-		CRN: core.StringPtr(crn),
-	}
-	err = core.ValidateStruct(_model, "required parameters")
-	return
-}
-
-func (*BareMetalServerPrototypeVPCVPCIdentityByCRN) isaBareMetalServerPrototypeVPC() bool {
-	return true
-}
-
-// UnmarshalBareMetalServerPrototypeVPCVPCIdentityByCRN unmarshals an instance of BareMetalServerPrototypeVPCVPCIdentityByCRN from the specified map of raw messages.
-func UnmarshalBareMetalServerPrototypeVPCVPCIdentityByCRN(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(BareMetalServerPrototypeVPCVPCIdentityByCRN)
-	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
-	if err != nil {
-		return
-	}
-	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
-	return
-}
-
-// BareMetalServerPrototypeVPCVPCIdentityByHref : BareMetalServerPrototypeVPCVPCIdentityByHref struct
-// This model "extends" BareMetalServerPrototypeVPC
-type BareMetalServerPrototypeVPCVPCIdentityByHref struct {
-	// The URL for this VPC.
-	Href *string `json:"href" validate:"required"`
-}
-
-// NewBareMetalServerPrototypeVPCVPCIdentityByHref : Instantiate BareMetalServerPrototypeVPCVPCIdentityByHref (Generic Model Constructor)
-func (*VpcbetaV1) NewBareMetalServerPrototypeVPCVPCIdentityByHref(href string) (_model *BareMetalServerPrototypeVPCVPCIdentityByHref, err error) {
-	_model = &BareMetalServerPrototypeVPCVPCIdentityByHref{
-		Href: core.StringPtr(href),
-	}
-	err = core.ValidateStruct(_model, "required parameters")
-	return
-}
-
-func (*BareMetalServerPrototypeVPCVPCIdentityByHref) isaBareMetalServerPrototypeVPC() bool {
-	return true
-}
-
-// UnmarshalBareMetalServerPrototypeVPCVPCIdentityByHref unmarshals an instance of BareMetalServerPrototypeVPCVPCIdentityByHref from the specified map of raw messages.
-func UnmarshalBareMetalServerPrototypeVPCVPCIdentityByHref(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(BareMetalServerPrototypeVPCVPCIdentityByHref)
-	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
-	if err != nil {
-		return
-	}
-	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
-	return
-}
-
-// BareMetalServerPrototypeVPCVPCIdentityByID : BareMetalServerPrototypeVPCVPCIdentityByID struct
-// This model "extends" BareMetalServerPrototypeVPC
-type BareMetalServerPrototypeVPCVPCIdentityByID struct {
-	// The unique identifier for this VPC.
-	ID *string `json:"id" validate:"required"`
-}
-
-// NewBareMetalServerPrototypeVPCVPCIdentityByID : Instantiate BareMetalServerPrototypeVPCVPCIdentityByID (Generic Model Constructor)
-func (*VpcbetaV1) NewBareMetalServerPrototypeVPCVPCIdentityByID(id string) (_model *BareMetalServerPrototypeVPCVPCIdentityByID, err error) {
-	_model = &BareMetalServerPrototypeVPCVPCIdentityByID{
-		ID: core.StringPtr(id),
-	}
-	err = core.ValidateStruct(_model, "required parameters")
-	return
-}
-
-func (*BareMetalServerPrototypeVPCVPCIdentityByID) isaBareMetalServerPrototypeVPC() bool {
-	return true
-}
-
-// UnmarshalBareMetalServerPrototypeVPCVPCIdentityByID unmarshals an instance of BareMetalServerPrototypeVPCVPCIdentityByID from the specified map of raw messages.
-func UnmarshalBareMetalServerPrototypeVPCVPCIdentityByID(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(BareMetalServerPrototypeVPCVPCIdentityByID)
-	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
 	if err != nil {
 		return
 	}
@@ -77651,6 +80539,47 @@ func UnmarshalFloatingIPPrototypeFloatingIPByZone(m map[string]json.RawMessage, 
 	return
 }
 
+// FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentity : Identifies a bare metal server network interface by a unique property.
+// Models which "extend" this model:
+// - FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID
+// - FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref
+// This model "extends" FloatingIPTargetPatch
+type FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentity struct {
+	// The unique identifier for this bare metal server network interface.
+	ID *string `json:"id,omitempty"`
+
+	// The URL for this bare metal server network interface.
+	Href *string `json:"href,omitempty"`
+}
+
+func (*FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentity) isaFloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentity() bool {
+	return true
+}
+
+type FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityIntf interface {
+	FloatingIPTargetPatchIntf
+	isaFloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentity() bool
+}
+
+func (*FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentity) isaFloatingIPTargetPatch() bool {
+	return true
+}
+
+// UnmarshalFloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentity unmarshals an instance of FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentity from the specified map of raw messages.
+func UnmarshalFloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentity(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentity)
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // FloatingIPTargetPatchNetworkInterfaceIdentity : Identifies an instance network interface by a unique property.
 // Models which "extend" this model:
 // - FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByID
@@ -77680,6 +80609,47 @@ func (*FloatingIPTargetPatchNetworkInterfaceIdentity) isaFloatingIPTargetPatch()
 // UnmarshalFloatingIPTargetPatchNetworkInterfaceIdentity unmarshals an instance of FloatingIPTargetPatchNetworkInterfaceIdentity from the specified map of raw messages.
 func UnmarshalFloatingIPTargetPatchNetworkInterfaceIdentity(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(FloatingIPTargetPatchNetworkInterfaceIdentity)
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentity : Identifies a bare metal server network interface by a unique property.
+// Models which "extend" this model:
+// - FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID
+// - FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref
+// This model "extends" FloatingIPTargetPrototype
+type FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentity struct {
+	// The unique identifier for this bare metal server network interface.
+	ID *string `json:"id,omitempty"`
+
+	// The URL for this bare metal server network interface.
+	Href *string `json:"href,omitempty"`
+}
+
+func (*FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentity) isaFloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentity() bool {
+	return true
+}
+
+type FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityIntf interface {
+	FloatingIPTargetPrototypeIntf
+	isaFloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentity() bool
+}
+
+func (*FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentity) isaFloatingIPTargetPrototype() bool {
+	return true
+}
+
+// UnmarshalFloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentity unmarshals an instance of FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentity from the specified map of raw messages.
+func UnmarshalFloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentity(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentity)
 	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
 	if err != nil {
 		return
@@ -81051,6 +84021,70 @@ func UnmarshalInstanceProfileMemoryRange(m map[string]json.RawMessage, result in
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// InstanceProfileNumaCountDependent : The total number of NUMA nodes for an instance with this profile depends on its configuration and the capacity
+// constraints within the zone.
+// This model "extends" InstanceProfileNumaCount
+type InstanceProfileNumaCountDependent struct {
+	// The type for this profile field.
+	Type *string `json:"type" validate:"required"`
+}
+
+// Constants associated with the InstanceProfileNumaCountDependent.Type property.
+// The type for this profile field.
+const (
+	InstanceProfileNumaCountDependentTypeDependentConst = "dependent"
+)
+
+func (*InstanceProfileNumaCountDependent) isaInstanceProfileNumaCount() bool {
+	return true
+}
+
+// UnmarshalInstanceProfileNumaCountDependent unmarshals an instance of InstanceProfileNumaCountDependent from the specified map of raw messages.
+func UnmarshalInstanceProfileNumaCountDependent(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(InstanceProfileNumaCountDependent)
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// InstanceProfileNumaCountFixed : The total number of NUMA nodes for an instance with this profile.
+// This model "extends" InstanceProfileNumaCount
+type InstanceProfileNumaCountFixed struct {
+	// The type for this profile field.
+	Type *string `json:"type" validate:"required"`
+
+	// The value for this profile field.
+	Value *int64 `json:"value" validate:"required"`
+}
+
+// Constants associated with the InstanceProfileNumaCountFixed.Type property.
+// The type for this profile field.
+const (
+	InstanceProfileNumaCountFixedTypeFixedConst = "fixed"
+)
+
+func (*InstanceProfileNumaCountFixed) isaInstanceProfileNumaCount() bool {
+	return true
+}
+
+// UnmarshalInstanceProfileNumaCountFixed unmarshals an instance of InstanceProfileNumaCountFixed from the specified map of raw messages.
+func UnmarshalInstanceProfileNumaCountFixed(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(InstanceProfileNumaCountFixed)
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "value", &obj.Value)
 	if err != nil {
 		return
 	}
@@ -86959,7 +89993,7 @@ type PublicGatewayFloatingIPPrototypeFloatingIPPrototypeTargetContext struct {
 	Name *string `json:"name,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 }
 
@@ -87605,10 +90639,6 @@ type ReservedIPTargetVirtualNetworkInterfaceReferenceReservedIPTargetContext str
 	// The CRN for this virtual network interface.
 	CRN *string `json:"crn" validate:"required"`
 
-	// If present, this property indicates the referenced resource has been deleted, and provides
-	// some supplementary information.
-	Deleted *VirtualNetworkInterfaceReferenceReservedIPTargetContextDeleted `json:"deleted,omitempty"`
-
 	// The URL for this virtual network interface.
 	Href *string `json:"href" validate:"required"`
 
@@ -87636,10 +90666,6 @@ func (*ReservedIPTargetVirtualNetworkInterfaceReferenceReservedIPTargetContext) 
 func UnmarshalReservedIPTargetVirtualNetworkInterfaceReferenceReservedIPTargetContext(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ReservedIPTargetVirtualNetworkInterfaceReferenceReservedIPTargetContext)
 	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalModel(m, "deleted", &obj.Deleted, UnmarshalVirtualNetworkInterfaceReferenceReservedIPTargetContextDeleted)
 	if err != nil {
 		return
 	}
@@ -89584,7 +92610,7 @@ func UnmarshalShareIdentityByID(m map[string]json.RawMessage, result interface{}
 	return
 }
 
-// ShareMountTargetPrototypeShareMountTargetByAccessControlModeSecurityGroup : The virtual network interface for this share mount target.  The virtual network interface's VPC must not be used by a
+// ShareMountTargetPrototypeShareMountTargetByAccessControlModeSecurityGroup : The virtual network interface for this share mount target. The virtual network interface's VPC must not be used by a
 // virtual network interface for another mount target for this share.
 //
 // Required if the share's `access_control_mode` is `security_group`.
@@ -89724,16 +92750,16 @@ type ShareMountTargetVirtualNetworkInterfacePrototypeVirtualNetworkInterfaceProt
 	// an available address on the subnet will be automatically selected and reserved.
 	PrimaryIP VirtualNetworkInterfacePrimaryIPPrototypeIntf `json:"primary_ip,omitempty"`
 
-	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// The resource group to use for this virtual network interface. If unspecified, the
+	// share's resource group will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// The security groups to use for this virtual network interface. If unspecified, the default security group of the VPC
 	// for the subnet is used.
 	SecurityGroups []SecurityGroupIdentityIntf `json:"security_groups,omitempty"`
 
-	// The associated subnet. Required if `primary_ip` does not specify a reserved IP and
-	// `primary_ip.address` is not specified.
+	// The associated subnet. Required if `primary_ip` does not specify a reserved IP
+	// identity.
 	Subnet SubnetIdentityIntf `json:"subnet,omitempty"`
 }
 
@@ -90199,7 +93225,7 @@ func UnmarshalShareProfileIdentityByName(m map[string]json.RawMessage, result in
 // SharePrototypeShareBySize : Create a file share by size.
 // This model "extends" SharePrototype
 type SharePrototypeShareBySize struct {
-	// The maximum input/output operations per second (IOPS) for the file share. The share must be in the `custom` or
+	// The maximum input/output operations per second (IOPS) for the file share. The share must be in the
 	// `defined_performance` profile family, and the value must be in the range supported by the share's specified size.
 	//
 	// In addition, each client accessing the share will be restricted to 48,000 IOPS.
@@ -90221,8 +93247,9 @@ type SharePrototypeShareBySize struct {
 	// Tags for this resource.
 	UserTags []string `json:"user_tags,omitempty"`
 
-	// The zone this file share will reside in. For a replica share, this must be a different zone in the same region as
-	// the source share.
+	// The zone this file share will reside in.
+	//
+	// For a replica share, this must be a different zone in the same region as the source share.
 	Zone ZoneIdentityIntf `json:"zone" validate:"required"`
 
 	// The access control mode for the share:
@@ -90246,7 +93273,7 @@ type SharePrototypeShareBySize struct {
 	InitialOwner *ShareInitialOwner `json:"initial_owner,omitempty"`
 
 	// The resource group to use. If unspecified, the account's [default resource
-	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) is used.
+	// group](https://cloud.ibm.com/apidocs/resource-manager#introduction) will be used.
 	ResourceGroup ResourceGroupIdentityIntf `json:"resource_group,omitempty"`
 
 	// The size of the file share rounded up to the next gigabyte.
@@ -90342,7 +93369,7 @@ func UnmarshalSharePrototypeShareBySize(m map[string]json.RawMessage, result int
 // `encryption_key`, `initial_owner`, and `size` will be inherited from `source_share`.
 // This model "extends" SharePrototype
 type SharePrototypeShareBySourceShare struct {
-	// The maximum input/output operations per second (IOPS) for the file share. The share must be in the `custom` or
+	// The maximum input/output operations per second (IOPS) for the file share. The share must be in the
 	// `defined_performance` profile family, and the value must be in the range supported by the share's specified size.
 	//
 	// In addition, each client accessing the share will be restricted to 48,000 IOPS.
@@ -90364,8 +93391,9 @@ type SharePrototypeShareBySourceShare struct {
 	// Tags for this resource.
 	UserTags []string `json:"user_tags,omitempty"`
 
-	// The zone this file share will reside in. For a replica share, this must be a different zone in the same region as
-	// the source share.
+	// The zone this file share will reside in.
+	//
+	// For a replica share, this must be a different zone in the same region as the source share.
 	Zone ZoneIdentityIntf `json:"zone" validate:"required"`
 
 	// The cron specification for the file share replication schedule.
@@ -91122,6 +94150,374 @@ func UnmarshalTrustedProfileIdentityTrustedProfileByID(m map[string]json.RawMess
 	return
 }
 
+// VpcdnsResolverPrototypeVpcdnsResolverTypeManualPrototype : Manually specify the DNS server addresses for this VPC.
+// This model "extends" VpcdnsResolverPrototype
+type VpcdnsResolverPrototypeVpcdnsResolverTypeManualPrototype struct {
+	// The DNS servers to use for this VPC. All the DNS servers must either:
+	//
+	// - have a unique `zone_affinity`, or
+	// - not have a `zone_affinity`.
+	//
+	// If `zone_affinity` is specified, exactly one DNS server must be specified for each zone in the region. The DHCP
+	// [Domain Name Server Option](https://datatracker.ietf.org/doc/html/rfc2132#section-3.8) for a zone will list this DNS
+	// server first, followed by unique DNS servers from other zones if available.
+	//
+	// If `zone_affinity` is not specified, the DHCP [Domain Name Server
+	// Option](https://datatracker.ietf.org/doc/html/rfc2132#section-3.8) for each zone will list all the manual DNS
+	// servers in the order specified.
+	ManualServers []DnsServerPrototype `json:"manual_servers" validate:"required"`
+
+	// The type of the DNS resolver to use.
+	Type *string `json:"type" validate:"required"`
+}
+
+// Constants associated with the VpcdnsResolverPrototypeVpcdnsResolverTypeManualPrototype.Type property.
+// The type of the DNS resolver to use.
+const (
+	VpcdnsResolverPrototypeVpcdnsResolverTypeManualPrototypeTypeManualConst = "manual"
+)
+
+// NewVpcdnsResolverPrototypeVpcdnsResolverTypeManualPrototype : Instantiate VpcdnsResolverPrototypeVpcdnsResolverTypeManualPrototype (Generic Model Constructor)
+func (*VpcbetaV1) NewVpcdnsResolverPrototypeVpcdnsResolverTypeManualPrototype(manualServers []DnsServerPrototype, typeVar string) (_model *VpcdnsResolverPrototypeVpcdnsResolverTypeManualPrototype, err error) {
+	_model = &VpcdnsResolverPrototypeVpcdnsResolverTypeManualPrototype{
+		ManualServers: manualServers,
+		Type:          core.StringPtr(typeVar),
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+func (*VpcdnsResolverPrototypeVpcdnsResolverTypeManualPrototype) isaVpcdnsResolverPrototype() bool {
+	return true
+}
+
+// UnmarshalVpcdnsResolverPrototypeVpcdnsResolverTypeManualPrototype unmarshals an instance of VpcdnsResolverPrototypeVpcdnsResolverTypeManualPrototype from the specified map of raw messages.
+func UnmarshalVpcdnsResolverPrototypeVpcdnsResolverTypeManualPrototype(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VpcdnsResolverPrototypeVpcdnsResolverTypeManualPrototype)
+	err = core.UnmarshalModel(m, "manual_servers", &obj.ManualServers, UnmarshalDnsServerPrototype)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VpcdnsResolverPrototypeVpcdnsResolverTypeSystemPrototype : The system will provide DNS server addresses for this VPC. The system-provided DNS server addresses depend on whether
+// any endpoint gateways reside in the VPC, and whether a
+// [DNS Services](https://cloud.ibm.com/docs/dns-svcs) instance is configured for the VPC.
+// This model "extends" VpcdnsResolverPrototype
+type VpcdnsResolverPrototypeVpcdnsResolverTypeSystemPrototype struct {
+	// The type of the DNS resolver to use.
+	Type *string `json:"type,omitempty"`
+}
+
+// Constants associated with the VpcdnsResolverPrototypeVpcdnsResolverTypeSystemPrototype.Type property.
+// The type of the DNS resolver to use.
+const (
+	VpcdnsResolverPrototypeVpcdnsResolverTypeSystemPrototypeTypeSystemConst = "system"
+)
+
+func (*VpcdnsResolverPrototypeVpcdnsResolverTypeSystemPrototype) isaVpcdnsResolverPrototype() bool {
+	return true
+}
+
+// UnmarshalVpcdnsResolverPrototypeVpcdnsResolverTypeSystemPrototype unmarshals an instance of VpcdnsResolverPrototypeVpcdnsResolverTypeSystemPrototype from the specified map of raw messages.
+func UnmarshalVpcdnsResolverPrototypeVpcdnsResolverTypeSystemPrototype(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VpcdnsResolverPrototypeVpcdnsResolverTypeSystemPrototype)
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VpcdnsResolverTypeDelegated : The DNS server addresses are delegated to the DNS resolver of another VPC.
+// This model "extends" VpcdnsResolver
+type VpcdnsResolverTypeDelegated struct {
+	// The DNS servers for this VPC. The servers are populated:
+	//
+	// - by the system when `dns.resolver.type` is `system`
+	// - using the DNS servers in `dns.resolver.vpc` when `dns.resolver.type` is `delegated`
+	// - using `dns.resolver.manual_servers` when the `dns.resolver.type` is `manual`.
+	Servers []DnsServer `json:"servers" validate:"required"`
+
+	// The type of the DNS resolver used for the VPC.
+	Type *string `json:"type" validate:"required"`
+
+	// The VPC whose DNS resolver provides the DNS server addresses for this VPC.
+	//
+	// The VPC may be remote and therefore may not be directly retrievable.
+	VPC *VPCReferenceDnsResolverContext `json:"vpc" validate:"required"`
+}
+
+// Constants associated with the VpcdnsResolverTypeDelegated.Type property.
+// The type of the DNS resolver used for the VPC.
+const (
+	VpcdnsResolverTypeDelegatedTypeDelegatedConst = "delegated"
+)
+
+func (*VpcdnsResolverTypeDelegated) isaVpcdnsResolver() bool {
+	return true
+}
+
+// UnmarshalVpcdnsResolverTypeDelegated unmarshals an instance of VpcdnsResolverTypeDelegated from the specified map of raw messages.
+func UnmarshalVpcdnsResolverTypeDelegated(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VpcdnsResolverTypeDelegated)
+	err = core.UnmarshalModel(m, "servers", &obj.Servers, UnmarshalDnsServer)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "vpc", &obj.VPC, UnmarshalVPCReferenceDnsResolverContext)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VpcdnsResolverTypeManual : The DNS server addresses are manually specified.
+// This model "extends" VpcdnsResolver
+type VpcdnsResolverTypeManual struct {
+	// The DNS servers for this VPC. The servers are populated:
+	//
+	// - by the system when `dns.resolver.type` is `system`
+	// - using the DNS servers in `dns.resolver.vpc` when `dns.resolver.type` is `delegated`
+	// - using `dns.resolver.manual_servers` when the `dns.resolver.type` is `manual`.
+	Servers []DnsServer `json:"servers" validate:"required"`
+
+	// The manually specified DNS servers for this VPC.
+	//
+	// If the DNS servers have `zone_affinity`, the DHCP [Domain Name Server
+	// Option](https://datatracker.ietf.org/doc/html/rfc2132#section-3.8) for a zone will list the DNS server with the
+	// affinity for that zone first, followed by the unique DNS servers from other zones.
+	//
+	// If the DNS servers do not have `zone_affinity`, the DHCP [Domain Name Server
+	// Option](https://datatracker.ietf.org/doc/html/rfc2132#section-3.8) for each zone will list all the manual DNS
+	// servers in the order specified.
+	ManualServers []DnsServer `json:"manual_servers" validate:"required"`
+
+	// The type of the DNS resolver used for the VPC.
+	Type *string `json:"type" validate:"required"`
+}
+
+// Constants associated with the VpcdnsResolverTypeManual.Type property.
+// The type of the DNS resolver used for the VPC.
+const (
+	VpcdnsResolverTypeManualTypeManualConst = "manual"
+)
+
+func (*VpcdnsResolverTypeManual) isaVpcdnsResolver() bool {
+	return true
+}
+
+// UnmarshalVpcdnsResolverTypeManual unmarshals an instance of VpcdnsResolverTypeManual from the specified map of raw messages.
+func UnmarshalVpcdnsResolverTypeManual(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VpcdnsResolverTypeManual)
+	err = core.UnmarshalModel(m, "servers", &obj.Servers, UnmarshalDnsServer)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "manual_servers", &obj.ManualServers, UnmarshalDnsServer)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VpcdnsResolverTypeSystem : The DNS server addresses are provided by the system and depend on the configuration.
+// This model "extends" VpcdnsResolver
+type VpcdnsResolverTypeSystem struct {
+	// The DNS servers for this VPC. The servers are populated:
+	//
+	// - by the system when `dns.resolver.type` is `system`
+	// - using the DNS servers in `dns.resolver.vpc` when `dns.resolver.type` is `delegated`
+	// - using `dns.resolver.manual_servers` when the `dns.resolver.type` is `manual`.
+	Servers []DnsServer `json:"servers" validate:"required"`
+
+	// The configuration of the system DNS resolver for this VPC.
+	//
+	// - `custom_resolver`: A custom DNS resolver is configured for this VPC.
+	//
+	// - `private_resolver`: A private DNS resolver is configured for this VPC. Applicable when
+	//   the VPC has either or both of the following:
+	//
+	//     - at least one endpoint gateway residing in it
+	//     - a [DNS Services](https://cloud.ibm.com/docs/dns-svcs) private zone configured for it
+	//
+	// - `default`: The provider default DNS resolvers are configured for this VPC.
+	//
+	//   This system DNS resolver configuration is used when the VPC has:
+	//
+	//   - no custom DNS resolver configured for it, and
+	//   - no endpoint gateways residing in it, and
+	//   - no [DNS Services](https://cloud.ibm.com/docs/dns-svcs) private zone configured for it.
+	Configuration *string `json:"configuration" validate:"required"`
+
+	// The type of the DNS resolver used for the VPC.
+	Type *string `json:"type" validate:"required"`
+}
+
+// Constants associated with the VpcdnsResolverTypeSystem.Configuration property.
+// The configuration of the system DNS resolver for this VPC.
+//
+// - `custom_resolver`: A custom DNS resolver is configured for this VPC.
+//
+//   - `private_resolver`: A private DNS resolver is configured for this VPC. Applicable when
+//     the VPC has either or both of the following:
+//
+//   - at least one endpoint gateway residing in it
+//
+//   - a [DNS Services](https://cloud.ibm.com/docs/dns-svcs) private zone configured for it
+//
+// - `default`: The provider default DNS resolvers are configured for this VPC.
+//
+//	This system DNS resolver configuration is used when the VPC has:
+//
+//	- no custom DNS resolver configured for it, and
+//	- no endpoint gateways residing in it, and
+//	- no [DNS Services](https://cloud.ibm.com/docs/dns-svcs) private zone configured for it.
+const (
+	VpcdnsResolverTypeSystemConfigurationCustomResolverConst  = "custom_resolver"
+	VpcdnsResolverTypeSystemConfigurationDefaultConst         = "default"
+	VpcdnsResolverTypeSystemConfigurationPrivateResolverConst = "private_resolver"
+)
+
+// Constants associated with the VpcdnsResolverTypeSystem.Type property.
+// The type of the DNS resolver used for the VPC.
+const (
+	VpcdnsResolverTypeSystemTypeSystemConst = "system"
+)
+
+func (*VpcdnsResolverTypeSystem) isaVpcdnsResolver() bool {
+	return true
+}
+
+// UnmarshalVpcdnsResolverTypeSystem unmarshals an instance of VpcdnsResolverTypeSystem from the specified map of raw messages.
+func UnmarshalVpcdnsResolverTypeSystem(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VpcdnsResolverTypeSystem)
+	err = core.UnmarshalModel(m, "servers", &obj.Servers, UnmarshalDnsServer)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "configuration", &obj.Configuration)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VpcdnsResolverVPCPatchVPCIdentityByCRN : VpcdnsResolverVPCPatchVPCIdentityByCRN struct
+// This model "extends" VpcdnsResolverVPCPatch
+type VpcdnsResolverVPCPatchVPCIdentityByCRN struct {
+	// The CRN for this VPC.
+	CRN *string `json:"crn" validate:"required"`
+}
+
+// NewVpcdnsResolverVPCPatchVPCIdentityByCRN : Instantiate VpcdnsResolverVPCPatchVPCIdentityByCRN (Generic Model Constructor)
+func (*VpcbetaV1) NewVpcdnsResolverVPCPatchVPCIdentityByCRN(crn string) (_model *VpcdnsResolverVPCPatchVPCIdentityByCRN, err error) {
+	_model = &VpcdnsResolverVPCPatchVPCIdentityByCRN{
+		CRN: core.StringPtr(crn),
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+func (*VpcdnsResolverVPCPatchVPCIdentityByCRN) isaVpcdnsResolverVPCPatch() bool {
+	return true
+}
+
+// UnmarshalVpcdnsResolverVPCPatchVPCIdentityByCRN unmarshals an instance of VpcdnsResolverVPCPatchVPCIdentityByCRN from the specified map of raw messages.
+func UnmarshalVpcdnsResolverVPCPatchVPCIdentityByCRN(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VpcdnsResolverVPCPatchVPCIdentityByCRN)
+	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VpcdnsResolverVPCPatchVPCIdentityByHref : VpcdnsResolverVPCPatchVPCIdentityByHref struct
+// This model "extends" VpcdnsResolverVPCPatch
+type VpcdnsResolverVPCPatchVPCIdentityByHref struct {
+	// The URL for this VPC.
+	Href *string `json:"href" validate:"required"`
+}
+
+// NewVpcdnsResolverVPCPatchVPCIdentityByHref : Instantiate VpcdnsResolverVPCPatchVPCIdentityByHref (Generic Model Constructor)
+func (*VpcbetaV1) NewVpcdnsResolverVPCPatchVPCIdentityByHref(href string) (_model *VpcdnsResolverVPCPatchVPCIdentityByHref, err error) {
+	_model = &VpcdnsResolverVPCPatchVPCIdentityByHref{
+		Href: core.StringPtr(href),
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+func (*VpcdnsResolverVPCPatchVPCIdentityByHref) isaVpcdnsResolverVPCPatch() bool {
+	return true
+}
+
+// UnmarshalVpcdnsResolverVPCPatchVPCIdentityByHref unmarshals an instance of VpcdnsResolverVPCPatchVPCIdentityByHref from the specified map of raw messages.
+func UnmarshalVpcdnsResolverVPCPatchVPCIdentityByHref(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VpcdnsResolverVPCPatchVPCIdentityByHref)
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// VpcdnsResolverVPCPatchVPCIdentityByID : VpcdnsResolverVPCPatchVPCIdentityByID struct
+// This model "extends" VpcdnsResolverVPCPatch
+type VpcdnsResolverVPCPatchVPCIdentityByID struct {
+	// The unique identifier for this VPC.
+	ID *string `json:"id" validate:"required"`
+}
+
+// NewVpcdnsResolverVPCPatchVPCIdentityByID : Instantiate VpcdnsResolverVPCPatchVPCIdentityByID (Generic Model Constructor)
+func (*VpcbetaV1) NewVpcdnsResolverVPCPatchVPCIdentityByID(id string) (_model *VpcdnsResolverVPCPatchVPCIdentityByID, err error) {
+	_model = &VpcdnsResolverVPCPatchVPCIdentityByID{
+		ID: core.StringPtr(id),
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+func (*VpcdnsResolverVPCPatchVPCIdentityByID) isaVpcdnsResolverVPCPatch() bool {
+	return true
+}
+
+// UnmarshalVpcdnsResolverVPCPatchVPCIdentityByID unmarshals an instance of VpcdnsResolverVPCPatchVPCIdentityByID from the specified map of raw messages.
+func UnmarshalVpcdnsResolverVPCPatchVPCIdentityByID(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VpcdnsResolverVPCPatchVPCIdentityByID)
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // VPCIdentityByCRN : VPCIdentityByCRN struct
 // This model "extends" VPCIdentity
 type VPCIdentityByCRN struct {
@@ -91593,6 +94989,27 @@ type VPNGatewayConnectionPolicyMode struct {
 	// The status of a VPN gateway connection.
 	Status *string `json:"status" validate:"required"`
 
+	// The reasons for the current VPN gateway connection status (if any):
+	// - `cannot_authenticate_connection`: Failed to authenticate a connection because of
+	//   mismatched IKE ID and PSK (check IKE ID and PSK in peer VPN configuration)
+	// - `internal_error`: Internal error (contact IBM support)
+	// - `ike_policy_mismatch`: None of the proposed IKE crypto suites was acceptable (check
+	//    the IKE policies on both sides of the VPN)
+	// - `ike_v1_id_local_remote_cidr_mismatch`: Invalid IKE ID or mismatched local CIDRs and
+	//   remote CIDRs in IKE V1 (check the IKE ID or the local CIDRs and remote CIDRs in IKE
+	//   V1 configuration)
+	// - `ike_v2_local_remote_cidr_mismatch`: Mismatched local CIDRs and remote CIDRs in IKE
+	//   V2 (check the local CIDRs and remote CIDRs in IKE V2 configuration)
+	// - `ipsec_policy_mismatch`: None of the proposed IPsec crypto suites was acceptable
+	//   (check the IPsec policies on both sides of the VPN)
+	// - `peer_not_responding`: No response from peer (check network ACL configuration, peer
+	//   availability, and on-premise firewall configuration)
+	//
+	// The enumerated reason code values for this property will expand in the future. When processing this property, check
+	// for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
+	// unexpected reason code was encountered.
+	StatusReasons []VPNGatewayConnectionStatusReason `json:"status_reasons" validate:"required"`
+
 	// The local CIDRs for this resource.
 	LocalCIDRs []string `json:"local_cidrs" validate:"required"`
 
@@ -91686,6 +95103,10 @@ func UnmarshalVPNGatewayConnectionPolicyMode(m map[string]json.RawMessage, resul
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "status", &obj.Status)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "status_reasons", &obj.StatusReasons, UnmarshalVPNGatewayConnectionStatusReason)
 	if err != nil {
 		return
 	}
@@ -91920,6 +95341,27 @@ type VPNGatewayConnectionStaticRouteMode struct {
 	// The status of a VPN gateway connection.
 	Status *string `json:"status" validate:"required"`
 
+	// The reasons for the current VPN gateway connection status (if any):
+	// - `cannot_authenticate_connection`: Failed to authenticate a connection because of
+	//   mismatched IKE ID and PSK (check IKE ID and PSK in peer VPN configuration)
+	// - `internal_error`: Internal error (contact IBM support)
+	// - `ike_policy_mismatch`: None of the proposed IKE crypto suites was acceptable (check
+	//    the IKE policies on both sides of the VPN)
+	// - `ike_v1_id_local_remote_cidr_mismatch`: Invalid IKE ID or mismatched local CIDRs and
+	//   remote CIDRs in IKE V1 (check the IKE ID or the local CIDRs and remote CIDRs in IKE
+	//   V1 configuration)
+	// - `ike_v2_local_remote_cidr_mismatch`: Mismatched local CIDRs and remote CIDRs in IKE
+	//   V2 (check the local CIDRs and remote CIDRs in IKE V2 configuration)
+	// - `ipsec_policy_mismatch`: None of the proposed IPsec crypto suites was acceptable
+	//   (check the IPsec policies on both sides of the VPN)
+	// - `peer_not_responding`: No response from peer (check network ACL configuration, peer
+	//   availability, and on-premise firewall configuration)
+	//
+	// The enumerated reason code values for this property will expand in the future. When processing this property, check
+	// for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
+	// unexpected reason code was encountered.
+	StatusReasons []VPNGatewayConnectionStatusReason `json:"status_reasons" validate:"required"`
+
 	// Routing protocols are disabled for this VPN gateway connection.
 	RoutingProtocol *string `json:"routing_protocol" validate:"required"`
 
@@ -92022,6 +95464,10 @@ func UnmarshalVPNGatewayConnectionStaticRouteMode(m map[string]json.RawMessage, 
 	if err != nil {
 		return
 	}
+	err = core.UnmarshalModel(m, "status_reasons", &obj.StatusReasons, UnmarshalVPNGatewayConnectionStatusReason)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "routing_protocol", &obj.RoutingProtocol)
 	if err != nil {
 		return
@@ -92046,11 +95492,43 @@ type VPNGatewayPolicyMode struct {
 	// The VPN gateway's CRN.
 	CRN *string `json:"crn" validate:"required"`
 
+	// The reasons for the current VPN gateway health_state (if any):
+	// - `cannot_create_vpc_route`: VPN cannot create route (check for conflict)
+	// - `cannot_reserve_ip_address`: IP address exhaustion (release addresses on the VPN's
+	//   subnet)
+	// - `internal_error`: Internal error (contact IBM support)
+	//
+	// The enumerated reason code values for this property will expand in the future. When processing this property, check
+	// for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
+	// unexpected reason code was encountered.
+	HealthReasons []VPNGatewayHealthReason `json:"health_reasons" validate:"required"`
+
+	// The health of this resource.
+	// - `ok`: No abnormal behavior detected
+	// - `degraded`: Experiencing compromised performance, capacity, or connectivity
+	// - `faulted`: Completely unreachable, inoperative, or otherwise entirely incapacitated
+	// - `inapplicable`: The health state does not apply because of the current lifecycle state. A resource with a
+	// lifecycle state of `failed` or `deleting` will have a health state of `inapplicable`. A `pending` resource may also
+	// have this state.
+	HealthState *string `json:"health_state" validate:"required"`
+
 	// The VPN gateway's canonical URL.
 	Href *string `json:"href" validate:"required"`
 
 	// The unique identifier for this VPN gateway.
 	ID *string `json:"id" validate:"required"`
+
+	// The reasons for the current VPN gateway lifecycle_state (if any):
+	// - `resource_suspended_by_provider`: The resource has been suspended (contact IBM
+	//   support)
+	//
+	// The enumerated reason code values for this property will expand in the future. When processing this property, check
+	// for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
+	// unexpected reason code was encountered.
+	LifecycleReasons []VPNGatewayLifecycleReason `json:"lifecycle_reasons" validate:"required"`
+
+	// The lifecycle state of the VPN gateway.
+	LifecycleState *string `json:"lifecycle_state" validate:"required"`
 
 	// Collection of VPN gateway members.
 	Members []VPNGatewayMember `json:"members" validate:"required"`
@@ -92064,9 +95542,6 @@ type VPNGatewayPolicyMode struct {
 	// The resource type.
 	ResourceType *string `json:"resource_type" validate:"required"`
 
-	// The status of the VPN gateway.
-	Status *string `json:"status" validate:"required"`
-
 	Subnet *SubnetReference `json:"subnet" validate:"required"`
 
 	// The VPC this VPN gateway resides in.
@@ -92076,19 +95551,37 @@ type VPNGatewayPolicyMode struct {
 	Mode *string `json:"mode" validate:"required"`
 }
 
+// Constants associated with the VPNGatewayPolicyMode.HealthState property.
+// The health of this resource.
+// - `ok`: No abnormal behavior detected
+// - `degraded`: Experiencing compromised performance, capacity, or connectivity
+// - `faulted`: Completely unreachable, inoperative, or otherwise entirely incapacitated
+// - `inapplicable`: The health state does not apply because of the current lifecycle state. A resource with a lifecycle
+// state of `failed` or `deleting` will have a health state of `inapplicable`. A `pending` resource may also have this
+// state.
+const (
+	VPNGatewayPolicyModeHealthStateDegradedConst     = "degraded"
+	VPNGatewayPolicyModeHealthStateFaultedConst      = "faulted"
+	VPNGatewayPolicyModeHealthStateInapplicableConst = "inapplicable"
+	VPNGatewayPolicyModeHealthStateOkConst           = "ok"
+)
+
+// Constants associated with the VPNGatewayPolicyMode.LifecycleState property.
+// The lifecycle state of the VPN gateway.
+const (
+	VPNGatewayPolicyModeLifecycleStateDeletingConst  = "deleting"
+	VPNGatewayPolicyModeLifecycleStateFailedConst    = "failed"
+	VPNGatewayPolicyModeLifecycleStatePendingConst   = "pending"
+	VPNGatewayPolicyModeLifecycleStateStableConst    = "stable"
+	VPNGatewayPolicyModeLifecycleStateSuspendedConst = "suspended"
+	VPNGatewayPolicyModeLifecycleStateUpdatingConst  = "updating"
+	VPNGatewayPolicyModeLifecycleStateWaitingConst   = "waiting"
+)
+
 // Constants associated with the VPNGatewayPolicyMode.ResourceType property.
 // The resource type.
 const (
 	VPNGatewayPolicyModeResourceTypeVPNGatewayConst = "vpn_gateway"
-)
-
-// Constants associated with the VPNGatewayPolicyMode.Status property.
-// The status of the VPN gateway.
-const (
-	VPNGatewayPolicyModeStatusAvailableConst = "available"
-	VPNGatewayPolicyModeStatusDeletingConst  = "deleting"
-	VPNGatewayPolicyModeStatusFailedConst    = "failed"
-	VPNGatewayPolicyModeStatusPendingConst   = "pending"
 )
 
 // Constants associated with the VPNGatewayPolicyMode.Mode property.
@@ -92116,11 +95609,27 @@ func UnmarshalVPNGatewayPolicyMode(m map[string]json.RawMessage, result interfac
 	if err != nil {
 		return
 	}
+	err = core.UnmarshalModel(m, "health_reasons", &obj.HealthReasons, UnmarshalVPNGatewayHealthReason)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "health_state", &obj.HealthState)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
 	if err != nil {
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "lifecycle_reasons", &obj.LifecycleReasons, UnmarshalVPNGatewayLifecycleReason)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "lifecycle_state", &obj.LifecycleState)
 	if err != nil {
 		return
 	}
@@ -92137,10 +95646,6 @@ func UnmarshalVPNGatewayPolicyMode(m map[string]json.RawMessage, result interfac
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "resource_type", &obj.ResourceType)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "status", &obj.Status)
 	if err != nil {
 		return
 	}
@@ -92286,11 +95791,43 @@ type VPNGatewayRouteMode struct {
 	// The VPN gateway's CRN.
 	CRN *string `json:"crn" validate:"required"`
 
+	// The reasons for the current VPN gateway health_state (if any):
+	// - `cannot_create_vpc_route`: VPN cannot create route (check for conflict)
+	// - `cannot_reserve_ip_address`: IP address exhaustion (release addresses on the VPN's
+	//   subnet)
+	// - `internal_error`: Internal error (contact IBM support)
+	//
+	// The enumerated reason code values for this property will expand in the future. When processing this property, check
+	// for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
+	// unexpected reason code was encountered.
+	HealthReasons []VPNGatewayHealthReason `json:"health_reasons" validate:"required"`
+
+	// The health of this resource.
+	// - `ok`: No abnormal behavior detected
+	// - `degraded`: Experiencing compromised performance, capacity, or connectivity
+	// - `faulted`: Completely unreachable, inoperative, or otherwise entirely incapacitated
+	// - `inapplicable`: The health state does not apply because of the current lifecycle state. A resource with a
+	// lifecycle state of `failed` or `deleting` will have a health state of `inapplicable`. A `pending` resource may also
+	// have this state.
+	HealthState *string `json:"health_state" validate:"required"`
+
 	// The VPN gateway's canonical URL.
 	Href *string `json:"href" validate:"required"`
 
 	// The unique identifier for this VPN gateway.
 	ID *string `json:"id" validate:"required"`
+
+	// The reasons for the current VPN gateway lifecycle_state (if any):
+	// - `resource_suspended_by_provider`: The resource has been suspended (contact IBM
+	//   support)
+	//
+	// The enumerated reason code values for this property will expand in the future. When processing this property, check
+	// for and log unknown values. Optionally halt processing and surface the error, or bypass the resource on which the
+	// unexpected reason code was encountered.
+	LifecycleReasons []VPNGatewayLifecycleReason `json:"lifecycle_reasons" validate:"required"`
+
+	// The lifecycle state of the VPN gateway.
+	LifecycleState *string `json:"lifecycle_state" validate:"required"`
 
 	// Collection of VPN gateway members.
 	Members []VPNGatewayMember `json:"members" validate:"required"`
@@ -92304,9 +95841,6 @@ type VPNGatewayRouteMode struct {
 	// The resource type.
 	ResourceType *string `json:"resource_type" validate:"required"`
 
-	// The status of the VPN gateway.
-	Status *string `json:"status" validate:"required"`
-
 	Subnet *SubnetReference `json:"subnet" validate:"required"`
 
 	// The VPC this VPN gateway resides in.
@@ -92316,19 +95850,37 @@ type VPNGatewayRouteMode struct {
 	Mode *string `json:"mode" validate:"required"`
 }
 
+// Constants associated with the VPNGatewayRouteMode.HealthState property.
+// The health of this resource.
+// - `ok`: No abnormal behavior detected
+// - `degraded`: Experiencing compromised performance, capacity, or connectivity
+// - `faulted`: Completely unreachable, inoperative, or otherwise entirely incapacitated
+// - `inapplicable`: The health state does not apply because of the current lifecycle state. A resource with a lifecycle
+// state of `failed` or `deleting` will have a health state of `inapplicable`. A `pending` resource may also have this
+// state.
+const (
+	VPNGatewayRouteModeHealthStateDegradedConst     = "degraded"
+	VPNGatewayRouteModeHealthStateFaultedConst      = "faulted"
+	VPNGatewayRouteModeHealthStateInapplicableConst = "inapplicable"
+	VPNGatewayRouteModeHealthStateOkConst           = "ok"
+)
+
+// Constants associated with the VPNGatewayRouteMode.LifecycleState property.
+// The lifecycle state of the VPN gateway.
+const (
+	VPNGatewayRouteModeLifecycleStateDeletingConst  = "deleting"
+	VPNGatewayRouteModeLifecycleStateFailedConst    = "failed"
+	VPNGatewayRouteModeLifecycleStatePendingConst   = "pending"
+	VPNGatewayRouteModeLifecycleStateStableConst    = "stable"
+	VPNGatewayRouteModeLifecycleStateSuspendedConst = "suspended"
+	VPNGatewayRouteModeLifecycleStateUpdatingConst  = "updating"
+	VPNGatewayRouteModeLifecycleStateWaitingConst   = "waiting"
+)
+
 // Constants associated with the VPNGatewayRouteMode.ResourceType property.
 // The resource type.
 const (
 	VPNGatewayRouteModeResourceTypeVPNGatewayConst = "vpn_gateway"
-)
-
-// Constants associated with the VPNGatewayRouteMode.Status property.
-// The status of the VPN gateway.
-const (
-	VPNGatewayRouteModeStatusAvailableConst = "available"
-	VPNGatewayRouteModeStatusDeletingConst  = "deleting"
-	VPNGatewayRouteModeStatusFailedConst    = "failed"
-	VPNGatewayRouteModeStatusPendingConst   = "pending"
 )
 
 // Constants associated with the VPNGatewayRouteMode.Mode property.
@@ -92356,11 +95908,27 @@ func UnmarshalVPNGatewayRouteMode(m map[string]json.RawMessage, result interface
 	if err != nil {
 		return
 	}
+	err = core.UnmarshalModel(m, "health_reasons", &obj.HealthReasons, UnmarshalVPNGatewayHealthReason)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "health_state", &obj.HealthState)
+	if err != nil {
+		return
+	}
 	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
 	if err != nil {
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(m, "lifecycle_reasons", &obj.LifecycleReasons, UnmarshalVPNGatewayLifecycleReason)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "lifecycle_state", &obj.LifecycleState)
 	if err != nil {
 		return
 	}
@@ -92377,10 +95945,6 @@ func UnmarshalVPNGatewayRouteMode(m map[string]json.RawMessage, result interface
 		return
 	}
 	err = core.UnmarshalPrimitive(m, "resource_type", &obj.ResourceType)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "status", &obj.Status)
 	if err != nil {
 		return
 	}
@@ -93302,6 +96866,41 @@ func UnmarshalZoneIdentityByName(m map[string]json.RawMessage, result interface{
 	return
 }
 
+// BackupPolicyScopePrototypeEnterpriseIdentityEnterpriseIdentityByCRN : BackupPolicyScopePrototypeEnterpriseIdentityEnterpriseIdentityByCRN struct
+// This model "extends" BackupPolicyScopePrototypeEnterpriseIdentity
+type BackupPolicyScopePrototypeEnterpriseIdentityEnterpriseIdentityByCRN struct {
+	// The CRN for this enterprise.
+	CRN *string `json:"crn" validate:"required"`
+}
+
+// NewBackupPolicyScopePrototypeEnterpriseIdentityEnterpriseIdentityByCRN : Instantiate BackupPolicyScopePrototypeEnterpriseIdentityEnterpriseIdentityByCRN (Generic Model Constructor)
+func (*VpcbetaV1) NewBackupPolicyScopePrototypeEnterpriseIdentityEnterpriseIdentityByCRN(crn string) (_model *BackupPolicyScopePrototypeEnterpriseIdentityEnterpriseIdentityByCRN, err error) {
+	_model = &BackupPolicyScopePrototypeEnterpriseIdentityEnterpriseIdentityByCRN{
+		CRN: core.StringPtr(crn),
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+func (*BackupPolicyScopePrototypeEnterpriseIdentityEnterpriseIdentityByCRN) isaBackupPolicyScopePrototypeEnterpriseIdentity() bool {
+	return true
+}
+
+func (*BackupPolicyScopePrototypeEnterpriseIdentityEnterpriseIdentityByCRN) isaBackupPolicyScopePrototype() bool {
+	return true
+}
+
+// UnmarshalBackupPolicyScopePrototypeEnterpriseIdentityEnterpriseIdentityByCRN unmarshals an instance of BackupPolicyScopePrototypeEnterpriseIdentityEnterpriseIdentityByCRN from the specified map of raw messages.
+func UnmarshalBackupPolicyScopePrototypeEnterpriseIdentityEnterpriseIdentityByCRN(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(BackupPolicyScopePrototypeEnterpriseIdentityEnterpriseIdentityByCRN)
+	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // EndpointGatewayReservedIPReservedIPIdentityByHref : EndpointGatewayReservedIPReservedIPIdentityByHref struct
 // This model "extends" EndpointGatewayReservedIPReservedIPIdentity
 type EndpointGatewayReservedIPReservedIPIdentityByHref struct {
@@ -93473,6 +97072,76 @@ func UnmarshalEndpointGatewayTargetPrototypeProviderInfrastructureServiceIdentit
 	return
 }
 
+// FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref : FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref struct
+// This model "extends" FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentity
+type FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref struct {
+	// The URL for this bare metal server network interface.
+	Href *string `json:"href" validate:"required"`
+}
+
+// NewFloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref : Instantiate FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref (Generic Model Constructor)
+func (*VpcbetaV1) NewFloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref(href string) (_model *FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref, err error) {
+	_model = &FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref{
+		Href: core.StringPtr(href),
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+func (*FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref) isaFloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentity() bool {
+	return true
+}
+
+func (*FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref) isaFloatingIPTargetPatch() bool {
+	return true
+}
+
+// UnmarshalFloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref unmarshals an instance of FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref from the specified map of raw messages.
+func UnmarshalFloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref)
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID : FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID struct
+// This model "extends" FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentity
+type FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID struct {
+	// The unique identifier for this bare metal server network interface.
+	ID *string `json:"id" validate:"required"`
+}
+
+// NewFloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID : Instantiate FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID (Generic Model Constructor)
+func (*VpcbetaV1) NewFloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID(id string) (_model *FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID, err error) {
+	_model = &FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID{
+		ID: core.StringPtr(id),
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+func (*FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID) isaFloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentity() bool {
+	return true
+}
+
+func (*FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID) isaFloatingIPTargetPatch() bool {
+	return true
+}
+
+// UnmarshalFloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID unmarshals an instance of FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID from the specified map of raw messages.
+func UnmarshalFloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(FloatingIPTargetPatchBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID)
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByHref : FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByHref struct
 // This model "extends" FloatingIPTargetPatchNetworkInterfaceIdentity
 type FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByHref struct {
@@ -93535,6 +97204,76 @@ func (*FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByID
 // UnmarshalFloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByID unmarshals an instance of FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByID from the specified map of raw messages.
 func UnmarshalFloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByID(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(FloatingIPTargetPatchNetworkInterfaceIdentityNetworkInterfaceIdentityByID)
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref : FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref struct
+// This model "extends" FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentity
+type FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref struct {
+	// The URL for this bare metal server network interface.
+	Href *string `json:"href" validate:"required"`
+}
+
+// NewFloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref : Instantiate FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref (Generic Model Constructor)
+func (*VpcbetaV1) NewFloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref(href string) (_model *FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref, err error) {
+	_model = &FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref{
+		Href: core.StringPtr(href),
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+func (*FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref) isaFloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentity() bool {
+	return true
+}
+
+func (*FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref) isaFloatingIPTargetPrototype() bool {
+	return true
+}
+
+// UnmarshalFloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref unmarshals an instance of FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref from the specified map of raw messages.
+func UnmarshalFloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByHref)
+	err = core.UnmarshalPrimitive(m, "href", &obj.Href)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID : FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID struct
+// This model "extends" FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentity
+type FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID struct {
+	// The unique identifier for this bare metal server network interface.
+	ID *string `json:"id" validate:"required"`
+}
+
+// NewFloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID : Instantiate FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID (Generic Model Constructor)
+func (*VpcbetaV1) NewFloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID(id string) (_model *FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID, err error) {
+	_model = &FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID{
+		ID: core.StringPtr(id),
+	}
+	err = core.ValidateStruct(_model, "required parameters")
+	return
+}
+
+func (*FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID) isaFloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentity() bool {
+	return true
+}
+
+func (*FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID) isaFloatingIPTargetPrototype() bool {
+	return true
+}
+
+// UnmarshalFloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID unmarshals an instance of FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID from the specified map of raw messages.
+func UnmarshalFloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(FloatingIPTargetPrototypeBareMetalServerNetworkInterfaceIdentityBareMetalServerNetworkInterfaceIdentityByID)
 	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
 	if err != nil {
 		return
@@ -96853,6 +100592,91 @@ func (pager *VPCAddressPrefixesPager) GetNext() (page []AddressPrefix, err error
 
 // GetAll invokes GetAllWithContext() using context.Background() as the Context parameter.
 func (pager *VPCAddressPrefixesPager) GetAll() (allItems []AddressPrefix, err error) {
+	return pager.GetAllWithContext(context.Background())
+}
+
+// VPCDnsResolutionBindingsPager can be used to simplify the use of the "ListVPCDnsResolutionBindings" method.
+type VPCDnsResolutionBindingsPager struct {
+	hasNext     bool
+	options     *ListVPCDnsResolutionBindingsOptions
+	client      *VpcbetaV1
+	pageContext struct {
+		next *string
+	}
+}
+
+// NewVPCDnsResolutionBindingsPager returns a new VPCDnsResolutionBindingsPager instance.
+func (vpcbeta *VpcbetaV1) NewVPCDnsResolutionBindingsPager(options *ListVPCDnsResolutionBindingsOptions) (pager *VPCDnsResolutionBindingsPager, err error) {
+	if options.Start != nil && *options.Start != "" {
+		err = fmt.Errorf("the 'options.Start' field should not be set")
+		return
+	}
+
+	var optionsCopy ListVPCDnsResolutionBindingsOptions = *options
+	pager = &VPCDnsResolutionBindingsPager{
+		hasNext: true,
+		options: &optionsCopy,
+		client:  vpcbeta,
+	}
+	return
+}
+
+// HasNext returns true if there are potentially more results to be retrieved.
+func (pager *VPCDnsResolutionBindingsPager) HasNext() bool {
+	return pager.hasNext
+}
+
+// GetNextWithContext returns the next page of results using the specified Context.
+func (pager *VPCDnsResolutionBindingsPager) GetNextWithContext(ctx context.Context) (page []VpcdnsResolutionBinding, err error) {
+	if !pager.HasNext() {
+		return nil, fmt.Errorf("no more results available")
+	}
+
+	pager.options.Start = pager.pageContext.next
+
+	result, _, err := pager.client.ListVPCDnsResolutionBindingsWithContext(ctx, pager.options)
+	if err != nil {
+		return
+	}
+
+	var next *string
+	if result.Next != nil {
+		var start *string
+		start, err = core.GetQueryParam(result.Next.Href, "start")
+		if err != nil {
+			err = fmt.Errorf("error retrieving 'start' query parameter from URL '%s': %s", *result.Next.Href, err.Error())
+			return
+		}
+		next = start
+	}
+	pager.pageContext.next = next
+	pager.hasNext = (pager.pageContext.next != nil)
+	page = result.DnsResolutionBindings
+
+	return
+}
+
+// GetAllWithContext returns all results by invoking GetNextWithContext() repeatedly
+// until all pages of results have been retrieved.
+func (pager *VPCDnsResolutionBindingsPager) GetAllWithContext(ctx context.Context) (allItems []VpcdnsResolutionBinding, err error) {
+	for pager.HasNext() {
+		var nextPage []VpcdnsResolutionBinding
+		nextPage, err = pager.GetNextWithContext(ctx)
+		if err != nil {
+			return
+		}
+		allItems = append(allItems, nextPage...)
+	}
+	return
+}
+
+// GetNext invokes GetNextWithContext() using context.Background() as the Context parameter.
+func (pager *VPCDnsResolutionBindingsPager) GetNext() (page []VpcdnsResolutionBinding, err error) {
+	return pager.GetNextWithContext(context.Background())
+}
+
+// GetAll invokes GetAllWithContext() using context.Background() as the Context parameter.
+func (pager *VPCDnsResolutionBindingsPager) GetAll() (allItems []VpcdnsResolutionBinding, err error) {
 	return pager.GetAllWithContext(context.Background())
 }
 
