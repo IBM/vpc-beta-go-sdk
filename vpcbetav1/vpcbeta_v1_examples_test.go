@@ -110,6 +110,10 @@ var (
 	createdReplicaShare1ID            string
 	shareProfileName                  string
 	createdShareETag                  string
+	createdPPSGID                     string
+	createdPPSGCRN                    string
+	createdPPSGAPID                   string
+	EndpointGatewayBindingID          string
 )
 
 func skipTest() {
@@ -1637,6 +1641,8 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 				Image:                   imageIDentityModel,
 				PrimaryNetworkInterface: networkInterfacePrototypeModel,
 				Zone:                    zoneIdentityModel,
+				ConfidentialComputeMode: &[]string{"sgx"}[0],
+				EnableSecureBoot:        &[]bool{true}[0],
 			}
 			createInstanceOptions := vpcService.NewCreateInstanceOptions(
 				instancePrototypeModel,
@@ -4487,14 +4493,15 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 			zoneIdentityModel := &vpcbetav1.ZoneIdentityByName{
 				Name: zone,
 			}
-
-			createBareMetalServerOptions := &vpcbetav1.CreateBareMetalServerOptions{
+			bareMetalServerPrototype := &vpcbetav1.BareMetalServerPrototype{
 				Initialization:          bareMetalServerInitializationPrototypeModel,
 				PrimaryNetworkInterface: bareMetalServerPrimaryNetworkInterfacePrototypeModel,
 				Profile:                 bareMetalServerProfileIdentityModel,
 				Zone:                    zoneIdentityModel,
+				Name:                    &[]string{"my-bare-metal-server"}[0],
 			}
-			createBareMetalServerOptions.SetName("my-bare-metal-server")
+			createBareMetalServerOptions := &vpcbetav1.CreateBareMetalServerOptions{}
+			createBareMetalServerOptions.BareMetalServerPrototype = bareMetalServerPrototype
 
 			bareMetalServer, response, err := vpcService.CreateBareMetalServer(createBareMetalServerOptions)
 			if err != nil {
@@ -4919,16 +4926,21 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 			// begin-create_backup_policy
 
 			userTags := []string{"tag1", "tag2"}
-			createBackupPolicyOptions := vpcService.NewCreateBackupPolicyOptions(userTags)
-			createBackupPolicyOptions.SetName("my-backup-policy")
-			createBackupPolicyOptions.SetMatchUserTags(userTags)
-
-			backupPolicy, response, err := vpcService.CreateBackupPolicy(createBackupPolicyOptions)
+			name := "my-backup-policy"
+			matchResourceType := "instance"
+			backupPolicyPrototype := &vpcbetav1.BackupPolicyPrototype{
+				MatchUserTags:     userTags,
+				Name:              &name,
+				MatchResourceType: &matchResourceType,
+			}
+			createBackupPolicyOptions := vpcService.NewCreateBackupPolicyOptions(backupPolicyPrototype)
+			backupPolicyIntf, response, err := vpcService.CreateBackupPolicy(createBackupPolicyOptions)
 			if err != nil {
 				panic(err)
 			}
 
 			// end-create_backup_policy
+			backupPolicy := backupPolicyIntf.(*vpcbetav1.BackupPolicy)
 			backupPolicyID = *backupPolicy.ID
 
 			Expect(err).To(BeNil())
@@ -5523,10 +5535,14 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 			fmt.Println("\nCreateLoadBalancer() result:")
 			name := getName("lb")
 			// begin-create_load_balancer
-
+			loadBalancerProfileIdentityModel := &vpcbetav1.LoadBalancerProfileIdentityByName{
+				Name: core.StringPtr("network-private-path"),
+			}
 			options := &vpcbetav1.CreateLoadBalancerOptions{
-				IsPublic: &[]bool{true}[0],
-				Name:     &name,
+				IsPublic:      &[]bool{false}[0],
+				IsPrivatePath: &[]bool{true}[0],
+				Name:          &name,
+				Profile:       loadBalancerProfileIdentityModel,
 				Subnets: []vpcbetav1.SubnetIdentityIntf{
 					&vpcbetav1.SubnetIdentity{
 						ID: &subnetID,
@@ -6190,6 +6206,194 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 			Expect(response.StatusCode).To(Equal(204))
 
 		})
+		It(`ListPrivatePathServiceGateways request example`, func() {
+			fmt.Println("\nListPrivatePathServiceGateways() result:")
+			// begin-list_private_path_service_gateways
+			listPrivatePathServiceGatewaysOptions := &vpcbetav1.ListPrivatePathServiceGatewaysOptions{
+				Limit: core.Int64Ptr(int64(10)),
+			}
+
+			pager, err := vpcService.NewPrivatePathServiceGatewaysPager(listPrivatePathServiceGatewaysOptions)
+			if err != nil {
+				panic(err)
+			}
+
+			var allResults []vpcbetav1.PrivatePathServiceGateway
+			for pager.HasNext() {
+				nextPage, err := pager.GetNext()
+				if err != nil {
+					panic(err)
+				}
+				allResults = append(allResults, nextPage...)
+			}
+
+			// end-list_private_path_service_gateways
+		})
+		It(`CreatePrivatePathServiceGateway request example`, func() {
+			fmt.Println("\nCreatePrivatePathServiceGateway() result:")
+			// begin-create_private_path_service_gateway
+
+			loadBalancerIdentityModel := &vpcbetav1.LoadBalancerIdentityByID{
+				ID: &loadBalancerID,
+			}
+
+			createPrivatePathServiceGatewayOptions := vpcService.NewCreatePrivatePathServiceGatewayOptions(
+				loadBalancerIdentityModel,
+				[]string{"my-service.example.com"},
+			)
+
+			privatePathServiceGateway, response, err := vpcService.CreatePrivatePathServiceGateway(createPrivatePathServiceGatewayOptions)
+			if err != nil {
+				panic(err)
+			}
+
+			// end-create_private_path_service_gateway
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(201))
+			Expect(privatePathServiceGateway).ToNot(BeNil())
+			createdPPSGID = *privatePathServiceGateway.ID
+			createdPPSGCRN = *privatePathServiceGateway.CRN
+		})
+		It(`GetPrivatePathServiceGateway request example`, func() {
+			fmt.Println("\nGetPrivatePathServiceGateway() result:")
+			// begin-get_private_path_service_gateway
+
+			getPrivatePathServiceGatewayOptions := vpcService.NewGetPrivatePathServiceGatewayOptions(
+				createdPPSGID,
+			)
+
+			privatePathServiceGateway, response, err := vpcService.GetPrivatePathServiceGateway(getPrivatePathServiceGatewayOptions)
+			if err != nil {
+				panic(err)
+			}
+
+			// end-get_private_path_service_gateway
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(privatePathServiceGateway).ToNot(BeNil())
+		})
+		It(`UpdatePrivatePathServiceGateway request example`, func() {
+			fmt.Println("\nUpdatePrivatePathServiceGateway() result:")
+			// begin-update_private_path_service_gateway
+
+			privatePathServiceGatewayPatchModel := &vpcbetav1.PrivatePathServiceGatewayPatch{}
+			privatePathServiceGatewayPatchModelAsPatch, asPatchErr := privatePathServiceGatewayPatchModel.AsPatch()
+			Expect(asPatchErr).To(BeNil())
+
+			updatePrivatePathServiceGatewayOptions := vpcService.NewUpdatePrivatePathServiceGatewayOptions(
+				createdPPSGID,
+				privatePathServiceGatewayPatchModelAsPatch,
+			)
+
+			privatePathServiceGateway, response, err := vpcService.UpdatePrivatePathServiceGateway(updatePrivatePathServiceGatewayOptions)
+			if err != nil {
+				panic(err)
+			}
+
+			// end-update_private_path_service_gateway
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(privatePathServiceGateway).ToNot(BeNil())
+		})
+		It(`ListPrivatePathServiceGatewayAccountPolicies request example`, func() {
+			fmt.Println("\nListPrivatePathServiceGatewayAccountPolicies() result:")
+			// begin-list_private_path_service_gateway_account_policies
+			listPrivatePathServiceGatewayAccountPoliciesOptions := &vpcbetav1.ListPrivatePathServiceGatewayAccountPoliciesOptions{
+				PrivatePathServiceGatewayID: &createdPPSGID,
+				Limit:                       core.Int64Ptr(int64(10)),
+			}
+
+			pager, err := vpcService.NewPrivatePathServiceGatewayAccountPoliciesPager(listPrivatePathServiceGatewayAccountPoliciesOptions)
+			if err != nil {
+				panic(err)
+			}
+
+			var allResults []vpcbetav1.PrivatePathServiceGatewayAccountPolicy
+			for pager.HasNext() {
+				nextPage, err := pager.GetNext()
+				if err != nil {
+					panic(err)
+				}
+				allResults = append(allResults, nextPage...)
+			}
+
+			// end-list_private_path_service_gateway_account_policies
+		})
+		It(`CreatePrivatePathServiceGatewayAccountPolicy request example`, func() {
+			fmt.Println("\nCreatePrivatePathServiceGatewayAccountPolicy() result:")
+			// begin-create_private_path_service_gateway_account_policy
+
+			accountIdentityModel := &vpcbetav1.AccountIdentityByID{
+				ID: core.StringPtr("aa2432b1fa4d4ace891e9b80fc104e34"),
+			}
+
+			createPrivatePathServiceGatewayAccountPolicyOptions := vpcService.NewCreatePrivatePathServiceGatewayAccountPolicyOptions(
+				createdPPSGID,
+				"deny",
+				accountIdentityModel,
+			)
+
+			privatePathServiceGatewayAccountPolicy, response, err := vpcService.CreatePrivatePathServiceGatewayAccountPolicy(createPrivatePathServiceGatewayAccountPolicyOptions)
+			if err != nil {
+				panic(err)
+			}
+
+			// end-create_private_path_service_gateway_account_policy
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(201))
+			Expect(privatePathServiceGatewayAccountPolicy).ToNot(BeNil())
+			createdPPSGAPID = *privatePathServiceGatewayAccountPolicy.ID
+		})
+		It(`GetPrivatePathServiceGatewayAccountPolicy request example`, func() {
+			fmt.Println("\nGetPrivatePathServiceGatewayAccountPolicy() result:")
+			// begin-get_private_path_service_gateway_account_policy
+
+			getPrivatePathServiceGatewayAccountPolicyOptions := vpcService.NewGetPrivatePathServiceGatewayAccountPolicyOptions(
+				createdPPSGID,
+				createdPPSGAPID,
+			)
+
+			privatePathServiceGatewayAccountPolicy, response, err := vpcService.GetPrivatePathServiceGatewayAccountPolicy(getPrivatePathServiceGatewayAccountPolicyOptions)
+			if err != nil {
+				panic(err)
+			}
+
+			// end-get_private_path_service_gateway_account_policy
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(privatePathServiceGatewayAccountPolicy).ToNot(BeNil())
+		})
+		It(`UpdatePrivatePathServiceGatewayAccountPolicy request example`, func() {
+			fmt.Println("\nUpdatePrivatePathServiceGatewayAccountPolicy() result:")
+			// begin-update_private_path_service_gateway_account_policy
+
+			privatePathServiceGatewayAccountPolicyPatchModel := &vpcbetav1.PrivatePathServiceGatewayAccountPolicyPatch{}
+			privatePathServiceGatewayAccountPolicyPatchModelAsPatch, asPatchErr := privatePathServiceGatewayAccountPolicyPatchModel.AsPatch()
+			Expect(asPatchErr).To(BeNil())
+
+			updatePrivatePathServiceGatewayAccountPolicyOptions := vpcService.NewUpdatePrivatePathServiceGatewayAccountPolicyOptions(
+				createdPPSGID,
+				createdPPSGAPID,
+				privatePathServiceGatewayAccountPolicyPatchModelAsPatch,
+			)
+
+			privatePathServiceGatewayAccountPolicy, response, err := vpcService.UpdatePrivatePathServiceGatewayAccountPolicy(updatePrivatePathServiceGatewayAccountPolicyOptions)
+			if err != nil {
+				panic(err)
+			}
+
+			// end-update_private_path_service_gateway_account_policy
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(202))
+			Expect(privatePathServiceGatewayAccountPolicy).ToNot(BeNil())
+		})
+
 		It(`ListEndpointGateways request example`, func() {
 			fmt.Println("\nListEndpointGateways() result:")
 			// begin-list_endpoint_gateways
@@ -6218,12 +6422,12 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 				ID: &vpcID,
 			})
 
-			targetName := "ibm-ntp-server"
-			providerInfrastructureService := "provider_infrastructure_service"
+			// targetName := "ibm-ntp-server"
+			providerInfrastructureService := "private_path_service_gateway"
 			options.SetTarget(
 				&vpcbetav1.EndpointGatewayTargetPrototype{
 					ResourceType: &providerInfrastructureService,
-					Name:         &targetName,
+					CRN:          &createdPPSGCRN,
 				},
 			)
 			endpointGateway, response, err := vpcService.CreateEndpointGateway(options)
@@ -6236,6 +6440,119 @@ var _ = Describe(`VpcbetaV1 Examples Tests`, func() {
 			Expect(response.StatusCode).To(Equal(201))
 			Expect(endpointGateway).ToNot(BeNil())
 			endpointGatewayID = *endpointGateway.ID
+		})
+		It(`ListPrivatePathServiceGatewayEndpointGatewayBindings request example`, func() {
+			fmt.Println("\nListPrivatePathServiceGatewayEndpointGatewayBindings() result:")
+			// begin-list_private_path_service_gateway_endpoint_gateway_bindings
+			listPrivatePathServiceGatewayEndpointGatewayBindingsOptions := &vpcbetav1.ListPrivatePathServiceGatewayEndpointGatewayBindingsOptions{
+				PrivatePathServiceGatewayID: &createdPPSGID,
+				Limit:                       core.Int64Ptr(int64(10)),
+				Status:                      core.StringPtr("denied"),
+				AccountID:                   core.StringPtr("aa2432b1fa4d4ace891e9b80fc104e34"),
+			}
+
+			pager, err := vpcService.NewPrivatePathServiceGatewayEndpointGatewayBindingsPager(listPrivatePathServiceGatewayEndpointGatewayBindingsOptions)
+			if err != nil {
+				panic(err)
+			}
+
+			var allResults []vpcbetav1.PrivatePathServiceGatewayEndpointGatewayBinding
+			for pager.HasNext() {
+				nextPage, err := pager.GetNext()
+				if err != nil {
+					panic(err)
+				}
+				allResults = append(allResults, nextPage...)
+			}
+			EndpointGatewayBindingID = *allResults[0].ID
+			// end-list_private_path_service_gateway_endpoint_gateway_bindings
+		})
+		It(`GetPrivatePathServiceGatewayEndpointGatewayBinding request example`, func() {
+			fmt.Println("\nGetPrivatePathServiceGatewayEndpointGatewayBinding() result:")
+			// begin-get_private_path_service_gateway_endpoint_gateway_binding
+
+			getPrivatePathServiceGatewayEndpointGatewayBindingOptions := vpcService.NewGetPrivatePathServiceGatewayEndpointGatewayBindingOptions(
+				createdPPSGID,
+				EndpointGatewayBindingID,
+			)
+
+			privatePathServiceGatewayEndpointGatewayBinding, response, err := vpcService.GetPrivatePathServiceGatewayEndpointGatewayBinding(getPrivatePathServiceGatewayEndpointGatewayBindingOptions)
+			if err != nil {
+				panic(err)
+			}
+
+			// end-get_private_path_service_gateway_endpoint_gateway_binding
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(privatePathServiceGatewayEndpointGatewayBinding).ToNot(BeNil())
+		})
+		It(`DenyPrivatePathServiceGatewayEndpointGatewayBinding request example`, func() {
+			// begin-deny_private_path_service_gateway_endpoint_gateway_binding
+
+			denyPrivatePathServiceGatewayEndpointGatewayBindingOptions := vpcService.NewDenyPrivatePathServiceGatewayEndpointGatewayBindingOptions(
+				createdPPSGID,
+				EndpointGatewayBindingID,
+			)
+
+			response, err := vpcService.DenyPrivatePathServiceGatewayEndpointGatewayBinding(denyPrivatePathServiceGatewayEndpointGatewayBindingOptions)
+			if err != nil {
+				panic(err)
+			}
+			if response.StatusCode != 200 {
+				fmt.Printf("\nUnexpected response status code received from DenyPrivatePathServiceGatewayEndpointGatewayBinding(): %d\n", response.StatusCode)
+			}
+
+			// end-deny_private_path_service_gateway_endpoint_gateway_binding
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+		})
+		It(`PermitPrivatePathServiceGatewayEndpointGatewayBinding request example`, func() {
+			// begin-permit_private_path_service_gateway_endpoint_gateway_binding
+
+			permitPrivatePathServiceGatewayEndpointGatewayBindingOptions := vpcService.NewPermitPrivatePathServiceGatewayEndpointGatewayBindingOptions(
+				createdPPSGID,
+				EndpointGatewayBindingID,
+			)
+
+			response, err := vpcService.PermitPrivatePathServiceGatewayEndpointGatewayBinding(permitPrivatePathServiceGatewayEndpointGatewayBindingOptions)
+			if err != nil {
+				panic(err)
+			}
+			if response.StatusCode != 200 {
+				fmt.Printf("\nUnexpected response status code received from PermitPrivatePathServiceGatewayEndpointGatewayBinding(): %d\n", response.StatusCode)
+			}
+
+			// end-permit_private_path_service_gateway_endpoint_gateway_binding
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+		})
+		It(`RevokeAccountForPrivatePathServiceGateway request example`, func() {
+			// begin-revoke_account_for_private_path_service_gateway
+
+			accountIdentityModel := &vpcbetav1.AccountIdentityByID{
+				ID: core.StringPtr("aa2432b1fa4d4ace891e9b80fc104e34"),
+			}
+
+			revokeAccountForPrivatePathServiceGatewayOptions := vpcService.NewRevokeAccountForPrivatePathServiceGatewayOptions(
+				createdPPSGID,
+				accountIdentityModel,
+			)
+
+			response, err := vpcService.RevokeAccountForPrivatePathServiceGateway(revokeAccountForPrivatePathServiceGatewayOptions)
+			if err != nil {
+				panic(err)
+			}
+			if response.StatusCode != 200 {
+				fmt.Printf("\nUnexpected response status code received from RevokeAccountForPrivatePathServiceGateway(): %d\n", response.StatusCode)
+			}
+
+			// end-revoke_account_for_private_path_service_gateway
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
 		})
 		It(`ListEndpointGatewayIps request example`, func() {
 			fmt.Println("\nListEndpointGatewayIps() result:")
