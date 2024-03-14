@@ -1,3 +1,10 @@
+# [0.8.0](https://github.com/IBM/vpc-beta-go-sdk/compare/v0.7.0...v0.8.0) (2024-03-14)
+
+
+### Features
+
+* **release:** Update SDK to use Beta API version 2024-03-12 ([#10](https://github.com/IBM/vpc-beta-go-sdk/issues/10)) ([852e888](https://github.com/IBM/vpc-beta-go-sdk/commit/852e888e34b33cb3c55c3f9ee66b0e5bee71383f))
+
 # [0.7.0](https://github.com/IBM/vpc-beta-go-sdk/compare/v0.6.0...v0.7.0) (2023-11-23)
 
 
