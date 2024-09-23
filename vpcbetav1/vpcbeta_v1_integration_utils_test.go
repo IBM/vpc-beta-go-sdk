@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 /**
@@ -3579,7 +3580,7 @@ func UpdateSnapshot(vpcService *vpcbetav1.VpcbetaV1, userTags []string, snapshot
 	return
 }
 
-//Placement Groups
+// Placement Groups
 func ListPlacementGroups(vpcService *vpcbetav1.VpcbetaV1) (placementGroupCollection *vpcbetav1.PlacementGroupCollection, response *core.DetailedResponse, err error) {
 	listPlacementGroupsOptions := &vpcbetav1.ListPlacementGroupsOptions{}
 
