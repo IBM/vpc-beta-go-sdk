@@ -1,6 +1,7 @@
 {
   "debug": true,
-  "branches": [ "main" ],
+  "branches": ["main"],
+  "tagFormat": "v${version}",
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
@@ -8,13 +9,14 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "bump2version --allow-dirty --current-version ${lastRelease.version} --new-version ${nextRelease.version} patch"
+        "prepareCmd": "bump2version --allow-dirty --current-version ${lastRelease.version} --new-version ${nextRelease.version} patch common/version.go"
       }
     ],
     [
       "@semantic-release/git",
       {
-        "message": "chore(release): ${nextRelease.version} release notes [skip ci]\n\n${nextRelease.notes}"
+        "message": "chore(release): ${nextRelease.version} release notes [skip ci]\n\n${nextRelease.notes}",
+        "assets": ["CHANGELOG.md", "common/version.go", "package.json"]
       }
     ],
     "@semantic-release/github"
