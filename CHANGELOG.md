@@ -1,3 +1,14 @@
+## [0.8.1](https://github.com/IBM/vpc-beta-go-sdk/compare/v0.8.0...v0.8.1) (2025-02-17)
+
+
+### Bug Fixes
+
+* **release:** fixed the Makefile ([8845cae](https://github.com/IBM/vpc-beta-go-sdk/commit/8845caeddd256e5c1e4633e351d9edc0c8f1a27e))
+* **release:** Update SDK to make the dynamic version ([7d7e1a6](https://github.com/IBM/vpc-beta-go-sdk/commit/7d7e1a67c4c08c8a37813651cb9d9e3d39593200))
+* **release:** updated the github workflow ([2e73a51](https://github.com/IBM/vpc-beta-go-sdk/commit/2e73a519240803d588a7a482f906ec89f051a518))
+* **release:** updated the github workflow ([e372df2](https://github.com/IBM/vpc-beta-go-sdk/commit/e372df24383d894b0d004bd20a71b9a9f4f05cc1))
+* **release:** updated the version.go ([#13](https://github.com/IBM/vpc-beta-go-sdk/issues/13)) ([e54de97](https://github.com/IBM/vpc-beta-go-sdk/commit/e54de974362ee5e10e045fcf06b8a193931d252e))
+
 # [0.8.0](https://github.com/IBM/vpc-beta-go-sdk/compare/v0.7.0...v0.8.0) (2024-03-14)
 
 
