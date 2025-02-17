@@ -16,3 +16,4 @@ vendor/
 /.openapi-generator/
 
 main/
+/node_modules
