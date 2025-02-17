@@ -1,3 +1,10 @@
+## [0.8.2](https://github.com/IBM/vpc-beta-go-sdk/compare/v0.8.1...v0.8.2) (2025-02-17)
+
+
+### Bug Fixes
+
+* **release:** removed duplicate tag creation ([#14](https://github.com/IBM/vpc-beta-go-sdk/issues/14)) ([8567483](https://github.com/IBM/vpc-beta-go-sdk/commit/8567483ec44b44e3355c595b4d5f521a5dfe86ab))
+
 ## [0.8.1](https://github.com/IBM/vpc-beta-go-sdk/compare/v0.8.0...v0.8.1) (2025-02-17)
 
 
