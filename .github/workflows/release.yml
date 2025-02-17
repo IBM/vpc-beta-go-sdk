@@ -41,7 +41,7 @@ jobs:
         
     - name: Install dependencies
       run: |
-        npm ci  # Using ci instead of install for more reliable builds
+        npm ci
 
     - name: Release
       env:
