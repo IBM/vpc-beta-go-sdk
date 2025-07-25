@@ -38,7 +38,6 @@ import (
 var _ = Describe(`VpcbetaV1`, func() {
 	var testServer *httptest.Server
 	Describe(`Service constructor tests`, func() {
-		version := "testString"
 		maturity := "testString"
 		version := "2024-06-23"
 		It(`Instantiate service client`, func() {
