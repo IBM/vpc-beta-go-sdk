@@ -2,7 +2,7 @@ module github.com/IBM/vpc-beta-go-sdk
 
 go 1.23.0
 
-toolchain go1.23.11
+toolchain go1.23.7
 
 require (
 	github.com/IBM/go-sdk-core/v5 v5.20.1
