@@ -2,8 +2,6 @@ module github.com/IBM/vpc-beta-go-sdk
 
 go 1.23.0
 
-toolchain go1.23.7
-
 require (
 	github.com/IBM/go-sdk-core/v5 v5.20.1
 	github.com/go-openapi/strfmt v0.23.0
