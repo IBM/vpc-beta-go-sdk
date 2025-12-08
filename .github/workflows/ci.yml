@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go: ['1.22.x', '1.23.x']
+        go: ['1.24.x', '1.25.x']
 
     steps:
     - uses: actions/checkout@v4
@@ -24,7 +24,7 @@ jobs:
         
     - name: Install golangci-lint
       run: |
-        curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.61.0
+        curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v2.6.2
 
     - name: Run CI tasks
       run: make ci

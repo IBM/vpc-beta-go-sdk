@@ -1,4 +1,4 @@
-// +build integration
+//go:build integration
 
 /**
  * (C) Copyright IBM Corp. 2020, 2021, 2022.
@@ -3579,7 +3579,7 @@ func UpdateSnapshot(vpcService *vpcbetav1.VpcbetaV1, userTags []string, snapshot
 	return
 }
 
-//Placement Groups
+// Placement Groups
 func ListPlacementGroups(vpcService *vpcbetav1.VpcbetaV1) (placementGroupCollection *vpcbetav1.PlacementGroupCollection, response *core.DetailedResponse, err error) {
 	listPlacementGroupsOptions := &vpcbetav1.ListPlacementGroupsOptions{}
 
