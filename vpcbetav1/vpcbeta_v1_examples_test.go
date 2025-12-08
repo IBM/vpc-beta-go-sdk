@@ -1,5 +1,4 @@
 //go:build examples
-// +build examples
 
 /**
  * (C) Copyright IBM Corp. 2020, 2021, 2022.
@@ -20,14 +19,15 @@ package vpcbetav1_test
 
 import (
 	"fmt"
-	"github.com/IBM/go-sdk-core/v5/core"
-	"github.com/IBM/vpc-beta-go-sdk/vpcbetav1"
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 	"os"
 	"reflect"
 	"strconv"
 	"time"
+
+	"github.com/IBM/go-sdk-core/v5/core"
+	"github.com/IBM/vpc-beta-go-sdk/vpcbetav1"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
 var (

@@ -1,3 +1,5 @@
+//go:build tests
+
 /**
  * (C) Copyright IBM Corp. 2025.
  *

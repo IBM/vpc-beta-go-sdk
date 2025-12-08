@@ -1,23 +1,28 @@
 # Makefile
 
-all: build lint tidy
+GO=go
+LINT=golangci-lint
+FORMATTER=goimports
 
-ci: build lint tidy test-unit
+all: tidy build test-unit lint
+
+ci: tidy build test-unit lint
 
 build:
-	go build ./vpcbetav1
+	${GO} build ./vpcbetav1
 
 test-unit:
-	go test `go list ./... | grep vpcbetav1` -v -tags=unit
+	${GO} test `go list ./... | grep vpcbetav1` -v -tags=unit
 
 test-integration:
-	go test `go list ./... | grep vpcbetav1` -v -tags=integration -skipForMockTesting -testCount
+	${GO} test `go list ./... | grep vpcbetav1` -v -tags=integration -skipForMockTesting -testCount
 
 test-examples:
-	go test `go list ./... | grep vpcbetav1` -v -tags=examples
+	${GO} test `go list ./... | grep vpcbetav1` -v -tags=examples
 
 lint:
-	golangci-lint --timeout=2m run
+	${LINT} run
+	DIFF=$$(${FORMATTER} -d vpcbetav1); if [ -n "$$DIFF" ]; then printf "\n$$DIFF\n" && exit 1; fi
 
 tidy:
-	go mod tidy
+	${GO} mod tidy

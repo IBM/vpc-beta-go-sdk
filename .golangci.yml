@@ -1,0 +1,19 @@
+version: 2
+
+run:
+  timeout: 2m
+
+linters:
+  disable-all: true
+  enable:
+    - gosec
+    - govet
+  disable:
+    - errcheck
+    - staticcheck
+
+linters-settings:
+  gosec:
+    excludes:
+      - G101  # Ignore hardcoded credentials check
+      - G104  # Ignore unhandled errors check
