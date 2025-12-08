@@ -1,3 +1,5 @@
+//go:build unit
+
 /**
  * (C) Copyright IBM Corp. 2023, 2024, 2025.
  *
