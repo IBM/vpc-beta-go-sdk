@@ -34287,14 +34287,14 @@ func (vpcbeta *VpcbetaV1) UpdateVPNGatewayConnectionWithContext(ctx context.Cont
 // This request lists local CIDRs for a VPN gateway connection.
 //
 // This request is only supported for policy mode VPN gateways.
-func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionsLocalCIDRs(listVPNGatewayConnectionsLocalCIDRsOptions *ListVPNGatewayConnectionsLocalCIDRsOptions) (result *VPNGatewayConnectionCidRs, response *core.DetailedResponse, err error) {
+func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionsLocalCIDRs(listVPNGatewayConnectionsLocalCIDRsOptions *ListVPNGatewayConnectionsLocalCIDRsOptions) (result *VPNGatewayConnectionCIDRs, response *core.DetailedResponse, err error) {
 	result, response, err = vpcbeta.ListVPNGatewayConnectionsLocalCIDRsWithContext(context.Background(), listVPNGatewayConnectionsLocalCIDRsOptions)
 	err = core.RepurposeSDKProblem(err, "")
 	return
 }
 
 // ListVPNGatewayConnectionsLocalCIDRsWithContext is an alternate form of the ListVPNGatewayConnectionsLocalCIDRs method which supports a Context parameter
-func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionsLocalCIDRsWithContext(ctx context.Context, listVPNGatewayConnectionsLocalCIDRsOptions *ListVPNGatewayConnectionsLocalCIDRsOptions) (result *VPNGatewayConnectionCidRs, response *core.DetailedResponse, err error) {
+func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionsLocalCIDRsWithContext(ctx context.Context, listVPNGatewayConnectionsLocalCIDRsOptions *ListVPNGatewayConnectionsLocalCIDRsOptions) (result *VPNGatewayConnectionCIDRs, response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(listVPNGatewayConnectionsLocalCIDRsOptions, "listVPNGatewayConnectionsLocalCIDRsOptions cannot be nil")
 	if err != nil {
 		err = core.SDKErrorf(err, "", "unexpected-nil-param", common.GetComponentInfo())
@@ -34348,7 +34348,7 @@ func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionsLocalCIDRsWithContext(ctx con
 		return
 	}
 	if rawResponse != nil {
-		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalVPNGatewayConnectionCidRs)
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalVPNGatewayConnectionCIDRs)
 		if err != nil {
 			err = core.SDKErrorf(err, "", "unmarshal-resp-error", common.GetComponentInfo())
 			return
@@ -34565,14 +34565,14 @@ func (vpcbeta *VpcbetaV1) AddVPNGatewayConnectionsLocalCIDRWithContext(ctx conte
 // This request lists peer CIDRs for a VPN gateway connection.
 //
 // This request is only supported for policy mode VPN gateways.
-func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionsPeerCIDRs(listVPNGatewayConnectionsPeerCIDRsOptions *ListVPNGatewayConnectionsPeerCIDRsOptions) (result *VPNGatewayConnectionCidRs, response *core.DetailedResponse, err error) {
+func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionsPeerCIDRs(listVPNGatewayConnectionsPeerCIDRsOptions *ListVPNGatewayConnectionsPeerCIDRsOptions) (result *VPNGatewayConnectionCIDRs, response *core.DetailedResponse, err error) {
 	result, response, err = vpcbeta.ListVPNGatewayConnectionsPeerCIDRsWithContext(context.Background(), listVPNGatewayConnectionsPeerCIDRsOptions)
 	err = core.RepurposeSDKProblem(err, "")
 	return
 }
 
 // ListVPNGatewayConnectionsPeerCIDRsWithContext is an alternate form of the ListVPNGatewayConnectionsPeerCIDRs method which supports a Context parameter
-func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionsPeerCIDRsWithContext(ctx context.Context, listVPNGatewayConnectionsPeerCIDRsOptions *ListVPNGatewayConnectionsPeerCIDRsOptions) (result *VPNGatewayConnectionCidRs, response *core.DetailedResponse, err error) {
+func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionsPeerCIDRsWithContext(ctx context.Context, listVPNGatewayConnectionsPeerCIDRsOptions *ListVPNGatewayConnectionsPeerCIDRsOptions) (result *VPNGatewayConnectionCIDRs, response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(listVPNGatewayConnectionsPeerCIDRsOptions, "listVPNGatewayConnectionsPeerCIDRsOptions cannot be nil")
 	if err != nil {
 		err = core.SDKErrorf(err, "", "unexpected-nil-param", common.GetComponentInfo())
@@ -34626,7 +34626,7 @@ func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionsPeerCIDRsWithContext(ctx cont
 		return
 	}
 	if rawResponse != nil {
-		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalVPNGatewayConnectionCidRs)
+		err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalVPNGatewayConnectionCIDRs)
 		if err != nil {
 			err = core.SDKErrorf(err, "", "unmarshal-resp-error", common.GetComponentInfo())
 			return
@@ -105919,15 +105919,15 @@ func UnmarshalVPNGatewayConnection(m map[string]json.RawMessage, result interfac
 	return
 }
 
-// VPNGatewayConnectionCidRs : VPNGatewayConnectionCidRs struct
-type VPNGatewayConnectionCidRs struct {
+// VPNGatewayConnectionCIDRs : VPNGatewayConnectionCIDRs struct
+type VPNGatewayConnectionCIDRs struct {
 	// The CIDRs for this resource.
 	CIDRs []string `json:"cidrs" validate:"required"`
 }
 
-// UnmarshalVPNGatewayConnectionCidRs unmarshals an instance of VPNGatewayConnectionCidRs from the specified map of raw messages.
-func UnmarshalVPNGatewayConnectionCidRs(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(VPNGatewayConnectionCidRs)
+// UnmarshalVPNGatewayConnectionCIDRs unmarshals an instance of VPNGatewayConnectionCIDRs from the specified map of raw messages.
+func UnmarshalVPNGatewayConnectionCIDRs(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(VPNGatewayConnectionCIDRs)
 	err = core.UnmarshalPrimitive(m, "cidrs", &obj.CIDRs)
 	if err != nil {
 		err = core.SDKErrorf(err, "", "cidrs-error", common.GetComponentInfo())
