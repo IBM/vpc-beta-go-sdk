@@ -1,3 +1,10 @@
+## [0.10.2](https://github.com/IBM/vpc-beta-go-sdk/compare/v0.10.1...v0.10.2) (2025-12-17)
+
+
+### Bug Fixes
+
+* Cidrs to CIDRs ( ([#20](https://github.com/IBM/vpc-beta-go-sdk/issues/20)) ([2ed8093](https://github.com/IBM/vpc-beta-go-sdk/commit/2ed8093b5a086dcaf8e27655b40951260a238f87))
+
 ## [0.10.1](https://github.com/IBM/vpc-beta-go-sdk/compare/v0.10.0...v0.10.1) (2025-12-17)
 
 
