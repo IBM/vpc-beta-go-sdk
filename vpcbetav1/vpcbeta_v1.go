@@ -33621,31 +33621,31 @@ func (vpcbeta *VpcbetaV1) UpdateVPNGatewayWithContext(ctx context.Context, updat
 	return
 }
 
-// ListVPNGatewayAdvertisedCidrs : List advertised CIDRs for a VPN gateway
+// ListVPNGatewayAdvertisedCIDRs : List advertised CIDRs for a VPN gateway
 // This request lists advertised CIDRs for a VPN gateway.
 //
 // This request is only supported for route mode VPN gateways.
-func (vpcbeta *VpcbetaV1) ListVPNGatewayAdvertisedCidrs(listVPNGatewayAdvertisedCidrsOptions *ListVPNGatewayAdvertisedCidrsOptions) (result *VPNGatewayAdvertisedCIDRCollection, response *core.DetailedResponse, err error) {
-	result, response, err = vpcbeta.ListVPNGatewayAdvertisedCidrsWithContext(context.Background(), listVPNGatewayAdvertisedCidrsOptions)
+func (vpcbeta *VpcbetaV1) ListVPNGatewayAdvertisedCIDRs(listVPNGatewayAdvertisedCIDRsOptions *ListVPNGatewayAdvertisedCIDRsOptions) (result *VPNGatewayAdvertisedCIDRCollection, response *core.DetailedResponse, err error) {
+	result, response, err = vpcbeta.ListVPNGatewayAdvertisedCIDRsWithContext(context.Background(), listVPNGatewayAdvertisedCIDRsOptions)
 	err = core.RepurposeSDKProblem(err, "")
 	return
 }
 
-// ListVPNGatewayAdvertisedCidrsWithContext is an alternate form of the ListVPNGatewayAdvertisedCidrs method which supports a Context parameter
-func (vpcbeta *VpcbetaV1) ListVPNGatewayAdvertisedCidrsWithContext(ctx context.Context, listVPNGatewayAdvertisedCidrsOptions *ListVPNGatewayAdvertisedCidrsOptions) (result *VPNGatewayAdvertisedCIDRCollection, response *core.DetailedResponse, err error) {
-	err = core.ValidateNotNil(listVPNGatewayAdvertisedCidrsOptions, "listVPNGatewayAdvertisedCidrsOptions cannot be nil")
+// ListVPNGatewayAdvertisedCIDRsWithContext is an alternate form of the ListVPNGatewayAdvertisedCIDRs method which supports a Context parameter
+func (vpcbeta *VpcbetaV1) ListVPNGatewayAdvertisedCIDRsWithContext(ctx context.Context, listVPNGatewayAdvertisedCIDRsOptions *ListVPNGatewayAdvertisedCIDRsOptions) (result *VPNGatewayAdvertisedCIDRCollection, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(listVPNGatewayAdvertisedCIDRsOptions, "listVPNGatewayAdvertisedCIDRsOptions cannot be nil")
 	if err != nil {
 		err = core.SDKErrorf(err, "", "unexpected-nil-param", common.GetComponentInfo())
 		return
 	}
-	err = core.ValidateStruct(listVPNGatewayAdvertisedCidrsOptions, "listVPNGatewayAdvertisedCidrsOptions")
+	err = core.ValidateStruct(listVPNGatewayAdvertisedCIDRsOptions, "listVPNGatewayAdvertisedCIDRsOptions")
 	if err != nil {
 		err = core.SDKErrorf(err, "", "struct-validation-error", common.GetComponentInfo())
 		return
 	}
 
 	pathParamsMap := map[string]string{
-		"vpn_gateway_id": *listVPNGatewayAdvertisedCidrsOptions.VPNGatewayID,
+		"vpn_gateway_id": *listVPNGatewayAdvertisedCIDRsOptions.VPNGatewayID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -33657,12 +33657,12 @@ func (vpcbeta *VpcbetaV1) ListVPNGatewayAdvertisedCidrsWithContext(ctx context.C
 		return
 	}
 
-	sdkHeaders := common.GetSdkHeaders("vpcbeta", "V1", "ListVPNGatewayAdvertisedCidrs")
+	sdkHeaders := common.GetSdkHeaders("vpcbeta", "V1", "ListVPNGatewayAdvertisedCIDRs")
 	for headerName, headerValue := range sdkHeaders {
 		builder.AddHeader(headerName, headerValue)
 	}
 
-	for headerName, headerValue := range listVPNGatewayAdvertisedCidrsOptions.Headers {
+	for headerName, headerValue := range listVPNGatewayAdvertisedCIDRsOptions.Headers {
 		builder.AddHeader(headerName, headerValue)
 	}
 	builder.AddHeader("Accept", "application/json")
@@ -34283,32 +34283,32 @@ func (vpcbeta *VpcbetaV1) UpdateVPNGatewayConnectionWithContext(ctx context.Cont
 	return
 }
 
-// ListVPNGatewayConnectionsLocalCidrs : List local CIDRs for a VPN gateway connection
+// ListVPNGatewayConnectionsLocalCIDRs : List local CIDRs for a VPN gateway connection
 // This request lists local CIDRs for a VPN gateway connection.
 //
 // This request is only supported for policy mode VPN gateways.
-func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionsLocalCidrs(listVPNGatewayConnectionsLocalCidrsOptions *ListVPNGatewayConnectionsLocalCidrsOptions) (result *VPNGatewayConnectionCidRs, response *core.DetailedResponse, err error) {
-	result, response, err = vpcbeta.ListVPNGatewayConnectionsLocalCidrsWithContext(context.Background(), listVPNGatewayConnectionsLocalCidrsOptions)
+func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionsLocalCIDRs(listVPNGatewayConnectionsLocalCIDRsOptions *ListVPNGatewayConnectionsLocalCIDRsOptions) (result *VPNGatewayConnectionCidRs, response *core.DetailedResponse, err error) {
+	result, response, err = vpcbeta.ListVPNGatewayConnectionsLocalCIDRsWithContext(context.Background(), listVPNGatewayConnectionsLocalCIDRsOptions)
 	err = core.RepurposeSDKProblem(err, "")
 	return
 }
 
-// ListVPNGatewayConnectionsLocalCidrsWithContext is an alternate form of the ListVPNGatewayConnectionsLocalCidrs method which supports a Context parameter
-func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionsLocalCidrsWithContext(ctx context.Context, listVPNGatewayConnectionsLocalCidrsOptions *ListVPNGatewayConnectionsLocalCidrsOptions) (result *VPNGatewayConnectionCidRs, response *core.DetailedResponse, err error) {
-	err = core.ValidateNotNil(listVPNGatewayConnectionsLocalCidrsOptions, "listVPNGatewayConnectionsLocalCidrsOptions cannot be nil")
+// ListVPNGatewayConnectionsLocalCIDRsWithContext is an alternate form of the ListVPNGatewayConnectionsLocalCIDRs method which supports a Context parameter
+func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionsLocalCIDRsWithContext(ctx context.Context, listVPNGatewayConnectionsLocalCIDRsOptions *ListVPNGatewayConnectionsLocalCIDRsOptions) (result *VPNGatewayConnectionCidRs, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(listVPNGatewayConnectionsLocalCIDRsOptions, "listVPNGatewayConnectionsLocalCIDRsOptions cannot be nil")
 	if err != nil {
 		err = core.SDKErrorf(err, "", "unexpected-nil-param", common.GetComponentInfo())
 		return
 	}
-	err = core.ValidateStruct(listVPNGatewayConnectionsLocalCidrsOptions, "listVPNGatewayConnectionsLocalCidrsOptions")
+	err = core.ValidateStruct(listVPNGatewayConnectionsLocalCIDRsOptions, "listVPNGatewayConnectionsLocalCIDRsOptions")
 	if err != nil {
 		err = core.SDKErrorf(err, "", "struct-validation-error", common.GetComponentInfo())
 		return
 	}
 
 	pathParamsMap := map[string]string{
-		"vpn_gateway_id": *listVPNGatewayConnectionsLocalCidrsOptions.VPNGatewayID,
-		"id":             *listVPNGatewayConnectionsLocalCidrsOptions.ID,
+		"vpn_gateway_id": *listVPNGatewayConnectionsLocalCIDRsOptions.VPNGatewayID,
+		"id":             *listVPNGatewayConnectionsLocalCIDRsOptions.ID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -34320,12 +34320,12 @@ func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionsLocalCidrsWithContext(ctx con
 		return
 	}
 
-	sdkHeaders := common.GetSdkHeaders("vpcbeta", "V1", "ListVPNGatewayConnectionsLocalCidrs")
+	sdkHeaders := common.GetSdkHeaders("vpcbeta", "V1", "ListVPNGatewayConnectionsLocalCIDRs")
 	for headerName, headerValue := range sdkHeaders {
 		builder.AddHeader(headerName, headerValue)
 	}
 
-	for headerName, headerValue := range listVPNGatewayConnectionsLocalCidrsOptions.Headers {
+	for headerName, headerValue := range listVPNGatewayConnectionsLocalCIDRsOptions.Headers {
 		builder.AddHeader(headerName, headerValue)
 	}
 	builder.AddHeader("Accept", "application/json")
@@ -34561,32 +34561,32 @@ func (vpcbeta *VpcbetaV1) AddVPNGatewayConnectionsLocalCIDRWithContext(ctx conte
 	return
 }
 
-// ListVPNGatewayConnectionsPeerCidrs : List peer CIDRs for a VPN gateway connection
+// ListVPNGatewayConnectionsPeerCIDRs : List peer CIDRs for a VPN gateway connection
 // This request lists peer CIDRs for a VPN gateway connection.
 //
 // This request is only supported for policy mode VPN gateways.
-func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionsPeerCidrs(listVPNGatewayConnectionsPeerCidrsOptions *ListVPNGatewayConnectionsPeerCidrsOptions) (result *VPNGatewayConnectionCidRs, response *core.DetailedResponse, err error) {
-	result, response, err = vpcbeta.ListVPNGatewayConnectionsPeerCidrsWithContext(context.Background(), listVPNGatewayConnectionsPeerCidrsOptions)
+func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionsPeerCIDRs(listVPNGatewayConnectionsPeerCIDRsOptions *ListVPNGatewayConnectionsPeerCIDRsOptions) (result *VPNGatewayConnectionCidRs, response *core.DetailedResponse, err error) {
+	result, response, err = vpcbeta.ListVPNGatewayConnectionsPeerCIDRsWithContext(context.Background(), listVPNGatewayConnectionsPeerCIDRsOptions)
 	err = core.RepurposeSDKProblem(err, "")
 	return
 }
 
-// ListVPNGatewayConnectionsPeerCidrsWithContext is an alternate form of the ListVPNGatewayConnectionsPeerCidrs method which supports a Context parameter
-func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionsPeerCidrsWithContext(ctx context.Context, listVPNGatewayConnectionsPeerCidrsOptions *ListVPNGatewayConnectionsPeerCidrsOptions) (result *VPNGatewayConnectionCidRs, response *core.DetailedResponse, err error) {
-	err = core.ValidateNotNil(listVPNGatewayConnectionsPeerCidrsOptions, "listVPNGatewayConnectionsPeerCidrsOptions cannot be nil")
+// ListVPNGatewayConnectionsPeerCIDRsWithContext is an alternate form of the ListVPNGatewayConnectionsPeerCIDRs method which supports a Context parameter
+func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionsPeerCIDRsWithContext(ctx context.Context, listVPNGatewayConnectionsPeerCIDRsOptions *ListVPNGatewayConnectionsPeerCIDRsOptions) (result *VPNGatewayConnectionCidRs, response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(listVPNGatewayConnectionsPeerCIDRsOptions, "listVPNGatewayConnectionsPeerCIDRsOptions cannot be nil")
 	if err != nil {
 		err = core.SDKErrorf(err, "", "unexpected-nil-param", common.GetComponentInfo())
 		return
 	}
-	err = core.ValidateStruct(listVPNGatewayConnectionsPeerCidrsOptions, "listVPNGatewayConnectionsPeerCidrsOptions")
+	err = core.ValidateStruct(listVPNGatewayConnectionsPeerCIDRsOptions, "listVPNGatewayConnectionsPeerCIDRsOptions")
 	if err != nil {
 		err = core.SDKErrorf(err, "", "struct-validation-error", common.GetComponentInfo())
 		return
 	}
 
 	pathParamsMap := map[string]string{
-		"vpn_gateway_id": *listVPNGatewayConnectionsPeerCidrsOptions.VPNGatewayID,
-		"id":             *listVPNGatewayConnectionsPeerCidrsOptions.ID,
+		"vpn_gateway_id": *listVPNGatewayConnectionsPeerCIDRsOptions.VPNGatewayID,
+		"id":             *listVPNGatewayConnectionsPeerCIDRsOptions.ID,
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
@@ -34598,12 +34598,12 @@ func (vpcbeta *VpcbetaV1) ListVPNGatewayConnectionsPeerCidrsWithContext(ctx cont
 		return
 	}
 
-	sdkHeaders := common.GetSdkHeaders("vpcbeta", "V1", "ListVPNGatewayConnectionsPeerCidrs")
+	sdkHeaders := common.GetSdkHeaders("vpcbeta", "V1", "ListVPNGatewayConnectionsPeerCIDRs")
 	for headerName, headerValue := range sdkHeaders {
 		builder.AddHeader(headerName, headerValue)
 	}
 
-	for headerName, headerValue := range listVPNGatewayConnectionsPeerCidrsOptions.Headers {
+	for headerName, headerValue := range listVPNGatewayConnectionsPeerCIDRsOptions.Headers {
 		builder.AddHeader(headerName, headerValue)
 	}
 	builder.AddHeader("Accept", "application/json")
@@ -79077,8 +79077,8 @@ func (options *ListVpcsOptions) SetHeaders(param map[string]string) *ListVpcsOpt
 	return options
 }
 
-// ListVPNGatewayAdvertisedCidrsOptions : The ListVPNGatewayAdvertisedCidrs options.
-type ListVPNGatewayAdvertisedCidrsOptions struct {
+// ListVPNGatewayAdvertisedCIDRsOptions : The ListVPNGatewayAdvertisedCIDRs options.
+type ListVPNGatewayAdvertisedCIDRsOptions struct {
 	// The VPN gateway identifier.
 	VPNGatewayID *string `json:"vpn_gateway_id" validate:"required,ne="`
 
@@ -79086,27 +79086,27 @@ type ListVPNGatewayAdvertisedCidrsOptions struct {
 	Headers map[string]string
 }
 
-// NewListVPNGatewayAdvertisedCidrsOptions : Instantiate ListVPNGatewayAdvertisedCidrsOptions
-func (*VpcbetaV1) NewListVPNGatewayAdvertisedCidrsOptions(vpnGatewayID string) *ListVPNGatewayAdvertisedCidrsOptions {
-	return &ListVPNGatewayAdvertisedCidrsOptions{
+// NewListVPNGatewayAdvertisedCIDRsOptions : Instantiate ListVPNGatewayAdvertisedCIDRsOptions
+func (*VpcbetaV1) NewListVPNGatewayAdvertisedCIDRsOptions(vpnGatewayID string) *ListVPNGatewayAdvertisedCIDRsOptions {
+	return &ListVPNGatewayAdvertisedCIDRsOptions{
 		VPNGatewayID: core.StringPtr(vpnGatewayID),
 	}
 }
 
 // SetVPNGatewayID : Allow user to set VPNGatewayID
-func (_options *ListVPNGatewayAdvertisedCidrsOptions) SetVPNGatewayID(vpnGatewayID string) *ListVPNGatewayAdvertisedCidrsOptions {
+func (_options *ListVPNGatewayAdvertisedCIDRsOptions) SetVPNGatewayID(vpnGatewayID string) *ListVPNGatewayAdvertisedCIDRsOptions {
 	_options.VPNGatewayID = core.StringPtr(vpnGatewayID)
 	return _options
 }
 
 // SetHeaders : Allow user to set Headers
-func (options *ListVPNGatewayAdvertisedCidrsOptions) SetHeaders(param map[string]string) *ListVPNGatewayAdvertisedCidrsOptions {
+func (options *ListVPNGatewayAdvertisedCIDRsOptions) SetHeaders(param map[string]string) *ListVPNGatewayAdvertisedCIDRsOptions {
 	options.Headers = param
 	return options
 }
 
-// ListVPNGatewayConnectionsLocalCidrsOptions : The ListVPNGatewayConnectionsLocalCidrs options.
-type ListVPNGatewayConnectionsLocalCidrsOptions struct {
+// ListVPNGatewayConnectionsLocalCIDRsOptions : The ListVPNGatewayConnectionsLocalCIDRs options.
+type ListVPNGatewayConnectionsLocalCIDRsOptions struct {
 	// The VPN gateway identifier.
 	VPNGatewayID *string `json:"vpn_gateway_id" validate:"required,ne="`
 
@@ -79117,28 +79117,28 @@ type ListVPNGatewayConnectionsLocalCidrsOptions struct {
 	Headers map[string]string
 }
 
-// NewListVPNGatewayConnectionsLocalCidrsOptions : Instantiate ListVPNGatewayConnectionsLocalCidrsOptions
-func (*VpcbetaV1) NewListVPNGatewayConnectionsLocalCidrsOptions(vpnGatewayID string, id string) *ListVPNGatewayConnectionsLocalCidrsOptions {
-	return &ListVPNGatewayConnectionsLocalCidrsOptions{
+// NewListVPNGatewayConnectionsLocalCIDRsOptions : Instantiate ListVPNGatewayConnectionsLocalCIDRsOptions
+func (*VpcbetaV1) NewListVPNGatewayConnectionsLocalCIDRsOptions(vpnGatewayID string, id string) *ListVPNGatewayConnectionsLocalCIDRsOptions {
+	return &ListVPNGatewayConnectionsLocalCIDRsOptions{
 		VPNGatewayID: core.StringPtr(vpnGatewayID),
 		ID:           core.StringPtr(id),
 	}
 }
 
 // SetVPNGatewayID : Allow user to set VPNGatewayID
-func (_options *ListVPNGatewayConnectionsLocalCidrsOptions) SetVPNGatewayID(vpnGatewayID string) *ListVPNGatewayConnectionsLocalCidrsOptions {
+func (_options *ListVPNGatewayConnectionsLocalCIDRsOptions) SetVPNGatewayID(vpnGatewayID string) *ListVPNGatewayConnectionsLocalCIDRsOptions {
 	_options.VPNGatewayID = core.StringPtr(vpnGatewayID)
 	return _options
 }
 
 // SetID : Allow user to set ID
-func (_options *ListVPNGatewayConnectionsLocalCidrsOptions) SetID(id string) *ListVPNGatewayConnectionsLocalCidrsOptions {
+func (_options *ListVPNGatewayConnectionsLocalCIDRsOptions) SetID(id string) *ListVPNGatewayConnectionsLocalCIDRsOptions {
 	_options.ID = core.StringPtr(id)
 	return _options
 }
 
 // SetHeaders : Allow user to set Headers
-func (options *ListVPNGatewayConnectionsLocalCidrsOptions) SetHeaders(param map[string]string) *ListVPNGatewayConnectionsLocalCidrsOptions {
+func (options *ListVPNGatewayConnectionsLocalCIDRsOptions) SetHeaders(param map[string]string) *ListVPNGatewayConnectionsLocalCIDRsOptions {
 	options.Headers = param
 	return options
 }
@@ -79205,8 +79205,8 @@ func (options *ListVPNGatewayConnectionsOptions) SetHeaders(param map[string]str
 	return options
 }
 
-// ListVPNGatewayConnectionsPeerCidrsOptions : The ListVPNGatewayConnectionsPeerCidrs options.
-type ListVPNGatewayConnectionsPeerCidrsOptions struct {
+// ListVPNGatewayConnectionsPeerCIDRsOptions : The ListVPNGatewayConnectionsPeerCIDRs options.
+type ListVPNGatewayConnectionsPeerCIDRsOptions struct {
 	// The VPN gateway identifier.
 	VPNGatewayID *string `json:"vpn_gateway_id" validate:"required,ne="`
 
@@ -79217,28 +79217,28 @@ type ListVPNGatewayConnectionsPeerCidrsOptions struct {
 	Headers map[string]string
 }
 
-// NewListVPNGatewayConnectionsPeerCidrsOptions : Instantiate ListVPNGatewayConnectionsPeerCidrsOptions
-func (*VpcbetaV1) NewListVPNGatewayConnectionsPeerCidrsOptions(vpnGatewayID string, id string) *ListVPNGatewayConnectionsPeerCidrsOptions {
-	return &ListVPNGatewayConnectionsPeerCidrsOptions{
+// NewListVPNGatewayConnectionsPeerCIDRsOptions : Instantiate ListVPNGatewayConnectionsPeerCIDRsOptions
+func (*VpcbetaV1) NewListVPNGatewayConnectionsPeerCIDRsOptions(vpnGatewayID string, id string) *ListVPNGatewayConnectionsPeerCIDRsOptions {
+	return &ListVPNGatewayConnectionsPeerCIDRsOptions{
 		VPNGatewayID: core.StringPtr(vpnGatewayID),
 		ID:           core.StringPtr(id),
 	}
 }
 
 // SetVPNGatewayID : Allow user to set VPNGatewayID
-func (_options *ListVPNGatewayConnectionsPeerCidrsOptions) SetVPNGatewayID(vpnGatewayID string) *ListVPNGatewayConnectionsPeerCidrsOptions {
+func (_options *ListVPNGatewayConnectionsPeerCIDRsOptions) SetVPNGatewayID(vpnGatewayID string) *ListVPNGatewayConnectionsPeerCIDRsOptions {
 	_options.VPNGatewayID = core.StringPtr(vpnGatewayID)
 	return _options
 }
 
 // SetID : Allow user to set ID
-func (_options *ListVPNGatewayConnectionsPeerCidrsOptions) SetID(id string) *ListVPNGatewayConnectionsPeerCidrsOptions {
+func (_options *ListVPNGatewayConnectionsPeerCIDRsOptions) SetID(id string) *ListVPNGatewayConnectionsPeerCIDRsOptions {
 	_options.ID = core.StringPtr(id)
 	return _options
 }
 
 // SetHeaders : Allow user to set Headers
-func (options *ListVPNGatewayConnectionsPeerCidrsOptions) SetHeaders(param map[string]string) *ListVPNGatewayConnectionsPeerCidrsOptions {
+func (options *ListVPNGatewayConnectionsPeerCIDRsOptions) SetHeaders(param map[string]string) *ListVPNGatewayConnectionsPeerCIDRsOptions {
 	options.Headers = param
 	return options
 }
@@ -105514,7 +105514,7 @@ type VPNGateway struct {
 
 	// The static CIDRs advertised through any enabled routing protocol (for example, BGP). The routing protocol will
 	// advertise routes with these CIDRs as route destinations.
-	AdvertisedCidrs []string `json:"advertised_cidrs,omitempty"`
+	AdvertisedCIDRs []string `json:"advertised_cidrs,omitempty"`
 
 	// The local autonomous system number (ASN) for this VPN gateway and its connections.
 	LocalAsn *int64 `json:"local_asn,omitempty"`
@@ -105650,7 +105650,7 @@ func UnmarshalVPNGateway(m map[string]json.RawMessage, result interface{}) (err 
 		err = core.SDKErrorf(err, "", "mode-error", common.GetComponentInfo())
 		return
 	}
-	err = core.UnmarshalPrimitive(m, "advertised_cidrs", &obj.AdvertisedCidrs)
+	err = core.UnmarshalPrimitive(m, "advertised_cidrs", &obj.AdvertisedCIDRs)
 	if err != nil {
 		err = core.SDKErrorf(err, "", "advertised_cidrs-error", common.GetComponentInfo())
 		return
@@ -105668,13 +105668,13 @@ func UnmarshalVPNGateway(m map[string]json.RawMessage, result interface{}) (err 
 type VPNGatewayAdvertisedCIDRCollection struct {
 	// The static CIDRs advertised through any enabled routing protocol (for example, BGP). The routing protocol will
 	// advertise routes with these CIDRs as route destinations.
-	AdvertisedCidrs []string `json:"advertised_cidrs" validate:"required"`
+	AdvertisedCIDRs []string `json:"advertised_cidrs" validate:"required"`
 }
 
 // UnmarshalVPNGatewayAdvertisedCIDRCollection unmarshals an instance of VPNGatewayAdvertisedCIDRCollection from the specified map of raw messages.
 func UnmarshalVPNGatewayAdvertisedCIDRCollection(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(VPNGatewayAdvertisedCIDRCollection)
-	err = core.UnmarshalPrimitive(m, "advertised_cidrs", &obj.AdvertisedCidrs)
+	err = core.UnmarshalPrimitive(m, "advertised_cidrs", &obj.AdvertisedCIDRs)
 	if err != nil {
 		err = core.SDKErrorf(err, "", "advertised_cidrs-error", common.GetComponentInfo())
 		return
@@ -105922,13 +105922,13 @@ func UnmarshalVPNGatewayConnection(m map[string]json.RawMessage, result interfac
 // VPNGatewayConnectionCidRs : VPNGatewayConnectionCidRs struct
 type VPNGatewayConnectionCidRs struct {
 	// The CIDRs for this resource.
-	Cidrs []string `json:"cidrs" validate:"required"`
+	CIDRs []string `json:"cidrs" validate:"required"`
 }
 
 // UnmarshalVPNGatewayConnectionCidRs unmarshals an instance of VPNGatewayConnectionCidRs from the specified map of raw messages.
 func UnmarshalVPNGatewayConnectionCidRs(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(VPNGatewayConnectionCidRs)
-	err = core.UnmarshalPrimitive(m, "cidrs", &obj.Cidrs)
+	err = core.UnmarshalPrimitive(m, "cidrs", &obj.CIDRs)
 	if err != nil {
 		err = core.SDKErrorf(err, "", "cidrs-error", common.GetComponentInfo())
 		return
@@ -106944,7 +106944,7 @@ func (vpnGatewayConnectionPeerPatch *VPNGatewayConnectionPeerPatch) asPatch() (_
 // VPNGatewayConnectionPolicyModeLocal : VPNGatewayConnectionPolicyModeLocal struct
 type VPNGatewayConnectionPolicyModeLocal struct {
 	// The local CIDRs for this VPN gateway connection.
-	Cidrs []string `json:"cidrs" validate:"required"`
+	CIDRs []string `json:"cidrs" validate:"required"`
 
 	// The local IKE identities.
 	//
@@ -106956,7 +106956,7 @@ type VPNGatewayConnectionPolicyModeLocal struct {
 // UnmarshalVPNGatewayConnectionPolicyModeLocal unmarshals an instance of VPNGatewayConnectionPolicyModeLocal from the specified map of raw messages.
 func UnmarshalVPNGatewayConnectionPolicyModeLocal(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(VPNGatewayConnectionPolicyModeLocal)
-	err = core.UnmarshalPrimitive(m, "cidrs", &obj.Cidrs)
+	err = core.UnmarshalPrimitive(m, "cidrs", &obj.CIDRs)
 	if err != nil {
 		err = core.SDKErrorf(err, "", "cidrs-error", common.GetComponentInfo())
 		return
@@ -106973,7 +106973,7 @@ func UnmarshalVPNGatewayConnectionPolicyModeLocal(m map[string]json.RawMessage, 
 // VPNGatewayConnectionPolicyModeLocalPrototype : VPNGatewayConnectionPolicyModeLocalPrototype struct
 type VPNGatewayConnectionPolicyModeLocalPrototype struct {
 	// The local CIDRs for this VPN gateway connection.
-	Cidrs []string `json:"cidrs" validate:"required"`
+	CIDRs []string `json:"cidrs" validate:"required"`
 
 	// The local IKE identities to use.
 	//
@@ -106987,7 +106987,7 @@ type VPNGatewayConnectionPolicyModeLocalPrototype struct {
 // NewVPNGatewayConnectionPolicyModeLocalPrototype : Instantiate VPNGatewayConnectionPolicyModeLocalPrototype (Generic Model Constructor)
 func (*VpcbetaV1) NewVPNGatewayConnectionPolicyModeLocalPrototype(cidrs []string) (_model *VPNGatewayConnectionPolicyModeLocalPrototype, err error) {
 	_model = &VPNGatewayConnectionPolicyModeLocalPrototype{
-		Cidrs: cidrs,
+		CIDRs: cidrs,
 	}
 	err = core.ValidateStruct(_model, "required parameters")
 	if err != nil {
@@ -106999,7 +106999,7 @@ func (*VpcbetaV1) NewVPNGatewayConnectionPolicyModeLocalPrototype(cidrs []string
 // UnmarshalVPNGatewayConnectionPolicyModeLocalPrototype unmarshals an instance of VPNGatewayConnectionPolicyModeLocalPrototype from the specified map of raw messages.
 func UnmarshalVPNGatewayConnectionPolicyModeLocalPrototype(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(VPNGatewayConnectionPolicyModeLocalPrototype)
-	err = core.UnmarshalPrimitive(m, "cidrs", &obj.Cidrs)
+	err = core.UnmarshalPrimitive(m, "cidrs", &obj.CIDRs)
 	if err != nil {
 		err = core.SDKErrorf(err, "", "cidrs-error", common.GetComponentInfo())
 		return
@@ -107019,7 +107019,7 @@ func UnmarshalVPNGatewayConnectionPolicyModeLocalPrototype(m map[string]json.Raw
 // - VPNGatewayConnectionPolicyModePeerVPNGatewayConnectionPeerByFqdn
 type VPNGatewayConnectionPolicyModePeer struct {
 	// The peer CIDRs for this VPN gateway connection.
-	Cidrs []string `json:"cidrs" validate:"required"`
+	CIDRs []string `json:"cidrs" validate:"required"`
 
 	// The peer IKE identity.
 	IkeIdentity VPNGatewayConnectionIkeIdentityIntf `json:"ike_identity" validate:"required"`
@@ -107052,7 +107052,7 @@ type VPNGatewayConnectionPolicyModePeerIntf interface {
 // UnmarshalVPNGatewayConnectionPolicyModePeer unmarshals an instance of VPNGatewayConnectionPolicyModePeer from the specified map of raw messages.
 func UnmarshalVPNGatewayConnectionPolicyModePeer(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(VPNGatewayConnectionPolicyModePeer)
-	err = core.UnmarshalPrimitive(m, "cidrs", &obj.Cidrs)
+	err = core.UnmarshalPrimitive(m, "cidrs", &obj.CIDRs)
 	if err != nil {
 		err = core.SDKErrorf(err, "", "cidrs-error", common.GetComponentInfo())
 		return
@@ -107087,7 +107087,7 @@ func UnmarshalVPNGatewayConnectionPolicyModePeer(m map[string]json.RawMessage, r
 // - VPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByFqdn
 type VPNGatewayConnectionPolicyModePeerPrototype struct {
 	// The peer CIDRs for this VPN gateway connection.
-	Cidrs []string `json:"cidrs" validate:"required"`
+	CIDRs []string `json:"cidrs" validate:"required"`
 
 	// The peer IKE identity to use.
 	//
@@ -107116,7 +107116,7 @@ type VPNGatewayConnectionPolicyModePeerPrototypeIntf interface {
 // UnmarshalVPNGatewayConnectionPolicyModePeerPrototype unmarshals an instance of VPNGatewayConnectionPolicyModePeerPrototype from the specified map of raw messages.
 func UnmarshalVPNGatewayConnectionPolicyModePeerPrototype(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(VPNGatewayConnectionPolicyModePeerPrototype)
-	err = core.UnmarshalPrimitive(m, "cidrs", &obj.Cidrs)
+	err = core.UnmarshalPrimitive(m, "cidrs", &obj.CIDRs)
 	if err != nil {
 		err = core.SDKErrorf(err, "", "cidrs-error", common.GetComponentInfo())
 		return
@@ -108156,7 +108156,7 @@ type VPNGatewayPrototype struct {
 
 	// The static CIDRs advertised through any enabled routing protocol (for example, BGP). The routing protocol will
 	// advertise routes with these CIDRs as route destinations.
-	AdvertisedCidrs []string `json:"advertised_cidrs,omitempty"`
+	AdvertisedCIDRs []string `json:"advertised_cidrs,omitempty"`
 
 	// The local autonomous system number (ASN) for this VPN gateway and its connections. The ASN values in the
 	// [restricted ASN list](
@@ -108200,7 +108200,7 @@ func UnmarshalVPNGatewayPrototype(m map[string]json.RawMessage, result interface
 		err = core.SDKErrorf(err, "", "subnet-error", common.GetComponentInfo())
 		return
 	}
-	err = core.UnmarshalPrimitive(m, "advertised_cidrs", &obj.AdvertisedCidrs)
+	err = core.UnmarshalPrimitive(m, "advertised_cidrs", &obj.AdvertisedCIDRs)
 	if err != nil {
 		err = core.SDKErrorf(err, "", "advertised_cidrs-error", common.GetComponentInfo())
 		return
@@ -143931,7 +143931,7 @@ func UnmarshalVPNGatewayConnectionPolicyMode(m map[string]json.RawMessage, resul
 // This model "extends" VPNGatewayConnectionPolicyModePeerPrototype
 type VPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByAddress struct {
 	// The peer CIDRs for this VPN gateway connection.
-	Cidrs []string `json:"cidrs" validate:"required"`
+	CIDRs []string `json:"cidrs" validate:"required"`
 
 	// The peer IKE identity to use.
 	//
@@ -143947,7 +143947,7 @@ type VPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByAddres
 // NewVPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByAddress : Instantiate VPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByAddress (Generic Model Constructor)
 func (*VpcbetaV1) NewVPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByAddress(cidrs []string, address string) (_model *VPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByAddress, err error) {
 	_model = &VPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByAddress{
-		Cidrs:   cidrs,
+		CIDRs:   cidrs,
 		Address: core.StringPtr(address),
 	}
 	err = core.ValidateStruct(_model, "required parameters")
@@ -143964,7 +143964,7 @@ func (*VPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByAddr
 // UnmarshalVPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByAddress unmarshals an instance of VPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByAddress from the specified map of raw messages.
 func UnmarshalVPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByAddress(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(VPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByAddress)
-	err = core.UnmarshalPrimitive(m, "cidrs", &obj.Cidrs)
+	err = core.UnmarshalPrimitive(m, "cidrs", &obj.CIDRs)
 	if err != nil {
 		err = core.SDKErrorf(err, "", "cidrs-error", common.GetComponentInfo())
 		return
@@ -143987,7 +143987,7 @@ func UnmarshalVPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPee
 // This model "extends" VPNGatewayConnectionPolicyModePeerPrototype
 type VPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByFqdn struct {
 	// The peer CIDRs for this VPN gateway connection.
-	Cidrs []string `json:"cidrs" validate:"required"`
+	CIDRs []string `json:"cidrs" validate:"required"`
 
 	// The peer IKE identity to use.
 	//
@@ -144003,7 +144003,7 @@ type VPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByFqdn s
 // NewVPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByFqdn : Instantiate VPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByFqdn (Generic Model Constructor)
 func (*VpcbetaV1) NewVPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByFqdn(cidrs []string, fqdn string) (_model *VPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByFqdn, err error) {
 	_model = &VPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByFqdn{
-		Cidrs: cidrs,
+		CIDRs: cidrs,
 		Fqdn:  core.StringPtr(fqdn),
 	}
 	err = core.ValidateStruct(_model, "required parameters")
@@ -144020,7 +144020,7 @@ func (*VPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByFqdn
 // UnmarshalVPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByFqdn unmarshals an instance of VPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByFqdn from the specified map of raw messages.
 func UnmarshalVPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByFqdn(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(VPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByFqdn)
-	err = core.UnmarshalPrimitive(m, "cidrs", &obj.Cidrs)
+	err = core.UnmarshalPrimitive(m, "cidrs", &obj.CIDRs)
 	if err != nil {
 		err = core.SDKErrorf(err, "", "cidrs-error", common.GetComponentInfo())
 		return
@@ -144043,7 +144043,7 @@ func UnmarshalVPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPee
 // This model "extends" VPNGatewayConnectionPolicyModePeer
 type VPNGatewayConnectionPolicyModePeerVPNGatewayConnectionPeerByAddress struct {
 	// The peer CIDRs for this VPN gateway connection.
-	Cidrs []string `json:"cidrs" validate:"required"`
+	CIDRs []string `json:"cidrs" validate:"required"`
 
 	// The peer IKE identity.
 	IkeIdentity VPNGatewayConnectionIkeIdentityIntf `json:"ike_identity" validate:"required"`
@@ -144069,7 +144069,7 @@ func (*VPNGatewayConnectionPolicyModePeerVPNGatewayConnectionPeerByAddress) isaV
 // UnmarshalVPNGatewayConnectionPolicyModePeerVPNGatewayConnectionPeerByAddress unmarshals an instance of VPNGatewayConnectionPolicyModePeerVPNGatewayConnectionPeerByAddress from the specified map of raw messages.
 func UnmarshalVPNGatewayConnectionPolicyModePeerVPNGatewayConnectionPeerByAddress(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(VPNGatewayConnectionPolicyModePeerVPNGatewayConnectionPeerByAddress)
-	err = core.UnmarshalPrimitive(m, "cidrs", &obj.Cidrs)
+	err = core.UnmarshalPrimitive(m, "cidrs", &obj.CIDRs)
 	if err != nil {
 		err = core.SDKErrorf(err, "", "cidrs-error", common.GetComponentInfo())
 		return
@@ -144097,7 +144097,7 @@ func UnmarshalVPNGatewayConnectionPolicyModePeerVPNGatewayConnectionPeerByAddres
 // This model "extends" VPNGatewayConnectionPolicyModePeer
 type VPNGatewayConnectionPolicyModePeerVPNGatewayConnectionPeerByFqdn struct {
 	// The peer CIDRs for this VPN gateway connection.
-	Cidrs []string `json:"cidrs" validate:"required"`
+	CIDRs []string `json:"cidrs" validate:"required"`
 
 	// The peer IKE identity.
 	IkeIdentity VPNGatewayConnectionIkeIdentityIntf `json:"ike_identity" validate:"required"`
@@ -144123,7 +144123,7 @@ func (*VPNGatewayConnectionPolicyModePeerVPNGatewayConnectionPeerByFqdn) isaVPNG
 // UnmarshalVPNGatewayConnectionPolicyModePeerVPNGatewayConnectionPeerByFqdn unmarshals an instance of VPNGatewayConnectionPolicyModePeerVPNGatewayConnectionPeerByFqdn from the specified map of raw messages.
 func UnmarshalVPNGatewayConnectionPolicyModePeerVPNGatewayConnectionPeerByFqdn(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(VPNGatewayConnectionPolicyModePeerVPNGatewayConnectionPeerByFqdn)
-	err = core.UnmarshalPrimitive(m, "cidrs", &obj.Cidrs)
+	err = core.UnmarshalPrimitive(m, "cidrs", &obj.CIDRs)
 	if err != nil {
 		err = core.SDKErrorf(err, "", "cidrs-error", common.GetComponentInfo())
 		return
@@ -145182,7 +145182,7 @@ type VPNGatewayPrototypeVPNGatewayRouteModePrototype struct {
 
 	// The static CIDRs advertised through any enabled routing protocol (for example, BGP). The routing protocol will
 	// advertise routes with these CIDRs as route destinations.
-	AdvertisedCidrs []string `json:"advertised_cidrs,omitempty"`
+	AdvertisedCIDRs []string `json:"advertised_cidrs,omitempty"`
 
 	// The local autonomous system number (ASN) for this VPN gateway and its connections. The ASN values in the
 	// [restricted ASN list](
@@ -145234,7 +145234,7 @@ func UnmarshalVPNGatewayPrototypeVPNGatewayRouteModePrototype(m map[string]json.
 		err = core.SDKErrorf(err, "", "subnet-error", common.GetComponentInfo())
 		return
 	}
-	err = core.UnmarshalPrimitive(m, "advertised_cidrs", &obj.AdvertisedCidrs)
+	err = core.UnmarshalPrimitive(m, "advertised_cidrs", &obj.AdvertisedCIDRs)
 	if err != nil {
 		err = core.SDKErrorf(err, "", "advertised_cidrs-error", common.GetComponentInfo())
 		return
@@ -145308,7 +145308,7 @@ type VPNGatewayRouteMode struct {
 
 	// The static CIDRs advertised through any enabled routing protocol (for example, BGP). The routing protocol will
 	// advertise routes with these CIDRs as route destinations.
-	AdvertisedCidrs []string `json:"advertised_cidrs" validate:"required"`
+	AdvertisedCIDRs []string `json:"advertised_cidrs" validate:"required"`
 
 	// The local autonomous system number (ASN) for this VPN gateway and its connections.
 	LocalAsn *int64 `json:"local_asn" validate:"required"`
@@ -145438,7 +145438,7 @@ func UnmarshalVPNGatewayRouteMode(m map[string]json.RawMessage, result interface
 		err = core.SDKErrorf(err, "", "vpc-error", common.GetComponentInfo())
 		return
 	}
-	err = core.UnmarshalPrimitive(m, "advertised_cidrs", &obj.AdvertisedCidrs)
+	err = core.UnmarshalPrimitive(m, "advertised_cidrs", &obj.AdvertisedCIDRs)
 	if err != nil {
 		err = core.SDKErrorf(err, "", "advertised_cidrs-error", common.GetComponentInfo())
 		return

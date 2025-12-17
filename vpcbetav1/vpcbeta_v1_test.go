@@ -116751,7 +116751,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 				vpnGatewayPrototypeModel.Name = core.StringPtr("my-vpn-gateway")
 				vpnGatewayPrototypeModel.ResourceGroup = resourceGroupIdentityModel
 				vpnGatewayPrototypeModel.Subnet = subnetIdentityModel
-				vpnGatewayPrototypeModel.AdvertisedCidrs = []string{"192.168.3.0/24"}
+				vpnGatewayPrototypeModel.AdvertisedCIDRs = []string{"192.168.3.0/24"}
 				vpnGatewayPrototypeModel.LocalAsn = core.Int64Ptr(int64(64520))
 				vpnGatewayPrototypeModel.Mode = core.StringPtr("route")
 
@@ -116842,7 +116842,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 				vpnGatewayPrototypeModel.Name = core.StringPtr("my-vpn-gateway")
 				vpnGatewayPrototypeModel.ResourceGroup = resourceGroupIdentityModel
 				vpnGatewayPrototypeModel.Subnet = subnetIdentityModel
-				vpnGatewayPrototypeModel.AdvertisedCidrs = []string{"192.168.3.0/24"}
+				vpnGatewayPrototypeModel.AdvertisedCIDRs = []string{"192.168.3.0/24"}
 				vpnGatewayPrototypeModel.LocalAsn = core.Int64Ptr(int64(64520))
 				vpnGatewayPrototypeModel.Mode = core.StringPtr("route")
 
@@ -116939,7 +116939,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 				vpnGatewayPrototypeModel.Name = core.StringPtr("my-vpn-gateway")
 				vpnGatewayPrototypeModel.ResourceGroup = resourceGroupIdentityModel
 				vpnGatewayPrototypeModel.Subnet = subnetIdentityModel
-				vpnGatewayPrototypeModel.AdvertisedCidrs = []string{"192.168.3.0/24"}
+				vpnGatewayPrototypeModel.AdvertisedCIDRs = []string{"192.168.3.0/24"}
 				vpnGatewayPrototypeModel.LocalAsn = core.Int64Ptr(int64(64520))
 				vpnGatewayPrototypeModel.Mode = core.StringPtr("route")
 
@@ -116978,7 +116978,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 				vpnGatewayPrototypeModel.Name = core.StringPtr("my-vpn-gateway")
 				vpnGatewayPrototypeModel.ResourceGroup = resourceGroupIdentityModel
 				vpnGatewayPrototypeModel.Subnet = subnetIdentityModel
-				vpnGatewayPrototypeModel.AdvertisedCidrs = []string{"192.168.3.0/24"}
+				vpnGatewayPrototypeModel.AdvertisedCIDRs = []string{"192.168.3.0/24"}
 				vpnGatewayPrototypeModel.LocalAsn = core.Int64Ptr(int64(64520))
 				vpnGatewayPrototypeModel.Mode = core.StringPtr("route")
 
@@ -117038,7 +117038,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 				vpnGatewayPrototypeModel.Name = core.StringPtr("my-vpn-gateway")
 				vpnGatewayPrototypeModel.ResourceGroup = resourceGroupIdentityModel
 				vpnGatewayPrototypeModel.Subnet = subnetIdentityModel
-				vpnGatewayPrototypeModel.AdvertisedCidrs = []string{"192.168.3.0/24"}
+				vpnGatewayPrototypeModel.AdvertisedCIDRs = []string{"192.168.3.0/24"}
 				vpnGatewayPrototypeModel.LocalAsn = core.Int64Ptr(int64(64520))
 				vpnGatewayPrototypeModel.Mode = core.StringPtr("route")
 
@@ -117679,17 +117679,17 @@ var _ = Describe(`VpcbetaV1`, func() {
 			})
 		})
 	})
-	Describe(`ListVPNGatewayAdvertisedCidrs(listVPNGatewayAdvertisedCidrsOptions *ListVPNGatewayAdvertisedCidrsOptions) - Operation response error`, func() {
+	Describe(`ListVPNGatewayAdvertisedCIDRs(listVPNGatewayAdvertisedCIDRsOptions *ListVPNGatewayAdvertisedCIDRsOptions) - Operation response error`, func() {
 		maturity := "testString"
 		version := "2024-06-23"
-		listVPNGatewayAdvertisedCidrsPath := "/vpn_gateways/testString/advertised_cidrs"
+		listVPNGatewayAdvertisedCIDRsPath := "/vpn_gateways/testString/advertised_cidrs"
 		Context(`Using mock server endpoint with invalid JSON response`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.EscapedPath()).To(Equal(listVPNGatewayAdvertisedCidrsPath))
+					Expect(req.URL.EscapedPath()).To(Equal(listVPNGatewayAdvertisedCIDRsPath))
 					Expect(req.Method).To(Equal("GET"))
 					Expect(req.URL.Query()["version"]).To(Equal([]string{"2024-06-23"}))
 					Expect(req.URL.Query()["generation"]).To(Equal([]string{fmt.Sprint(int64(2))}))
@@ -117699,7 +117699,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 					fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
-			It(`Invoke ListVPNGatewayAdvertisedCidrs with error: Operation response processing error`, func() {
+			It(`Invoke ListVPNGatewayAdvertisedCIDRs with error: Operation response processing error`, func() {
 				vpcbetaService, serviceErr := vpcbetav1.NewVpcbetaV1(&vpcbetav1.VpcbetaV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
@@ -117709,19 +117709,19 @@ var _ = Describe(`VpcbetaV1`, func() {
 				Expect(serviceErr).To(BeNil())
 				Expect(vpcbetaService).ToNot(BeNil())
 
-				// Construct an instance of the ListVPNGatewayAdvertisedCidrsOptions model
-				listVPNGatewayAdvertisedCidrsOptionsModel := new(vpcbetav1.ListVPNGatewayAdvertisedCidrsOptions)
-				listVPNGatewayAdvertisedCidrsOptionsModel.VPNGatewayID = core.StringPtr("testString")
-				listVPNGatewayAdvertisedCidrsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Construct an instance of the ListVPNGatewayAdvertisedCIDRsOptions model
+				listVPNGatewayAdvertisedCIDRsOptionsModel := new(vpcbetav1.ListVPNGatewayAdvertisedCIDRsOptions)
+				listVPNGatewayAdvertisedCIDRsOptionsModel.VPNGatewayID = core.StringPtr("testString")
+				listVPNGatewayAdvertisedCIDRsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Expect response parsing to fail since we are receiving a text/plain response
-				result, response, operationErr := vpcbetaService.ListVPNGatewayAdvertisedCidrs(listVPNGatewayAdvertisedCidrsOptionsModel)
+				result, response, operationErr := vpcbetaService.ListVPNGatewayAdvertisedCIDRs(listVPNGatewayAdvertisedCIDRsOptionsModel)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).To(BeNil())
 
 				// Enable retries and test again
 				vpcbetaService.EnableRetries(0, 0)
-				result, response, operationErr = vpcbetaService.ListVPNGatewayAdvertisedCidrs(listVPNGatewayAdvertisedCidrsOptionsModel)
+				result, response, operationErr = vpcbetaService.ListVPNGatewayAdvertisedCIDRs(listVPNGatewayAdvertisedCIDRsOptionsModel)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).To(BeNil())
@@ -117731,17 +117731,17 @@ var _ = Describe(`VpcbetaV1`, func() {
 			})
 		})
 	})
-	Describe(`ListVPNGatewayAdvertisedCidrs(listVPNGatewayAdvertisedCidrsOptions *ListVPNGatewayAdvertisedCidrsOptions)`, func() {
+	Describe(`ListVPNGatewayAdvertisedCIDRs(listVPNGatewayAdvertisedCIDRsOptions *ListVPNGatewayAdvertisedCIDRsOptions)`, func() {
 		maturity := "testString"
 		version := "2024-06-23"
-		listVPNGatewayAdvertisedCidrsPath := "/vpn_gateways/testString/advertised_cidrs"
+		listVPNGatewayAdvertisedCIDRsPath := "/vpn_gateways/testString/advertised_cidrs"
 		Context(`Using mock server endpoint with timeout`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.EscapedPath()).To(Equal(listVPNGatewayAdvertisedCidrsPath))
+					Expect(req.URL.EscapedPath()).To(Equal(listVPNGatewayAdvertisedCIDRsPath))
 					Expect(req.Method).To(Equal("GET"))
 
 					Expect(req.URL.Query()["version"]).To(Equal([]string{"2024-06-23"}))
@@ -117756,7 +117756,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 					fmt.Fprintf(res, "%s", `{"advertised_cidrs": ["192.168.3.0/24"]}`)
 				}))
 			})
-			It(`Invoke ListVPNGatewayAdvertisedCidrs successfully with retries`, func() {
+			It(`Invoke ListVPNGatewayAdvertisedCIDRs successfully with retries`, func() {
 				vpcbetaService, serviceErr := vpcbetav1.NewVpcbetaV1(&vpcbetav1.VpcbetaV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
@@ -117767,21 +117767,21 @@ var _ = Describe(`VpcbetaV1`, func() {
 				Expect(vpcbetaService).ToNot(BeNil())
 				vpcbetaService.EnableRetries(0, 0)
 
-				// Construct an instance of the ListVPNGatewayAdvertisedCidrsOptions model
-				listVPNGatewayAdvertisedCidrsOptionsModel := new(vpcbetav1.ListVPNGatewayAdvertisedCidrsOptions)
-				listVPNGatewayAdvertisedCidrsOptionsModel.VPNGatewayID = core.StringPtr("testString")
-				listVPNGatewayAdvertisedCidrsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Construct an instance of the ListVPNGatewayAdvertisedCIDRsOptions model
+				listVPNGatewayAdvertisedCIDRsOptionsModel := new(vpcbetav1.ListVPNGatewayAdvertisedCIDRsOptions)
+				listVPNGatewayAdvertisedCIDRsOptionsModel.VPNGatewayID = core.StringPtr("testString")
+				listVPNGatewayAdvertisedCIDRsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 
 				// Invoke operation with a Context to test a timeout error
 				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
 				defer cancelFunc()
-				_, _, operationErr := vpcbetaService.ListVPNGatewayAdvertisedCidrsWithContext(ctx, listVPNGatewayAdvertisedCidrsOptionsModel)
+				_, _, operationErr := vpcbetaService.ListVPNGatewayAdvertisedCIDRsWithContext(ctx, listVPNGatewayAdvertisedCIDRsOptionsModel)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
 
 				// Disable retries and test again
 				vpcbetaService.DisableRetries()
-				result, response, operationErr := vpcbetaService.ListVPNGatewayAdvertisedCidrs(listVPNGatewayAdvertisedCidrsOptionsModel)
+				result, response, operationErr := vpcbetaService.ListVPNGatewayAdvertisedCIDRs(listVPNGatewayAdvertisedCIDRsOptionsModel)
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
@@ -117789,7 +117789,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 				// Re-test the timeout error with retries disabled
 				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
 				defer cancelFunc2()
-				_, _, operationErr = vpcbetaService.ListVPNGatewayAdvertisedCidrsWithContext(ctx, listVPNGatewayAdvertisedCidrsOptionsModel)
+				_, _, operationErr = vpcbetaService.ListVPNGatewayAdvertisedCIDRsWithContext(ctx, listVPNGatewayAdvertisedCIDRsOptionsModel)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
 			})
@@ -117803,7 +117803,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.EscapedPath()).To(Equal(listVPNGatewayAdvertisedCidrsPath))
+					Expect(req.URL.EscapedPath()).To(Equal(listVPNGatewayAdvertisedCIDRsPath))
 					Expect(req.Method).To(Equal("GET"))
 
 					Expect(req.URL.Query()["version"]).To(Equal([]string{"2024-06-23"}))
@@ -117815,7 +117815,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 					fmt.Fprintf(res, "%s", `{"advertised_cidrs": ["192.168.3.0/24"]}`)
 				}))
 			})
-			It(`Invoke ListVPNGatewayAdvertisedCidrs successfully`, func() {
+			It(`Invoke ListVPNGatewayAdvertisedCIDRs successfully`, func() {
 				vpcbetaService, serviceErr := vpcbetav1.NewVpcbetaV1(&vpcbetav1.VpcbetaV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
@@ -117826,24 +117826,24 @@ var _ = Describe(`VpcbetaV1`, func() {
 				Expect(vpcbetaService).ToNot(BeNil())
 
 				// Invoke operation with nil options model (negative test)
-				result, response, operationErr := vpcbetaService.ListVPNGatewayAdvertisedCidrs(nil)
+				result, response, operationErr := vpcbetaService.ListVPNGatewayAdvertisedCIDRs(nil)
 				Expect(operationErr).NotTo(BeNil())
 				Expect(response).To(BeNil())
 				Expect(result).To(BeNil())
 
-				// Construct an instance of the ListVPNGatewayAdvertisedCidrsOptions model
-				listVPNGatewayAdvertisedCidrsOptionsModel := new(vpcbetav1.ListVPNGatewayAdvertisedCidrsOptions)
-				listVPNGatewayAdvertisedCidrsOptionsModel.VPNGatewayID = core.StringPtr("testString")
-				listVPNGatewayAdvertisedCidrsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Construct an instance of the ListVPNGatewayAdvertisedCIDRsOptions model
+				listVPNGatewayAdvertisedCIDRsOptionsModel := new(vpcbetav1.ListVPNGatewayAdvertisedCIDRsOptions)
+				listVPNGatewayAdvertisedCIDRsOptionsModel.VPNGatewayID = core.StringPtr("testString")
+				listVPNGatewayAdvertisedCIDRsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 
 				// Invoke operation with valid options model (positive test)
-				result, response, operationErr = vpcbetaService.ListVPNGatewayAdvertisedCidrs(listVPNGatewayAdvertisedCidrsOptionsModel)
+				result, response, operationErr = vpcbetaService.ListVPNGatewayAdvertisedCIDRs(listVPNGatewayAdvertisedCIDRsOptionsModel)
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
 
 			})
-			It(`Invoke ListVPNGatewayAdvertisedCidrs with error: Operation validation and request error`, func() {
+			It(`Invoke ListVPNGatewayAdvertisedCIDRs with error: Operation validation and request error`, func() {
 				vpcbetaService, serviceErr := vpcbetav1.NewVpcbetaV1(&vpcbetav1.VpcbetaV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
@@ -117853,22 +117853,22 @@ var _ = Describe(`VpcbetaV1`, func() {
 				Expect(serviceErr).To(BeNil())
 				Expect(vpcbetaService).ToNot(BeNil())
 
-				// Construct an instance of the ListVPNGatewayAdvertisedCidrsOptions model
-				listVPNGatewayAdvertisedCidrsOptionsModel := new(vpcbetav1.ListVPNGatewayAdvertisedCidrsOptions)
-				listVPNGatewayAdvertisedCidrsOptionsModel.VPNGatewayID = core.StringPtr("testString")
-				listVPNGatewayAdvertisedCidrsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Construct an instance of the ListVPNGatewayAdvertisedCIDRsOptions model
+				listVPNGatewayAdvertisedCIDRsOptionsModel := new(vpcbetav1.ListVPNGatewayAdvertisedCIDRsOptions)
+				listVPNGatewayAdvertisedCIDRsOptionsModel.VPNGatewayID = core.StringPtr("testString")
+				listVPNGatewayAdvertisedCIDRsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Invoke operation with empty URL (negative test)
 				err := vpcbetaService.SetServiceURL("")
 				Expect(err).To(BeNil())
-				result, response, operationErr := vpcbetaService.ListVPNGatewayAdvertisedCidrs(listVPNGatewayAdvertisedCidrsOptionsModel)
+				result, response, operationErr := vpcbetaService.ListVPNGatewayAdvertisedCIDRs(listVPNGatewayAdvertisedCIDRsOptionsModel)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(operationErr.Error()).To(ContainSubstring(core.ERRORMSG_SERVICE_URL_MISSING))
 				Expect(response).To(BeNil())
 				Expect(result).To(BeNil())
-				// Construct a second instance of the ListVPNGatewayAdvertisedCidrsOptions model with no property values
-				listVPNGatewayAdvertisedCidrsOptionsModelNew := new(vpcbetav1.ListVPNGatewayAdvertisedCidrsOptions)
+				// Construct a second instance of the ListVPNGatewayAdvertisedCIDRsOptions model with no property values
+				listVPNGatewayAdvertisedCIDRsOptionsModelNew := new(vpcbetav1.ListVPNGatewayAdvertisedCIDRsOptions)
 				// Invoke operation with invalid model (negative test)
-				result, response, operationErr = vpcbetaService.ListVPNGatewayAdvertisedCidrs(listVPNGatewayAdvertisedCidrsOptionsModelNew)
+				result, response, operationErr = vpcbetaService.ListVPNGatewayAdvertisedCIDRs(listVPNGatewayAdvertisedCIDRsOptionsModelNew)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).To(BeNil())
 				Expect(result).To(BeNil())
@@ -117886,7 +117886,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 					res.WriteHeader(200)
 				}))
 			})
-			It(`Invoke ListVPNGatewayAdvertisedCidrs successfully`, func() {
+			It(`Invoke ListVPNGatewayAdvertisedCIDRs successfully`, func() {
 				vpcbetaService, serviceErr := vpcbetav1.NewVpcbetaV1(&vpcbetav1.VpcbetaV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
@@ -117896,13 +117896,13 @@ var _ = Describe(`VpcbetaV1`, func() {
 				Expect(serviceErr).To(BeNil())
 				Expect(vpcbetaService).ToNot(BeNil())
 
-				// Construct an instance of the ListVPNGatewayAdvertisedCidrsOptions model
-				listVPNGatewayAdvertisedCidrsOptionsModel := new(vpcbetav1.ListVPNGatewayAdvertisedCidrsOptions)
-				listVPNGatewayAdvertisedCidrsOptionsModel.VPNGatewayID = core.StringPtr("testString")
-				listVPNGatewayAdvertisedCidrsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Construct an instance of the ListVPNGatewayAdvertisedCIDRsOptions model
+				listVPNGatewayAdvertisedCIDRsOptionsModel := new(vpcbetav1.ListVPNGatewayAdvertisedCIDRsOptions)
+				listVPNGatewayAdvertisedCIDRsOptionsModel.VPNGatewayID = core.StringPtr("testString")
+				listVPNGatewayAdvertisedCIDRsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 
 				// Invoke operation
-				result, response, operationErr := vpcbetaService.ListVPNGatewayAdvertisedCidrs(listVPNGatewayAdvertisedCidrsOptionsModel)
+				result, response, operationErr := vpcbetaService.ListVPNGatewayAdvertisedCIDRs(listVPNGatewayAdvertisedCIDRsOptionsModel)
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 
@@ -119825,17 +119825,17 @@ var _ = Describe(`VpcbetaV1`, func() {
 			})
 		})
 	})
-	Describe(`ListVPNGatewayConnectionsLocalCidrs(listVPNGatewayConnectionsLocalCidrsOptions *ListVPNGatewayConnectionsLocalCidrsOptions) - Operation response error`, func() {
+	Describe(`ListVPNGatewayConnectionsLocalCIDRs(listVPNGatewayConnectionsLocalCIDRsOptions *ListVPNGatewayConnectionsLocalCIDRsOptions) - Operation response error`, func() {
 		maturity := "testString"
 		version := "2024-06-23"
-		listVPNGatewayConnectionsLocalCidrsPath := "/vpn_gateways/testString/connections/testString/local/cidrs"
+		listVPNGatewayConnectionsLocalCIDRsPath := "/vpn_gateways/testString/connections/testString/local/cidrs"
 		Context(`Using mock server endpoint with invalid JSON response`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.EscapedPath()).To(Equal(listVPNGatewayConnectionsLocalCidrsPath))
+					Expect(req.URL.EscapedPath()).To(Equal(listVPNGatewayConnectionsLocalCIDRsPath))
 					Expect(req.Method).To(Equal("GET"))
 					Expect(req.URL.Query()["version"]).To(Equal([]string{"2024-06-23"}))
 					Expect(req.URL.Query()["generation"]).To(Equal([]string{fmt.Sprint(int64(2))}))
@@ -119845,7 +119845,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 					fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
-			It(`Invoke ListVPNGatewayConnectionsLocalCidrs with error: Operation response processing error`, func() {
+			It(`Invoke ListVPNGatewayConnectionsLocalCIDRs with error: Operation response processing error`, func() {
 				vpcbetaService, serviceErr := vpcbetav1.NewVpcbetaV1(&vpcbetav1.VpcbetaV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
@@ -119855,20 +119855,20 @@ var _ = Describe(`VpcbetaV1`, func() {
 				Expect(serviceErr).To(BeNil())
 				Expect(vpcbetaService).ToNot(BeNil())
 
-				// Construct an instance of the ListVPNGatewayConnectionsLocalCidrsOptions model
-				listVPNGatewayConnectionsLocalCidrsOptionsModel := new(vpcbetav1.ListVPNGatewayConnectionsLocalCidrsOptions)
-				listVPNGatewayConnectionsLocalCidrsOptionsModel.VPNGatewayID = core.StringPtr("testString")
-				listVPNGatewayConnectionsLocalCidrsOptionsModel.ID = core.StringPtr("testString")
-				listVPNGatewayConnectionsLocalCidrsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Construct an instance of the ListVPNGatewayConnectionsLocalCIDRsOptions model
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel := new(vpcbetav1.ListVPNGatewayConnectionsLocalCIDRsOptions)
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel.VPNGatewayID = core.StringPtr("testString")
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel.ID = core.StringPtr("testString")
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Expect response parsing to fail since we are receiving a text/plain response
-				result, response, operationErr := vpcbetaService.ListVPNGatewayConnectionsLocalCidrs(listVPNGatewayConnectionsLocalCidrsOptionsModel)
+				result, response, operationErr := vpcbetaService.ListVPNGatewayConnectionsLocalCIDRs(listVPNGatewayConnectionsLocalCIDRsOptionsModel)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).To(BeNil())
 
 				// Enable retries and test again
 				vpcbetaService.EnableRetries(0, 0)
-				result, response, operationErr = vpcbetaService.ListVPNGatewayConnectionsLocalCidrs(listVPNGatewayConnectionsLocalCidrsOptionsModel)
+				result, response, operationErr = vpcbetaService.ListVPNGatewayConnectionsLocalCIDRs(listVPNGatewayConnectionsLocalCIDRsOptionsModel)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).To(BeNil())
@@ -119878,17 +119878,17 @@ var _ = Describe(`VpcbetaV1`, func() {
 			})
 		})
 	})
-	Describe(`ListVPNGatewayConnectionsLocalCidrs(listVPNGatewayConnectionsLocalCidrsOptions *ListVPNGatewayConnectionsLocalCidrsOptions)`, func() {
+	Describe(`ListVPNGatewayConnectionsLocalCIDRs(listVPNGatewayConnectionsLocalCIDRsOptions *ListVPNGatewayConnectionsLocalCIDRsOptions)`, func() {
 		maturity := "testString"
 		version := "2024-06-23"
-		listVPNGatewayConnectionsLocalCidrsPath := "/vpn_gateways/testString/connections/testString/local/cidrs"
+		listVPNGatewayConnectionsLocalCIDRsPath := "/vpn_gateways/testString/connections/testString/local/cidrs"
 		Context(`Using mock server endpoint with timeout`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.EscapedPath()).To(Equal(listVPNGatewayConnectionsLocalCidrsPath))
+					Expect(req.URL.EscapedPath()).To(Equal(listVPNGatewayConnectionsLocalCIDRsPath))
 					Expect(req.Method).To(Equal("GET"))
 
 					Expect(req.URL.Query()["version"]).To(Equal([]string{"2024-06-23"}))
@@ -119903,7 +119903,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 					fmt.Fprintf(res, "%s", `{"cidrs": ["192.0.2.0/24"]}`)
 				}))
 			})
-			It(`Invoke ListVPNGatewayConnectionsLocalCidrs successfully with retries`, func() {
+			It(`Invoke ListVPNGatewayConnectionsLocalCIDRs successfully with retries`, func() {
 				vpcbetaService, serviceErr := vpcbetav1.NewVpcbetaV1(&vpcbetav1.VpcbetaV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
@@ -119914,22 +119914,22 @@ var _ = Describe(`VpcbetaV1`, func() {
 				Expect(vpcbetaService).ToNot(BeNil())
 				vpcbetaService.EnableRetries(0, 0)
 
-				// Construct an instance of the ListVPNGatewayConnectionsLocalCidrsOptions model
-				listVPNGatewayConnectionsLocalCidrsOptionsModel := new(vpcbetav1.ListVPNGatewayConnectionsLocalCidrsOptions)
-				listVPNGatewayConnectionsLocalCidrsOptionsModel.VPNGatewayID = core.StringPtr("testString")
-				listVPNGatewayConnectionsLocalCidrsOptionsModel.ID = core.StringPtr("testString")
-				listVPNGatewayConnectionsLocalCidrsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Construct an instance of the ListVPNGatewayConnectionsLocalCIDRsOptions model
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel := new(vpcbetav1.ListVPNGatewayConnectionsLocalCIDRsOptions)
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel.VPNGatewayID = core.StringPtr("testString")
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel.ID = core.StringPtr("testString")
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 
 				// Invoke operation with a Context to test a timeout error
 				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
 				defer cancelFunc()
-				_, _, operationErr := vpcbetaService.ListVPNGatewayConnectionsLocalCidrsWithContext(ctx, listVPNGatewayConnectionsLocalCidrsOptionsModel)
+				_, _, operationErr := vpcbetaService.ListVPNGatewayConnectionsLocalCIDRsWithContext(ctx, listVPNGatewayConnectionsLocalCIDRsOptionsModel)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
 
 				// Disable retries and test again
 				vpcbetaService.DisableRetries()
-				result, response, operationErr := vpcbetaService.ListVPNGatewayConnectionsLocalCidrs(listVPNGatewayConnectionsLocalCidrsOptionsModel)
+				result, response, operationErr := vpcbetaService.ListVPNGatewayConnectionsLocalCIDRs(listVPNGatewayConnectionsLocalCIDRsOptionsModel)
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
@@ -119937,7 +119937,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 				// Re-test the timeout error with retries disabled
 				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
 				defer cancelFunc2()
-				_, _, operationErr = vpcbetaService.ListVPNGatewayConnectionsLocalCidrsWithContext(ctx, listVPNGatewayConnectionsLocalCidrsOptionsModel)
+				_, _, operationErr = vpcbetaService.ListVPNGatewayConnectionsLocalCIDRsWithContext(ctx, listVPNGatewayConnectionsLocalCIDRsOptionsModel)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
 			})
@@ -119951,7 +119951,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.EscapedPath()).To(Equal(listVPNGatewayConnectionsLocalCidrsPath))
+					Expect(req.URL.EscapedPath()).To(Equal(listVPNGatewayConnectionsLocalCIDRsPath))
 					Expect(req.Method).To(Equal("GET"))
 
 					Expect(req.URL.Query()["version"]).To(Equal([]string{"2024-06-23"}))
@@ -119963,7 +119963,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 					fmt.Fprintf(res, "%s", `{"cidrs": ["192.0.2.0/24"]}`)
 				}))
 			})
-			It(`Invoke ListVPNGatewayConnectionsLocalCidrs successfully`, func() {
+			It(`Invoke ListVPNGatewayConnectionsLocalCIDRs successfully`, func() {
 				vpcbetaService, serviceErr := vpcbetav1.NewVpcbetaV1(&vpcbetav1.VpcbetaV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
@@ -119974,25 +119974,25 @@ var _ = Describe(`VpcbetaV1`, func() {
 				Expect(vpcbetaService).ToNot(BeNil())
 
 				// Invoke operation with nil options model (negative test)
-				result, response, operationErr := vpcbetaService.ListVPNGatewayConnectionsLocalCidrs(nil)
+				result, response, operationErr := vpcbetaService.ListVPNGatewayConnectionsLocalCIDRs(nil)
 				Expect(operationErr).NotTo(BeNil())
 				Expect(response).To(BeNil())
 				Expect(result).To(BeNil())
 
-				// Construct an instance of the ListVPNGatewayConnectionsLocalCidrsOptions model
-				listVPNGatewayConnectionsLocalCidrsOptionsModel := new(vpcbetav1.ListVPNGatewayConnectionsLocalCidrsOptions)
-				listVPNGatewayConnectionsLocalCidrsOptionsModel.VPNGatewayID = core.StringPtr("testString")
-				listVPNGatewayConnectionsLocalCidrsOptionsModel.ID = core.StringPtr("testString")
-				listVPNGatewayConnectionsLocalCidrsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Construct an instance of the ListVPNGatewayConnectionsLocalCIDRsOptions model
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel := new(vpcbetav1.ListVPNGatewayConnectionsLocalCIDRsOptions)
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel.VPNGatewayID = core.StringPtr("testString")
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel.ID = core.StringPtr("testString")
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 
 				// Invoke operation with valid options model (positive test)
-				result, response, operationErr = vpcbetaService.ListVPNGatewayConnectionsLocalCidrs(listVPNGatewayConnectionsLocalCidrsOptionsModel)
+				result, response, operationErr = vpcbetaService.ListVPNGatewayConnectionsLocalCIDRs(listVPNGatewayConnectionsLocalCIDRsOptionsModel)
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
 
 			})
-			It(`Invoke ListVPNGatewayConnectionsLocalCidrs with error: Operation validation and request error`, func() {
+			It(`Invoke ListVPNGatewayConnectionsLocalCIDRs with error: Operation validation and request error`, func() {
 				vpcbetaService, serviceErr := vpcbetav1.NewVpcbetaV1(&vpcbetav1.VpcbetaV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
@@ -120002,23 +120002,23 @@ var _ = Describe(`VpcbetaV1`, func() {
 				Expect(serviceErr).To(BeNil())
 				Expect(vpcbetaService).ToNot(BeNil())
 
-				// Construct an instance of the ListVPNGatewayConnectionsLocalCidrsOptions model
-				listVPNGatewayConnectionsLocalCidrsOptionsModel := new(vpcbetav1.ListVPNGatewayConnectionsLocalCidrsOptions)
-				listVPNGatewayConnectionsLocalCidrsOptionsModel.VPNGatewayID = core.StringPtr("testString")
-				listVPNGatewayConnectionsLocalCidrsOptionsModel.ID = core.StringPtr("testString")
-				listVPNGatewayConnectionsLocalCidrsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Construct an instance of the ListVPNGatewayConnectionsLocalCIDRsOptions model
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel := new(vpcbetav1.ListVPNGatewayConnectionsLocalCIDRsOptions)
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel.VPNGatewayID = core.StringPtr("testString")
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel.ID = core.StringPtr("testString")
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Invoke operation with empty URL (negative test)
 				err := vpcbetaService.SetServiceURL("")
 				Expect(err).To(BeNil())
-				result, response, operationErr := vpcbetaService.ListVPNGatewayConnectionsLocalCidrs(listVPNGatewayConnectionsLocalCidrsOptionsModel)
+				result, response, operationErr := vpcbetaService.ListVPNGatewayConnectionsLocalCIDRs(listVPNGatewayConnectionsLocalCIDRsOptionsModel)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(operationErr.Error()).To(ContainSubstring(core.ERRORMSG_SERVICE_URL_MISSING))
 				Expect(response).To(BeNil())
 				Expect(result).To(BeNil())
-				// Construct a second instance of the ListVPNGatewayConnectionsLocalCidrsOptions model with no property values
-				listVPNGatewayConnectionsLocalCidrsOptionsModelNew := new(vpcbetav1.ListVPNGatewayConnectionsLocalCidrsOptions)
+				// Construct a second instance of the ListVPNGatewayConnectionsLocalCIDRsOptions model with no property values
+				listVPNGatewayConnectionsLocalCIDRsOptionsModelNew := new(vpcbetav1.ListVPNGatewayConnectionsLocalCIDRsOptions)
 				// Invoke operation with invalid model (negative test)
-				result, response, operationErr = vpcbetaService.ListVPNGatewayConnectionsLocalCidrs(listVPNGatewayConnectionsLocalCidrsOptionsModelNew)
+				result, response, operationErr = vpcbetaService.ListVPNGatewayConnectionsLocalCIDRs(listVPNGatewayConnectionsLocalCIDRsOptionsModelNew)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).To(BeNil())
 				Expect(result).To(BeNil())
@@ -120036,7 +120036,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 					res.WriteHeader(200)
 				}))
 			})
-			It(`Invoke ListVPNGatewayConnectionsLocalCidrs successfully`, func() {
+			It(`Invoke ListVPNGatewayConnectionsLocalCIDRs successfully`, func() {
 				vpcbetaService, serviceErr := vpcbetav1.NewVpcbetaV1(&vpcbetav1.VpcbetaV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
@@ -120046,14 +120046,14 @@ var _ = Describe(`VpcbetaV1`, func() {
 				Expect(serviceErr).To(BeNil())
 				Expect(vpcbetaService).ToNot(BeNil())
 
-				// Construct an instance of the ListVPNGatewayConnectionsLocalCidrsOptions model
-				listVPNGatewayConnectionsLocalCidrsOptionsModel := new(vpcbetav1.ListVPNGatewayConnectionsLocalCidrsOptions)
-				listVPNGatewayConnectionsLocalCidrsOptionsModel.VPNGatewayID = core.StringPtr("testString")
-				listVPNGatewayConnectionsLocalCidrsOptionsModel.ID = core.StringPtr("testString")
-				listVPNGatewayConnectionsLocalCidrsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Construct an instance of the ListVPNGatewayConnectionsLocalCIDRsOptions model
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel := new(vpcbetav1.ListVPNGatewayConnectionsLocalCIDRsOptions)
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel.VPNGatewayID = core.StringPtr("testString")
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel.ID = core.StringPtr("testString")
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 
 				// Invoke operation
-				result, response, operationErr := vpcbetaService.ListVPNGatewayConnectionsLocalCidrs(listVPNGatewayConnectionsLocalCidrsOptionsModel)
+				result, response, operationErr := vpcbetaService.ListVPNGatewayConnectionsLocalCIDRs(listVPNGatewayConnectionsLocalCIDRsOptionsModel)
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 
@@ -120308,17 +120308,17 @@ var _ = Describe(`VpcbetaV1`, func() {
 			})
 		})
 	})
-	Describe(`ListVPNGatewayConnectionsPeerCidrs(listVPNGatewayConnectionsPeerCidrsOptions *ListVPNGatewayConnectionsPeerCidrsOptions) - Operation response error`, func() {
+	Describe(`ListVPNGatewayConnectionsPeerCIDRs(listVPNGatewayConnectionsPeerCIDRsOptions *ListVPNGatewayConnectionsPeerCIDRsOptions) - Operation response error`, func() {
 		maturity := "testString"
 		version := "2024-06-23"
-		listVPNGatewayConnectionsPeerCidrsPath := "/vpn_gateways/testString/connections/testString/peer/cidrs"
+		listVPNGatewayConnectionsPeerCIDRsPath := "/vpn_gateways/testString/connections/testString/peer/cidrs"
 		Context(`Using mock server endpoint with invalid JSON response`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.EscapedPath()).To(Equal(listVPNGatewayConnectionsPeerCidrsPath))
+					Expect(req.URL.EscapedPath()).To(Equal(listVPNGatewayConnectionsPeerCIDRsPath))
 					Expect(req.Method).To(Equal("GET"))
 					Expect(req.URL.Query()["version"]).To(Equal([]string{"2024-06-23"}))
 					Expect(req.URL.Query()["generation"]).To(Equal([]string{fmt.Sprint(int64(2))}))
@@ -120328,7 +120328,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 					fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
-			It(`Invoke ListVPNGatewayConnectionsPeerCidrs with error: Operation response processing error`, func() {
+			It(`Invoke ListVPNGatewayConnectionsPeerCIDRs with error: Operation response processing error`, func() {
 				vpcbetaService, serviceErr := vpcbetav1.NewVpcbetaV1(&vpcbetav1.VpcbetaV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
@@ -120338,20 +120338,20 @@ var _ = Describe(`VpcbetaV1`, func() {
 				Expect(serviceErr).To(BeNil())
 				Expect(vpcbetaService).ToNot(BeNil())
 
-				// Construct an instance of the ListVPNGatewayConnectionsPeerCidrsOptions model
-				listVPNGatewayConnectionsPeerCidrsOptionsModel := new(vpcbetav1.ListVPNGatewayConnectionsPeerCidrsOptions)
-				listVPNGatewayConnectionsPeerCidrsOptionsModel.VPNGatewayID = core.StringPtr("testString")
-				listVPNGatewayConnectionsPeerCidrsOptionsModel.ID = core.StringPtr("testString")
-				listVPNGatewayConnectionsPeerCidrsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Construct an instance of the ListVPNGatewayConnectionsPeerCIDRsOptions model
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel := new(vpcbetav1.ListVPNGatewayConnectionsPeerCIDRsOptions)
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel.VPNGatewayID = core.StringPtr("testString")
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel.ID = core.StringPtr("testString")
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Expect response parsing to fail since we are receiving a text/plain response
-				result, response, operationErr := vpcbetaService.ListVPNGatewayConnectionsPeerCidrs(listVPNGatewayConnectionsPeerCidrsOptionsModel)
+				result, response, operationErr := vpcbetaService.ListVPNGatewayConnectionsPeerCIDRs(listVPNGatewayConnectionsPeerCIDRsOptionsModel)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).To(BeNil())
 
 				// Enable retries and test again
 				vpcbetaService.EnableRetries(0, 0)
-				result, response, operationErr = vpcbetaService.ListVPNGatewayConnectionsPeerCidrs(listVPNGatewayConnectionsPeerCidrsOptionsModel)
+				result, response, operationErr = vpcbetaService.ListVPNGatewayConnectionsPeerCIDRs(listVPNGatewayConnectionsPeerCIDRsOptionsModel)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).To(BeNil())
@@ -120361,17 +120361,17 @@ var _ = Describe(`VpcbetaV1`, func() {
 			})
 		})
 	})
-	Describe(`ListVPNGatewayConnectionsPeerCidrs(listVPNGatewayConnectionsPeerCidrsOptions *ListVPNGatewayConnectionsPeerCidrsOptions)`, func() {
+	Describe(`ListVPNGatewayConnectionsPeerCIDRs(listVPNGatewayConnectionsPeerCIDRsOptions *ListVPNGatewayConnectionsPeerCIDRsOptions)`, func() {
 		maturity := "testString"
 		version := "2024-06-23"
-		listVPNGatewayConnectionsPeerCidrsPath := "/vpn_gateways/testString/connections/testString/peer/cidrs"
+		listVPNGatewayConnectionsPeerCIDRsPath := "/vpn_gateways/testString/connections/testString/peer/cidrs"
 		Context(`Using mock server endpoint with timeout`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.EscapedPath()).To(Equal(listVPNGatewayConnectionsPeerCidrsPath))
+					Expect(req.URL.EscapedPath()).To(Equal(listVPNGatewayConnectionsPeerCIDRsPath))
 					Expect(req.Method).To(Equal("GET"))
 
 					Expect(req.URL.Query()["version"]).To(Equal([]string{"2024-06-23"}))
@@ -120386,7 +120386,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 					fmt.Fprintf(res, "%s", `{"cidrs": ["192.0.2.0/24"]}`)
 				}))
 			})
-			It(`Invoke ListVPNGatewayConnectionsPeerCidrs successfully with retries`, func() {
+			It(`Invoke ListVPNGatewayConnectionsPeerCIDRs successfully with retries`, func() {
 				vpcbetaService, serviceErr := vpcbetav1.NewVpcbetaV1(&vpcbetav1.VpcbetaV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
@@ -120397,22 +120397,22 @@ var _ = Describe(`VpcbetaV1`, func() {
 				Expect(vpcbetaService).ToNot(BeNil())
 				vpcbetaService.EnableRetries(0, 0)
 
-				// Construct an instance of the ListVPNGatewayConnectionsPeerCidrsOptions model
-				listVPNGatewayConnectionsPeerCidrsOptionsModel := new(vpcbetav1.ListVPNGatewayConnectionsPeerCidrsOptions)
-				listVPNGatewayConnectionsPeerCidrsOptionsModel.VPNGatewayID = core.StringPtr("testString")
-				listVPNGatewayConnectionsPeerCidrsOptionsModel.ID = core.StringPtr("testString")
-				listVPNGatewayConnectionsPeerCidrsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Construct an instance of the ListVPNGatewayConnectionsPeerCIDRsOptions model
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel := new(vpcbetav1.ListVPNGatewayConnectionsPeerCIDRsOptions)
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel.VPNGatewayID = core.StringPtr("testString")
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel.ID = core.StringPtr("testString")
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 
 				// Invoke operation with a Context to test a timeout error
 				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
 				defer cancelFunc()
-				_, _, operationErr := vpcbetaService.ListVPNGatewayConnectionsPeerCidrsWithContext(ctx, listVPNGatewayConnectionsPeerCidrsOptionsModel)
+				_, _, operationErr := vpcbetaService.ListVPNGatewayConnectionsPeerCIDRsWithContext(ctx, listVPNGatewayConnectionsPeerCIDRsOptionsModel)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
 
 				// Disable retries and test again
 				vpcbetaService.DisableRetries()
-				result, response, operationErr := vpcbetaService.ListVPNGatewayConnectionsPeerCidrs(listVPNGatewayConnectionsPeerCidrsOptionsModel)
+				result, response, operationErr := vpcbetaService.ListVPNGatewayConnectionsPeerCIDRs(listVPNGatewayConnectionsPeerCIDRsOptionsModel)
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
@@ -120420,7 +120420,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 				// Re-test the timeout error with retries disabled
 				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
 				defer cancelFunc2()
-				_, _, operationErr = vpcbetaService.ListVPNGatewayConnectionsPeerCidrsWithContext(ctx, listVPNGatewayConnectionsPeerCidrsOptionsModel)
+				_, _, operationErr = vpcbetaService.ListVPNGatewayConnectionsPeerCIDRsWithContext(ctx, listVPNGatewayConnectionsPeerCIDRsOptionsModel)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
 			})
@@ -120434,7 +120434,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.EscapedPath()).To(Equal(listVPNGatewayConnectionsPeerCidrsPath))
+					Expect(req.URL.EscapedPath()).To(Equal(listVPNGatewayConnectionsPeerCIDRsPath))
 					Expect(req.Method).To(Equal("GET"))
 
 					Expect(req.URL.Query()["version"]).To(Equal([]string{"2024-06-23"}))
@@ -120446,7 +120446,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 					fmt.Fprintf(res, "%s", `{"cidrs": ["192.0.2.0/24"]}`)
 				}))
 			})
-			It(`Invoke ListVPNGatewayConnectionsPeerCidrs successfully`, func() {
+			It(`Invoke ListVPNGatewayConnectionsPeerCIDRs successfully`, func() {
 				vpcbetaService, serviceErr := vpcbetav1.NewVpcbetaV1(&vpcbetav1.VpcbetaV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
@@ -120457,25 +120457,25 @@ var _ = Describe(`VpcbetaV1`, func() {
 				Expect(vpcbetaService).ToNot(BeNil())
 
 				// Invoke operation with nil options model (negative test)
-				result, response, operationErr := vpcbetaService.ListVPNGatewayConnectionsPeerCidrs(nil)
+				result, response, operationErr := vpcbetaService.ListVPNGatewayConnectionsPeerCIDRs(nil)
 				Expect(operationErr).NotTo(BeNil())
 				Expect(response).To(BeNil())
 				Expect(result).To(BeNil())
 
-				// Construct an instance of the ListVPNGatewayConnectionsPeerCidrsOptions model
-				listVPNGatewayConnectionsPeerCidrsOptionsModel := new(vpcbetav1.ListVPNGatewayConnectionsPeerCidrsOptions)
-				listVPNGatewayConnectionsPeerCidrsOptionsModel.VPNGatewayID = core.StringPtr("testString")
-				listVPNGatewayConnectionsPeerCidrsOptionsModel.ID = core.StringPtr("testString")
-				listVPNGatewayConnectionsPeerCidrsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Construct an instance of the ListVPNGatewayConnectionsPeerCIDRsOptions model
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel := new(vpcbetav1.ListVPNGatewayConnectionsPeerCIDRsOptions)
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel.VPNGatewayID = core.StringPtr("testString")
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel.ID = core.StringPtr("testString")
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 
 				// Invoke operation with valid options model (positive test)
-				result, response, operationErr = vpcbetaService.ListVPNGatewayConnectionsPeerCidrs(listVPNGatewayConnectionsPeerCidrsOptionsModel)
+				result, response, operationErr = vpcbetaService.ListVPNGatewayConnectionsPeerCIDRs(listVPNGatewayConnectionsPeerCIDRsOptionsModel)
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
 
 			})
-			It(`Invoke ListVPNGatewayConnectionsPeerCidrs with error: Operation validation and request error`, func() {
+			It(`Invoke ListVPNGatewayConnectionsPeerCIDRs with error: Operation validation and request error`, func() {
 				vpcbetaService, serviceErr := vpcbetav1.NewVpcbetaV1(&vpcbetav1.VpcbetaV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
@@ -120485,23 +120485,23 @@ var _ = Describe(`VpcbetaV1`, func() {
 				Expect(serviceErr).To(BeNil())
 				Expect(vpcbetaService).ToNot(BeNil())
 
-				// Construct an instance of the ListVPNGatewayConnectionsPeerCidrsOptions model
-				listVPNGatewayConnectionsPeerCidrsOptionsModel := new(vpcbetav1.ListVPNGatewayConnectionsPeerCidrsOptions)
-				listVPNGatewayConnectionsPeerCidrsOptionsModel.VPNGatewayID = core.StringPtr("testString")
-				listVPNGatewayConnectionsPeerCidrsOptionsModel.ID = core.StringPtr("testString")
-				listVPNGatewayConnectionsPeerCidrsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Construct an instance of the ListVPNGatewayConnectionsPeerCIDRsOptions model
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel := new(vpcbetav1.ListVPNGatewayConnectionsPeerCIDRsOptions)
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel.VPNGatewayID = core.StringPtr("testString")
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel.ID = core.StringPtr("testString")
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Invoke operation with empty URL (negative test)
 				err := vpcbetaService.SetServiceURL("")
 				Expect(err).To(BeNil())
-				result, response, operationErr := vpcbetaService.ListVPNGatewayConnectionsPeerCidrs(listVPNGatewayConnectionsPeerCidrsOptionsModel)
+				result, response, operationErr := vpcbetaService.ListVPNGatewayConnectionsPeerCIDRs(listVPNGatewayConnectionsPeerCIDRsOptionsModel)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(operationErr.Error()).To(ContainSubstring(core.ERRORMSG_SERVICE_URL_MISSING))
 				Expect(response).To(BeNil())
 				Expect(result).To(BeNil())
-				// Construct a second instance of the ListVPNGatewayConnectionsPeerCidrsOptions model with no property values
-				listVPNGatewayConnectionsPeerCidrsOptionsModelNew := new(vpcbetav1.ListVPNGatewayConnectionsPeerCidrsOptions)
+				// Construct a second instance of the ListVPNGatewayConnectionsPeerCIDRsOptions model with no property values
+				listVPNGatewayConnectionsPeerCIDRsOptionsModelNew := new(vpcbetav1.ListVPNGatewayConnectionsPeerCIDRsOptions)
 				// Invoke operation with invalid model (negative test)
-				result, response, operationErr = vpcbetaService.ListVPNGatewayConnectionsPeerCidrs(listVPNGatewayConnectionsPeerCidrsOptionsModelNew)
+				result, response, operationErr = vpcbetaService.ListVPNGatewayConnectionsPeerCIDRs(listVPNGatewayConnectionsPeerCIDRsOptionsModelNew)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).To(BeNil())
 				Expect(result).To(BeNil())
@@ -120519,7 +120519,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 					res.WriteHeader(200)
 				}))
 			})
-			It(`Invoke ListVPNGatewayConnectionsPeerCidrs successfully`, func() {
+			It(`Invoke ListVPNGatewayConnectionsPeerCIDRs successfully`, func() {
 				vpcbetaService, serviceErr := vpcbetav1.NewVpcbetaV1(&vpcbetav1.VpcbetaV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
@@ -120529,14 +120529,14 @@ var _ = Describe(`VpcbetaV1`, func() {
 				Expect(serviceErr).To(BeNil())
 				Expect(vpcbetaService).ToNot(BeNil())
 
-				// Construct an instance of the ListVPNGatewayConnectionsPeerCidrsOptions model
-				listVPNGatewayConnectionsPeerCidrsOptionsModel := new(vpcbetav1.ListVPNGatewayConnectionsPeerCidrsOptions)
-				listVPNGatewayConnectionsPeerCidrsOptionsModel.VPNGatewayID = core.StringPtr("testString")
-				listVPNGatewayConnectionsPeerCidrsOptionsModel.ID = core.StringPtr("testString")
-				listVPNGatewayConnectionsPeerCidrsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Construct an instance of the ListVPNGatewayConnectionsPeerCIDRsOptions model
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel := new(vpcbetav1.ListVPNGatewayConnectionsPeerCIDRsOptions)
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel.VPNGatewayID = core.StringPtr("testString")
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel.ID = core.StringPtr("testString")
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 
 				// Invoke operation
-				result, response, operationErr := vpcbetaService.ListVPNGatewayConnectionsPeerCidrs(listVPNGatewayConnectionsPeerCidrsOptionsModel)
+				result, response, operationErr := vpcbetaService.ListVPNGatewayConnectionsPeerCIDRs(listVPNGatewayConnectionsPeerCIDRsOptionsModel)
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 
@@ -129325,13 +129325,13 @@ var _ = Describe(`VpcbetaV1`, func() {
 				vpnGatewayPrototypeModel.Name = core.StringPtr("my-vpn-gateway")
 				vpnGatewayPrototypeModel.ResourceGroup = resourceGroupIdentityModel
 				vpnGatewayPrototypeModel.Subnet = subnetIdentityModel
-				vpnGatewayPrototypeModel.AdvertisedCidrs = []string{"192.168.3.0/24"}
+				vpnGatewayPrototypeModel.AdvertisedCIDRs = []string{"192.168.3.0/24"}
 				vpnGatewayPrototypeModel.LocalAsn = core.Int64Ptr(int64(64520))
 				vpnGatewayPrototypeModel.Mode = core.StringPtr("route")
 				Expect(vpnGatewayPrototypeModel.Name).To(Equal(core.StringPtr("my-vpn-gateway")))
 				Expect(vpnGatewayPrototypeModel.ResourceGroup).To(Equal(resourceGroupIdentityModel))
 				Expect(vpnGatewayPrototypeModel.Subnet).To(Equal(subnetIdentityModel))
-				Expect(vpnGatewayPrototypeModel.AdvertisedCidrs).To(Equal([]string{"192.168.3.0/24"}))
+				Expect(vpnGatewayPrototypeModel.AdvertisedCIDRs).To(Equal([]string{"192.168.3.0/24"}))
 				Expect(vpnGatewayPrototypeModel.LocalAsn).To(Equal(core.Int64Ptr(int64(64520))))
 				Expect(vpnGatewayPrototypeModel.Mode).To(Equal(core.StringPtr("route")))
 
@@ -133145,28 +133145,28 @@ var _ = Describe(`VpcbetaV1`, func() {
 				Expect(listVpcsOptionsModel.ClassicAccess).To(Equal(core.BoolPtr(true)))
 				Expect(listVpcsOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
 			})
-			It(`Invoke NewListVPNGatewayAdvertisedCidrsOptions successfully`, func() {
-				// Construct an instance of the ListVPNGatewayAdvertisedCidrsOptions model
+			It(`Invoke NewListVPNGatewayAdvertisedCIDRsOptions successfully`, func() {
+				// Construct an instance of the ListVPNGatewayAdvertisedCIDRsOptions model
 				vpnGatewayID := "testString"
-				listVPNGatewayAdvertisedCidrsOptionsModel := vpcbetaService.NewListVPNGatewayAdvertisedCidrsOptions(vpnGatewayID)
-				listVPNGatewayAdvertisedCidrsOptionsModel.SetVPNGatewayID("testString")
-				listVPNGatewayAdvertisedCidrsOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
-				Expect(listVPNGatewayAdvertisedCidrsOptionsModel).ToNot(BeNil())
-				Expect(listVPNGatewayAdvertisedCidrsOptionsModel.VPNGatewayID).To(Equal(core.StringPtr("testString")))
-				Expect(listVPNGatewayAdvertisedCidrsOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
+				listVPNGatewayAdvertisedCIDRsOptionsModel := vpcbetaService.NewListVPNGatewayAdvertisedCIDRsOptions(vpnGatewayID)
+				listVPNGatewayAdvertisedCIDRsOptionsModel.SetVPNGatewayID("testString")
+				listVPNGatewayAdvertisedCIDRsOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
+				Expect(listVPNGatewayAdvertisedCIDRsOptionsModel).ToNot(BeNil())
+				Expect(listVPNGatewayAdvertisedCIDRsOptionsModel.VPNGatewayID).To(Equal(core.StringPtr("testString")))
+				Expect(listVPNGatewayAdvertisedCIDRsOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
 			})
-			It(`Invoke NewListVPNGatewayConnectionsLocalCidrsOptions successfully`, func() {
-				// Construct an instance of the ListVPNGatewayConnectionsLocalCidrsOptions model
+			It(`Invoke NewListVPNGatewayConnectionsLocalCIDRsOptions successfully`, func() {
+				// Construct an instance of the ListVPNGatewayConnectionsLocalCIDRsOptions model
 				vpnGatewayID := "testString"
 				id := "testString"
-				listVPNGatewayConnectionsLocalCidrsOptionsModel := vpcbetaService.NewListVPNGatewayConnectionsLocalCidrsOptions(vpnGatewayID, id)
-				listVPNGatewayConnectionsLocalCidrsOptionsModel.SetVPNGatewayID("testString")
-				listVPNGatewayConnectionsLocalCidrsOptionsModel.SetID("testString")
-				listVPNGatewayConnectionsLocalCidrsOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
-				Expect(listVPNGatewayConnectionsLocalCidrsOptionsModel).ToNot(BeNil())
-				Expect(listVPNGatewayConnectionsLocalCidrsOptionsModel.VPNGatewayID).To(Equal(core.StringPtr("testString")))
-				Expect(listVPNGatewayConnectionsLocalCidrsOptionsModel.ID).To(Equal(core.StringPtr("testString")))
-				Expect(listVPNGatewayConnectionsLocalCidrsOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel := vpcbetaService.NewListVPNGatewayConnectionsLocalCIDRsOptions(vpnGatewayID, id)
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel.SetVPNGatewayID("testString")
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel.SetID("testString")
+				listVPNGatewayConnectionsLocalCIDRsOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
+				Expect(listVPNGatewayConnectionsLocalCIDRsOptionsModel).ToNot(BeNil())
+				Expect(listVPNGatewayConnectionsLocalCIDRsOptionsModel.VPNGatewayID).To(Equal(core.StringPtr("testString")))
+				Expect(listVPNGatewayConnectionsLocalCIDRsOptionsModel.ID).To(Equal(core.StringPtr("testString")))
+				Expect(listVPNGatewayConnectionsLocalCIDRsOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
 			})
 			It(`Invoke NewListVPNGatewayConnectionsOptions successfully`, func() {
 				// Construct an instance of the ListVPNGatewayConnectionsOptions model
@@ -133184,18 +133184,18 @@ var _ = Describe(`VpcbetaV1`, func() {
 				Expect(listVPNGatewayConnectionsOptionsModel.Status).To(Equal(core.StringPtr("down")))
 				Expect(listVPNGatewayConnectionsOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
 			})
-			It(`Invoke NewListVPNGatewayConnectionsPeerCidrsOptions successfully`, func() {
-				// Construct an instance of the ListVPNGatewayConnectionsPeerCidrsOptions model
+			It(`Invoke NewListVPNGatewayConnectionsPeerCIDRsOptions successfully`, func() {
+				// Construct an instance of the ListVPNGatewayConnectionsPeerCIDRsOptions model
 				vpnGatewayID := "testString"
 				id := "testString"
-				listVPNGatewayConnectionsPeerCidrsOptionsModel := vpcbetaService.NewListVPNGatewayConnectionsPeerCidrsOptions(vpnGatewayID, id)
-				listVPNGatewayConnectionsPeerCidrsOptionsModel.SetVPNGatewayID("testString")
-				listVPNGatewayConnectionsPeerCidrsOptionsModel.SetID("testString")
-				listVPNGatewayConnectionsPeerCidrsOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
-				Expect(listVPNGatewayConnectionsPeerCidrsOptionsModel).ToNot(BeNil())
-				Expect(listVPNGatewayConnectionsPeerCidrsOptionsModel.VPNGatewayID).To(Equal(core.StringPtr("testString")))
-				Expect(listVPNGatewayConnectionsPeerCidrsOptionsModel.ID).To(Equal(core.StringPtr("testString")))
-				Expect(listVPNGatewayConnectionsPeerCidrsOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel := vpcbetaService.NewListVPNGatewayConnectionsPeerCIDRsOptions(vpnGatewayID, id)
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel.SetVPNGatewayID("testString")
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel.SetID("testString")
+				listVPNGatewayConnectionsPeerCIDRsOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
+				Expect(listVPNGatewayConnectionsPeerCIDRsOptionsModel).ToNot(BeNil())
+				Expect(listVPNGatewayConnectionsPeerCIDRsOptionsModel.VPNGatewayID).To(Equal(core.StringPtr("testString")))
+				Expect(listVPNGatewayConnectionsPeerCIDRsOptionsModel.ID).To(Equal(core.StringPtr("testString")))
+				Expect(listVPNGatewayConnectionsPeerCIDRsOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
 			})
 			It(`Invoke NewListVPNGatewayServiceConnectionsOptions successfully`, func() {
 				// Construct an instance of the ListVPNGatewayServiceConnectionsOptions model
@@ -142036,7 +142036,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 		It(`Invoke UnmarshalVPNGatewayConnectionPolicyModeLocalPrototype successfully`, func() {
 			// Construct an instance of the model.
 			model := new(vpcbetav1.VPNGatewayConnectionPolicyModeLocalPrototype)
-			model.Cidrs = []string{"192.0.2.0/24"}
+			model.CIDRs = []string{"192.0.2.0/24"}
 			model.IkeIdentities = nil
 
 			b, err := json.Marshal(model)
@@ -142055,7 +142055,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 		It(`Invoke UnmarshalVPNGatewayConnectionPolicyModePeerPrototype successfully`, func() {
 			// Construct an instance of the model.
 			model := new(vpcbetav1.VPNGatewayConnectionPolicyModePeerPrototype)
-			model.Cidrs = []string{"203.0.113.0/24"}
+			model.CIDRs = []string{"203.0.113.0/24"}
 			model.IkeIdentity = nil
 			model.Address = core.StringPtr("192.0.2.5")
 			model.Fqdn = core.StringPtr("my-service.example.com")
@@ -142203,7 +142203,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 			model.Name = core.StringPtr("my-vpn-gateway")
 			model.ResourceGroup = nil
 			model.Subnet = nil
-			model.AdvertisedCidrs = []string{"192.168.3.0/24"}
+			model.AdvertisedCIDRs = []string{"192.168.3.0/24"}
 			model.LocalAsn = core.Int64Ptr(int64(64520))
 			model.Mode = core.StringPtr("route")
 
@@ -147683,7 +147683,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 		It(`Invoke UnmarshalVPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByAddress successfully`, func() {
 			// Construct an instance of the model.
 			model := new(vpcbetav1.VPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByAddress)
-			model.Cidrs = []string{"203.0.113.0/24"}
+			model.CIDRs = []string{"203.0.113.0/24"}
 			model.IkeIdentity = nil
 			model.Address = core.StringPtr("192.0.2.5")
 
@@ -147703,7 +147703,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 		It(`Invoke UnmarshalVPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByFqdn successfully`, func() {
 			// Construct an instance of the model.
 			model := new(vpcbetav1.VPNGatewayConnectionPolicyModePeerPrototypeVPNGatewayConnectionPeerByFqdn)
-			model.Cidrs = []string{"203.0.113.0/24"}
+			model.CIDRs = []string{"203.0.113.0/24"}
 			model.IkeIdentity = nil
 			model.Fqdn = core.StringPtr("my-service.example.com")
 
@@ -147868,7 +147868,7 @@ var _ = Describe(`VpcbetaV1`, func() {
 			model.Name = core.StringPtr("my-vpn-gateway")
 			model.ResourceGroup = nil
 			model.Subnet = nil
-			model.AdvertisedCidrs = []string{"192.168.3.0/24"}
+			model.AdvertisedCIDRs = []string{"192.168.3.0/24"}
 			model.LocalAsn = core.Int64Ptr(int64(64520))
 			model.Mode = core.StringPtr("route")
 
