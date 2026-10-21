@@ -1,5 +1,3 @@
-//go:build unit
-
 /**
  * (C) Copyright IBM Corp. 2023, 2024, 2025.
  *
@@ -352,7 +350,7 @@ var _ = Describe(`InstanceTemplate Unmarshalling Tests`, func() {
 			err = vpcbetav1.UnmarshalInstanceTemplate(rawMap, &result)
 			Expect(err).To(BeNil())
 
-			// Imp: This will fail if source_snapshot detection is missing
+			// THE IMP ASSERTION: This will fail if source_snapshot detection is missing
 			_, isSourceSnapshotType := result.(*vpcbetav1.InstanceTemplateInstanceBySourceSnapshotInstanceTemplateContext)
 			Expect(isSourceSnapshotType).To(BeTrue(),
 				"CRITICAL: source_snapshot detection logic appears to be missing! "+
