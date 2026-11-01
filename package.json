@@ -11,6 +11,7 @@
   },
   "overrides": {
     "braces": "^3.0.3",
-    "ip-address": "^10.7.4"
+    "ip-address": "^10.7.5",
+    "undici": "^6.29.1"
   }
 }
